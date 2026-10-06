@@ -45,10 +45,17 @@ Example manifest location:
 /.well-known/agent-trust.json
 ```
 
-Validate an example manifest locally:
+Create an isolated Python environment and install the validator dependency:
 
 ```bash
-python3 tools/validator/validate.py examples/signed-manifest.json schemas/agent-trust-manifest.schema.json
+python3 -m venv .venv
+.venv/bin/python -m pip install jsonschema
+```
+
+Validate an example manifest using that environment:
+
+```bash
+.venv/bin/python tools/validator/validate.py examples/signed-manifest.json schemas/agent-trust-manifest.schema.json
 ```
 
 ## Implemented validation
@@ -61,7 +68,7 @@ The CLI does not enforce JSON Schema `format` annotations, including URI and dat
 
 Each `governance_artifacts[].owner` identifies an implementation-defined component or role maintaining that artifact. The field accepts a string containing at least one non-whitespace character. Fictional example labels such as `example_catalog_team` are not a prescribed vocabulary. This field does not identify organization ownership or a verifier and does not grant trust or authority. Earlier accepted nonblank labels remain valid; older validators with a fixed vocabulary may reject new labels. See the core draft specification for details.
 
-Run the owner-field regression tests with `python3 -m unittest discover -s tests`.
+Run the owner-field regression tests with `.venv/bin/python -m unittest discover -s tests`.
 
 ## Example limitations
 
