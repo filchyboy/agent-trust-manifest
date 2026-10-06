@@ -1,0 +1,109 @@
+{
+  "atm_version": "0.2.0",
+  "manifest_version": "2026.04.19",
+  "issuer": {
+    "name": "Example Platform",
+    "uri": "https://example.com",
+    "domain": "example.com"
+  },
+  "published_at": "2026-04-19T18:00:00Z",
+  "expires_at": "2026-05-19T18:00:00Z",
+  "interaction_profile": {
+    "content_triggered_execution": false,
+    "explicit_invocation_required": true,
+    "provenance_available": true,
+    "audit_logging_available": true
+  },
+  "verification": {
+    "level": "active",
+    "verified_by": [
+      {
+        "entity": "Example Trust Validator",
+        "method": "active",
+        "timestamp": "2026-04-19T18:30:00Z",
+        "result": "pass",
+        "report_uri": "https://validator.example/reports/123",
+        "covered_claims": [
+          "interaction_profile.content_triggered_execution",
+          "interaction_profile.explicit_invocation_required"
+        ]
+      }
+    ]
+  },
+  "reputation": {
+    "provider": "Example Reputation Network",
+    "scorecard_uri": "https://reputation.example/scorecards/example.com",
+    "dimensions": ["declaration_accuracy", "execution_safety", "provenance_quality"],
+    "last_updated": "2026-04-19T19:00:00Z"
+  },
+  "governance_artifacts": [
+    {
+      "type": "capability_catalog",
+      "uri": "https://example.com/.well-known/capability-catalog.json",
+      "schema_uri": "https://agenttrustmanifest.org/schemas/capability-catalog.schema.json",
+      "version": "0.2.0",
+      "owner": "example_catalog_team",
+      "hash": "sha256:capabilitycataloghash",
+      "last_updated": "2026-04-19T19:00:00Z",
+      "published_at": "2026-04-19T19:00:00Z",
+      "expires_at": "2026-04-20T19:00:00Z",
+      "cache_ttl_seconds": 3600,
+      "freshness_class": "catalog",
+      "assurance_level": "hash_pinned",
+      "revocation_status": "active",
+      "scope": {
+        "level": "surface",
+        "identifier": "external_agent"
+      },
+      "issuer": {
+        "id": "https://example.com",
+        "type": "platform"
+      },
+      "subject": {
+        "id": "https://example.com",
+        "type": "platform"
+      }
+    },
+    {
+      "type": "reputation_feed",
+      "uri": "https://reputation.example/feeds/example.com.json",
+      "schema_uri": "https://agenttrustmanifest.org/schemas/reputation-feed.schema.json",
+      "version": "0.2.0",
+      "owner": "example_ratings_team",
+      "hash": "sha256:reputationfeedhash",
+      "last_updated": "2026-04-19T19:00:00Z",
+      "published_at": "2026-04-19T19:00:00Z",
+      "expires_at": "2026-04-26T19:00:00Z",
+      "cache_ttl_seconds": 86400,
+      "freshness_class": "attestation",
+      "assurance_level": "third_party_attested",
+      "revocation_status": "active",
+      "scope": {
+        "level": "platform",
+        "identifier": "https://example.com"
+      },
+      "issuer": {
+        "id": "https://reputation.example",
+        "type": "third_party"
+      },
+      "subject": {
+        "id": "https://example.com",
+        "type": "platform"
+      }
+    }
+  ],
+  "attestation": {
+    "type": "deployment_bound",
+    "alg": "Ed25519",
+    "key_id": "atm-key-2026-q2",
+    "issued_at": "2026-04-19T18:00:00Z",
+    "expires_at": "2026-05-19T18:00:00Z",
+    "signature": "BASE64_SIGNATURE_PLACEHOLDER",
+    "deployment_binding": {
+      "build_sha": "abc123def456",
+      "policy_bundle_sha": "789ghi012jkl",
+      "runtime_profile": "production-us-west",
+      "container_image_digest": "sha256:0123456789abcdef"
+    }
+  }
+}

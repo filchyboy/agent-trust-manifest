@@ -1,0 +1,16 @@
+{
+  "level": "active",
+  "verified_by": [
+    {
+      "entity": "Example Trust Validator",
+      "method": "active",
+      "timestamp": "2026-04-19T18:30:00Z",
+      "result": "pass",
+      "report_uri": "https://validator.example/reports/123",
+      "covered_claims": [
+        "interaction_profile.content_triggered_execution",
+        "interaction_profile.explicit_invocation_required"
+      ]
+    }
+  ]
+}

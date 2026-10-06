@@ -1,0 +1,17 @@
+{
+  "atm_version": "0.2.0",
+  "manifest_version": "2026.04.19",
+  "issuer": {
+    "name": "Example Platform",
+    "uri": "https://example.com",
+    "domain": "example.com"
+  },
+  "published_at": "2026-04-19T18:00:00Z",
+  "expires_at": "2026-05-19T18:00:00Z",
+  "interaction_profile": {
+    "content_triggered_execution": false,
+    "explicit_invocation_required": true,
+    "provenance_available": true,
+    "audit_logging_available": true
+  }
+}

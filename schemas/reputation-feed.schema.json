@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agenttrustmanifest.org/schemas/reputation-feed.schema.json",
+  "title": "Reputation Feed",
+  "type": "object",
+  "required": ["feed_version", "published_at", "expires_at", "cache_ttl_seconds", "freshness_class", "issuer", "subject", "scope", "methodology", "dimensions", "evidence_refs", "assurance_level", "revocation_status", "signature"],
+  "properties": {
+    "feed_version": {"type": "string"},
+    "published_at": {"type": "string", "format": "date-time"},
+    "expires_at": {"type": "string", "format": "date-time"},
+    "cache_ttl_seconds": {"type": "integer", "minimum": 0},
+    "freshness_class": {"const": "attestation"},
+    "issuer": {"type": "object", "additionalProperties": true},
+    "subject": {"type": "object", "additionalProperties": true},
+    "scope": {"$ref": "#/$defs/scope"},
+    "methodology": {
+      "type": "object",
+      "required": ["id", "version", "summary", "evidence_policy"],
+      "properties": {
+        "id": {"type": "string"},
+        "version": {"type": "string"},
+        "uri": {"type": "string", "format": "uri"},
+        "summary": {"type": "string"},
+        "score_scale": {"type": "object", "additionalProperties": true},
+        "rating_scale": {"type": "array", "items": {"type": "string"}},
+        "lookback_window": {"type": "object", "additionalProperties": true},
+        "evidence_policy": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "dimensions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["dimension", "evidence_refs", "measured_at", "summary"],
+        "properties": {
+          "dimension": {"enum": ["declaration_accuracy", "execution_safety", "provenance_quality", "policy_reliability", "incident_responsiveness", "stability"]},
+          "score": {"type": "number"},
+          "rating": {"enum": ["excellent", "good", "fair", "poor", "unknown"]},
+          "result": {"enum": ["pass", "fail", "mixed", "unknown"]},
+          "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+          "evidence_refs": {"type": "array", "items": {"$ref": "#/$defs/evidence_ref"}},
+          "measured_at": {"type": "string", "format": "date-time"},
+          "summary": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "overall": {
+      "type": "object",
+      "properties": {
+        "score": {"type": "number"},
+        "rating": {"enum": ["excellent", "good", "fair", "poor", "unknown"]},
+        "result": {"enum": ["pass", "fail", "mixed", "unknown"]},
+        "summary": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "evidence_refs": {"type": "array", "items": {"$ref": "#/$defs/evidence_ref"}},
+    "assurance_level": {"enum": ["declaration", "hash_pinned", "signed", "third_party_attested", "deployment_bound", "hardware_attested"]},
+    "revocation_status": {"enum": ["active", "superseded", "revoked", "expired", "unknown"]},
+    "signature": {
+      "type": "object",
+      "required": ["alg", "key_id", "value"],
+      "properties": {
+        "alg": {"type": "string"},
+        "key_id": {"type": "string"},
+        "value": {"type": "string"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "scope": {
+      "type": "object",
+      "required": ["level", "identifier"],
+      "properties": {
+        "level": {"enum": ["platform", "tenant", "surface", "artifact", "capability", "evaluation_suite"]},
+        "identifier": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "evidence_ref": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {"enum": ["agent_trust_manifest", "capability_catalog", "evaluation_status", "provenance_manifest", "compliance_manifest", "operational_status_feed", "revocation_feed", "third_party_audit", "provider_observation", "private_evidence"]},
+        "uri": {"type": "string", "format": "uri"},
+        "hash": {"type": "string"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agenttrustmanifest.org/schemas/operational-status-feed.schema.json",
+  "title": "Operational Status Feed",
+  "type": "object",
+  "required": ["feed_version", "published_at", "expires_at", "cache_ttl_seconds", "freshness_class", "issuer", "subject", "scope", "overall_status", "components", "incidents", "maintenance_windows"],
+  "properties": {
+    "feed_version": {"type": "string"},
+    "published_at": {"type": "string", "format": "date-time"},
+    "expires_at": {"type": "string", "format": "date-time"},
+    "cache_ttl_seconds": {"type": "integer", "minimum": 0},
+    "freshness_class": {"enum": ["policy_state", "operational_state"]},
+    "issuer": {"type": "object", "additionalProperties": true},
+    "subject": {"type": "object", "additionalProperties": true},
+    "scope": {"$ref": "#/$defs/scope"},
+    "overall_status": {"$ref": "#/$defs/status"},
+    "components": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "status", "last_changed_at"],
+        "properties": {
+          "id": {"type": "string"},
+          "name": {"type": "string"},
+          "status": {"$ref": "#/$defs/status"},
+          "surface": {"type": "string"},
+          "capability_ids": {"type": "array", "items": {"type": "string"}},
+          "region": {"type": "string"},
+          "last_changed_at": {"type": "string", "format": "date-time"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "incidents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "status", "severity", "started_at", "summary", "affected_components"],
+        "properties": {
+          "id": {"type": "string"},
+          "status": {"enum": ["investigating", "identified", "monitoring", "resolved", "postmortem_published"]},
+          "severity": {"enum": ["minor", "major", "critical"]},
+          "started_at": {"type": "string", "format": "date-time"},
+          "detected_at": {"type": "string", "format": "date-time"},
+          "acknowledged_at": {"type": "string", "format": "date-time"},
+          "resolved_at": {"type": "string", "format": "date-time"},
+          "summary": {"type": "string"},
+          "affected_components": {"type": "array", "items": {"type": "string"}},
+          "affected_capabilities": {"type": "array", "items": {"type": "string"}},
+          "updates_uri": {"type": "string", "format": "uri"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "maintenance_windows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "status", "starts_at", "ends_at", "summary", "affected_components"],
+        "properties": {
+          "id": {"type": "string"},
+          "status": {"enum": ["scheduled", "in_progress", "completed", "cancelled"]},
+          "starts_at": {"type": "string", "format": "date-time"},
+          "ends_at": {"type": "string", "format": "date-time"},
+          "summary": {"type": "string"},
+          "affected_components": {"type": "array", "items": {"type": "string"}},
+          "affected_capabilities": {"type": "array", "items": {"type": "string"}},
+          "updates_uri": {"type": "string", "format": "uri"}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "$defs": {
+    "status": {"enum": ["operational", "degraded", "partial_outage", "major_outage", "maintenance", "unknown"]},
+    "scope": {
+      "type": "object",
+      "required": ["level", "identifier"],
+      "properties": {
+        "level": {"enum": ["platform", "tenant", "surface", "artifact", "capability", "evaluation_suite"]},
+        "identifier": {"type": "string"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

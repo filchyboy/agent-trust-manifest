@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agenttrustmanifest.org/schemas/verification-report.schema.json",
+  "title": "Verification Report",
+  "type": "object",
+  "required": ["level", "verified_by"],
+  "properties": {
+    "level": {"enum": ["static", "active", "audit"]},
+    "verified_by": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["entity", "method", "timestamp", "result"],
+        "properties": {
+          "entity": {"type": "string"},
+          "method": {"enum": ["static", "active", "audit"]},
+          "timestamp": {"type": "string", "format": "date-time"},
+          "result": {"enum": ["pass", "fail", "mixed", "unknown"]},
+          "report_uri": {"type": "string", "format": "uri"},
+          "covered_claims": {"type": "array", "items": {"type": "string"}}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

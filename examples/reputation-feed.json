@@ -1,0 +1,94 @@
+{
+  "feed_version": "0.2.0",
+  "published_at": "2026-05-16T21:00:00Z",
+  "expires_at": "2026-05-23T21:00:00Z",
+  "cache_ttl_seconds": 86400,
+  "freshness_class": "attestation",
+  "issuer": {
+    "id": "https://trust-ratings.example",
+    "name": "Example Agent Trust Ratings",
+    "type": "third_party",
+    "issuer_registry_id": "issuer_01HXREPUTATION000000000001"
+  },
+  "subject": {
+    "type": "platform",
+    "id": "https://platform.example",
+    "name": "Example Platform"
+  },
+  "scope": {
+    "level": "platform",
+    "identifier": "https://platform.example"
+  },
+  "methodology": {
+    "id": "agent-platform-trust-v1",
+    "version": "1.4.2",
+    "uri": "https://trust-ratings.example/methodologies/agent-platform-trust-v1",
+    "summary": "Scores public agent trust disclosures, operational history, revocation behavior, and evidence freshness over a rolling 90-day window.",
+    "score_scale": {
+      "min": 0,
+      "max": 100,
+      "higher_is_better": true
+    },
+    "rating_scale": ["excellent", "good", "fair", "poor", "unknown"],
+    "lookback_window": {
+      "duration": "P90D",
+      "started_at": "2026-02-15T00:00:00Z",
+      "ended_at": "2026-05-16T00:00:00Z"
+    },
+    "evidence_policy": "Uses public ATM artifacts, public operational status disclosures, public revocation state, and provider-observed availability checks."
+  },
+  "dimensions": [
+    {
+      "dimension": "declaration_accuracy",
+      "score": 94,
+      "rating": "excellent",
+      "result": "pass",
+      "confidence": 0.91,
+      "evidence_refs": [
+        {
+          "type": "agent_trust_manifest",
+          "uri": "https://platform.example/.well-known/agent-trust.json",
+          "hash": "sha256:manifesthash"
+        }
+      ],
+      "measured_at": "2026-05-16T20:45:00Z",
+      "summary": "Public manifest declarations were internally consistent and hash-pinned at evaluation time."
+    },
+    {
+      "dimension": "incident_responsiveness",
+      "score": 82,
+      "rating": "good",
+      "result": "pass",
+      "confidence": 0.78,
+      "evidence_refs": [
+        {
+          "type": "operational_status_feed",
+          "uri": "https://platform.example/.well-known/operational-status.json",
+          "hash": "sha256:statusfeedhash"
+        }
+      ],
+      "measured_at": "2026-05-16T20:45:00Z",
+      "summary": "Incident disclosures and recovery updates were timely for the assessed window."
+    }
+  ],
+  "overall": {
+    "score": 88,
+    "rating": "good",
+    "result": "pass",
+    "summary": "The subject met the provider's public evidence and responsiveness threshold."
+  },
+  "evidence_refs": [
+    {
+      "type": "revocation_feed",
+      "uri": "https://platform.example/.well-known/revocation-feed.json",
+      "hash": "sha256:revocationfeedhash"
+    }
+  ],
+  "assurance_level": "third_party_attested",
+  "revocation_status": "active",
+  "signature": {
+    "alg": "Ed25519",
+    "key_id": "https://trust-ratings.example/.well-known/keys/2026-q2.json#primary",
+    "value": "base64url-signature"
+  }
+}

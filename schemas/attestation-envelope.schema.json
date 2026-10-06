@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agenttrustmanifest.org/schemas/attestation-envelope.schema.json",
+  "title": "Attestation Envelope",
+  "type": "object",
+  "required": ["type", "alg", "key_id", "issued_at", "expires_at", "signature"],
+  "properties": {
+    "type": {"enum": ["signed_manifest", "deployment_bound", "hardware_attested"]},
+    "alg": {"type": "string"},
+    "key_id": {"type": "string"},
+    "issued_at": {"type": "string", "format": "date-time"},
+    "expires_at": {"type": "string", "format": "date-time"},
+    "signature": {"type": "string"},
+    "deployment_binding": {
+      "type": "object",
+      "properties": {
+        "build_sha": {"type": "string"},
+        "policy_bundle_sha": {"type": "string"},
+        "runtime_profile": {"type": "string"},
+        "container_image_digest": {"type": "string"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

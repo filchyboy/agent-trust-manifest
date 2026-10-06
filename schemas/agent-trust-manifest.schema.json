@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agenttrustmanifest.org/schemas/agent-trust-manifest.schema.json",
+  "title": "Agent Trust Manifest",
+  "type": "object",
+  "required": ["atm_version", "manifest_version", "issuer", "published_at", "expires_at", "interaction_profile"],
+  "properties": {
+    "atm_version": {"type": "string"},
+    "manifest_version": {"type": "string"},
+    "issuer": {
+      "type": "object",
+      "required": ["name", "uri", "domain"],
+      "properties": {
+        "name": {"type": "string"},
+        "uri": {"type": "string", "format": "uri"},
+        "domain": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "published_at": {"type": "string", "format": "date-time"},
+    "expires_at": {"type": "string", "format": "date-time"},
+    "interaction_profile": {
+      "type": "object",
+      "required": ["content_triggered_execution", "explicit_invocation_required", "provenance_available", "audit_logging_available"],
+      "properties": {
+        "content_triggered_execution": {"type": "boolean"},
+        "explicit_invocation_required": {"type": "boolean"},
+        "provenance_available": {"type": "boolean"},
+        "audit_logging_available": {"type": "boolean"}
+      },
+      "additionalProperties": true
+    },
+    "verification": {"$ref": "verification-report.schema.json"},
+    "reputation": {
+      "type": "object",
+      "required": ["provider", "scorecard_uri", "last_updated"],
+      "properties": {
+        "provider": {"type": "string"},
+        "scorecard_uri": {"type": "string", "format": "uri"},
+        "dimensions": {"type": "array", "items": {"type": "string"}},
+        "last_updated": {"type": "string", "format": "date-time"}
+      },
+      "additionalProperties": false
+    },
+    "attestation": {"$ref": "attestation-envelope.schema.json"},
+    "governance_artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "uri", "schema_uri", "version", "owner", "hash", "last_updated", "assurance_level", "scope", "issuer", "subject"],
+        "properties": {
+          "type": {
+            "enum": [
+              "capability_catalog",
+              "platform_policy",
+              "api_catalog",
+              "evaluation_status",
+              "provenance_manifest",
+              "ui_governance",
+              "compliance_manifest",
+              "operational_status_feed",
+              "reputation_feed",
+              "revocation_feed"
+            ]
+          },
+          "uri": {"type": "string", "format": "uri"},
+          "schema_uri": {"type": "string", "format": "uri"},
+          "version": {"type": "string"},
+          "owner": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S",
+            "description": "Implementation-defined identifier for the responsible component or role maintaining this artifact. Must contain a non-whitespace character. It does not identify organization ownership or verifier identity and does not grant trust or authority."
+          },
+          "hash": {"type": "string"},
+          "last_updated": {"type": "string", "format": "date-time"},
+          "published_at": {"type": "string", "format": "date-time"},
+          "expires_at": {"type": "string", "format": "date-time"},
+          "cache_ttl_seconds": {"type": "integer", "minimum": 0},
+          "freshness_class": {
+            "enum": ["static_reference", "catalog", "policy_state", "revocation_state", "attestation", "operational_state"]
+          },
+          "assurance_level": {
+            "enum": ["declaration", "hash_pinned", "signed", "third_party_attested", "deployment_bound", "hardware_attested"]
+          },
+          "revocation_status": {
+            "enum": ["active", "superseded", "revoked", "expired", "unknown"]
+          },
+          "scope": {
+            "type": "object",
+            "required": ["level", "identifier"],
+            "properties": {
+              "level": {"enum": ["platform", "tenant", "surface", "artifact", "capability", "evaluation_suite"]},
+              "identifier": {"type": "string"}
+            },
+            "additionalProperties": false
+          },
+          "issuer": {"type": "object", "additionalProperties": true},
+          "subject": {"type": "object", "additionalProperties": true}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

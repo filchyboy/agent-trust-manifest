@@ -1,0 +1,99 @@
+{
+  "catalog_version": "0.2.0",
+  "published_at": "2026-05-16T20:30:00Z",
+  "expires_at": "2026-05-17T20:30:00Z",
+  "cache_ttl_seconds": 3600,
+  "freshness_class": "catalog",
+  "issuer": {
+    "id": "https://platform.example",
+    "name": "Example Platform",
+    "type": "platform"
+  },
+  "subject": {
+    "type": "platform",
+    "id": "https://platform.example"
+  },
+  "scope": {
+    "level": "surface",
+    "identifier": "external_agent"
+  },
+  "capabilities": [
+    {
+      "id": "crm.contact.read",
+      "version": "1.2.0",
+      "title": "Read CRM Contact",
+      "description": "Retrieves a tenant-scoped CRM contact record when the caller is authorized for the contact's account context.",
+      "action_type": {
+        "id": "https://intentschema.org/productivity/contact/read",
+        "fallback": "contact.read"
+      },
+      "surface": "external_agent",
+      "scope": {
+        "level": "capability",
+        "identifier": "crm.contact.read"
+      },
+      "input_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "required": ["contact_id"],
+        "additionalProperties": false,
+        "properties": {
+          "contact_id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "output_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "required": ["contact"],
+        "additionalProperties": false,
+        "properties": {
+          "contact": {
+            "type": "object",
+            "required": ["id", "display_name", "email"],
+            "additionalProperties": false,
+            "properties": {
+              "id": {"type": "string", "format": "uuid"},
+              "display_name": {"type": "string"},
+              "email": {"type": "string", "format": "email"}
+            }
+          }
+        }
+      },
+      "fulfillment": {
+        "protocol": "mcp",
+        "operation_id": "crm.contact.read",
+        "transport": "server_managed",
+        "interaction_mode": "request_response"
+      },
+      "auth": {
+        "required": true,
+        "context": "tenant",
+        "scopes": ["crm.contacts.read"],
+        "policy_class": "tenant_scoped_read"
+      },
+      "side_effects": "read_only",
+      "data_exposure": {
+        "classification": "tenant_business_data",
+        "categories": ["contact_profile", "contact_email"],
+        "pii": true
+      },
+      "constraints": {
+        "tenant_isolation": "required",
+        "approval_required": false
+      },
+      "capability_flags": {
+        "network_access": false,
+        "api_access": true,
+        "offline_supported": false,
+        "requires_approval": false
+      },
+      "assurance_level": "hash_pinned",
+      "revocation_status": "active",
+      "deprecated_at": null,
+      "replacement_id": null
+    }
+  ]
+}

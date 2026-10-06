@@ -1,0 +1,47 @@
+{
+  "feed_version": "0.2.0",
+  "published_at": "2026-05-16T20:35:00Z",
+  "expires_at": "2026-05-16T21:35:00Z",
+  "cache_ttl_seconds": 300,
+  "freshness_class": "revocation_state",
+  "issuer": {
+    "id": "https://platform.example",
+    "name": "Example Platform",
+    "type": "platform"
+  },
+  "subject": {
+    "type": "platform",
+    "id": "https://platform.example"
+  },
+  "scope": {
+    "level": "platform",
+    "identifier": "https://platform.example"
+  },
+  "entries": [
+    {
+      "artifact_type": "manifest_attestation",
+      "artifact_id": "attestation_01HXMANIFEST000000000001",
+      "artifact_hash": "sha256:manifestattestationhash",
+      "issuer": {
+        "id": "https://platform.example",
+        "type": "platform"
+      },
+      "subject": {
+        "type": "platform",
+        "id": "https://platform.example"
+      },
+      "scope": {
+        "level": "platform",
+        "identifier": "https://platform.example"
+      },
+      "revocation_status": "active",
+      "status_reason_code": "none",
+      "valid_from": "2026-05-16T20:00:00Z",
+      "valid_until": "2026-06-16T20:00:00Z",
+      "last_verified_at": "2026-05-16T20:30:00Z",
+      "evidence_ref": {
+        "hash": "sha256:evidencehash"
+      }
+    }
+  ]
+}

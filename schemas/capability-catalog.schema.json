@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agenttrustmanifest.org/schemas/capability-catalog.schema.json",
+  "title": "Capability Catalog",
+  "type": "object",
+  "required": ["catalog_version", "published_at", "expires_at", "cache_ttl_seconds", "freshness_class", "issuer", "subject", "scope", "capabilities"],
+  "properties": {
+    "catalog_version": {"type": "string"},
+    "published_at": {"type": "string", "format": "date-time"},
+    "expires_at": {"type": "string", "format": "date-time"},
+    "cache_ttl_seconds": {"type": "integer", "minimum": 0},
+    "freshness_class": {"const": "catalog"},
+    "issuer": {"type": "object", "additionalProperties": true},
+    "subject": {"type": "object", "additionalProperties": true},
+    "scope": {"$ref": "#/$defs/scope"},
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "version", "title", "description", "action_type", "surface", "scope", "input_schema", "fulfillment", "auth", "side_effects", "data_exposure", "constraints", "capability_flags", "assurance_level", "revocation_status"],
+        "properties": {
+          "id": {"type": "string"},
+          "version": {"type": "string"},
+          "title": {"type": "string"},
+          "description": {"type": "string"},
+          "action_type": {"type": "object", "additionalProperties": true},
+          "surface": {"type": "string"},
+          "scope": {"$ref": "#/$defs/scope"},
+          "input_schema": {"type": "object", "additionalProperties": true},
+          "output_schema": {"type": "object", "additionalProperties": true},
+          "fulfillment": {
+            "type": "object",
+            "required": ["protocol"],
+            "properties": {
+              "protocol": {"enum": ["mcp", "https", "deeplink", "event", "manual"]},
+              "operation_id": {"type": "string"},
+              "transport": {"type": "string"},
+              "interaction_mode": {"enum": ["request_response", "async_job", "event_stream", "webhook", "ui_handoff"]}
+            },
+            "additionalProperties": true
+          },
+          "auth": {
+            "type": "object",
+            "required": ["required", "context"],
+            "properties": {
+              "required": {"type": "boolean"},
+              "context": {"enum": ["none", "platform", "tenant", "user", "service_account", "delegated"]},
+              "scopes": {"type": "array", "items": {"type": "string"}},
+              "policy_class": {"type": "string"}
+            },
+            "additionalProperties": true
+          },
+          "side_effects": {"enum": ["read_only", "write", "external_call", "state_change", "destructive"]},
+          "data_exposure": {
+            "type": "object",
+            "required": ["classification"],
+            "properties": {
+              "classification": {
+                "enum": [
+                  "none",
+                  "public",
+                  "tenant_business_data",
+                  "tenant_personal_data",
+                  "platform_operational_data",
+                  "security_sensitive",
+                  "regulated"
+                ]
+              },
+              "categories": {"type": "array", "items": {"type": "string"}},
+              "pii": {"type": "boolean"}
+            },
+            "additionalProperties": true
+          },
+          "constraints": {
+            "type": "object",
+            "properties": {
+              "tenant_isolation": {
+                "enum": [
+                  "not_applicable",
+                  "required",
+                  "cross_tenant_allowed_with_policy",
+                  "platform_only"
+                ]
+              },
+              "approval_required": {"type": "boolean"},
+              "rate_limit": {"type": "object", "additionalProperties": true}
+            },
+            "additionalProperties": true
+          },
+          "capability_flags": {
+            "type": "object",
+            "propertyNames": {
+              "enum": [
+                "network_access",
+                "api_access",
+                "offline_supported",
+                "requires_approval",
+                "supports_dry_run",
+                "supports_idempotency_key",
+                "returns_pii",
+                "writes_external_system"
+              ]
+            },
+            "additionalProperties": {"type": "boolean"}
+          },
+          "assurance_level": {"enum": ["declaration", "hash_pinned", "signed", "third_party_attested", "deployment_bound", "hardware_attested"]},
+          "revocation_status": {"enum": ["active", "superseded", "revoked", "expired", "unknown"]},
+          "deprecated_at": {"type": ["string", "null"], "format": "date-time"},
+          "replacement_id": {"type": ["string", "null"]}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "$defs": {
+    "scope": {
+      "type": "object",
+      "required": ["level", "identifier"],
+      "properties": {
+        "level": {"enum": ["platform", "tenant", "surface", "artifact", "capability", "evaluation_suite"]},
+        "identifier": {"type": "string"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

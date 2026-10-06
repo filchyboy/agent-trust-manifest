@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agenttrustmanifest.org/schemas/revocation-feed.schema.json",
+  "title": "Revocation Feed",
+  "type": "object",
+  "required": ["feed_version", "published_at", "expires_at", "cache_ttl_seconds", "freshness_class", "issuer", "subject", "scope", "entries"],
+  "properties": {
+    "feed_version": {"type": "string"},
+    "published_at": {"type": "string", "format": "date-time"},
+    "expires_at": {"type": "string", "format": "date-time"},
+    "cache_ttl_seconds": {"type": "integer", "minimum": 0},
+    "freshness_class": {"const": "revocation_state"},
+    "issuer": {"type": "object", "additionalProperties": true},
+    "subject": {"type": "object", "additionalProperties": true},
+    "scope": {"$ref": "#/$defs/scope"},
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["artifact_type", "artifact_id", "issuer", "subject", "scope", "revocation_status", "status_reason_code"],
+        "properties": {
+          "artifact_type": {"enum": ["trust_claim", "trust_delegation", "attestation", "attestation_issuer", "manifest_attestation"]},
+          "artifact_id": {"type": "string"},
+          "artifact_hash": {"type": "string"},
+          "issuer": {"type": "object", "additionalProperties": true},
+          "subject": {"type": "object", "additionalProperties": true},
+          "scope": {"$ref": "#/$defs/scope"},
+          "revocation_status": {"enum": ["active", "superseded", "revoked", "expired", "unknown"]},
+          "status_reason_code": {"enum": ["none", "expired", "issuer_revoked", "issuer_suspended", "signature_invalid", "scope_invalid", "policy_rejected", "superseded", "manual_revocation", "unknown"]},
+          "valid_from": {"type": "string", "format": "date-time"},
+          "valid_until": {"type": "string", "format": "date-time"},
+          "revoked_at": {"type": "string", "format": "date-time"},
+          "superseded_by": {"type": "string"},
+          "last_verified_at": {"type": "string", "format": "date-time"},
+          "evidence_ref": {"type": "object", "additionalProperties": true}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "$defs": {
+    "scope": {
+      "type": "object",
+      "required": ["level", "identifier"],
+      "properties": {
+        "level": {"enum": ["platform", "tenant", "surface", "artifact", "capability", "evaluation_suite"]},
+        "identifier": {"type": "string"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
