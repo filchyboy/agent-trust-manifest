@@ -1,0 +1,44 @@
+{
+  "atm_version": "0.2.0",
+  "manifest_version": "fictional-consumer-demo-1",
+  "issuer": {
+    "name": "Fictional Demo Publisher",
+    "uri": "https://consumer-demo.example",
+    "domain": "consumer-demo.example"
+  },
+  "published_at": "2026-10-05T17:00:00Z",
+  "expires_at": "2026-10-05T19:00:00Z",
+  "interaction_profile": {
+    "content_triggered_execution": false,
+    "explicit_invocation_required": true,
+    "provenance_available": true,
+    "audit_logging_available": true
+  },
+  "governance_artifacts": [
+    {
+      "type": "operational_status_feed",
+      "uri": "https://consumer-demo.example/.well-known/operational-status.json",
+      "schema_uri": "https://agenttrustmanifest.org/schemas/operational-status-feed.schema.json",
+      "version": "0.2.0",
+      "owner": "example_status_team",
+      "hash": "sha256:c6a6d51b0e6bf982d311be2ffb21726c20821e006d137b66ebe928f98631bf90",
+      "last_updated": "2026-10-06T17:55:00Z",
+      "published_at": "2026-10-06T17:55:00Z",
+      "expires_at": "2026-10-06T18:05:00Z",
+      "assurance_level": "hash_pinned",
+      "revocation_status": "active",
+      "scope": {
+        "level": "platform",
+        "identifier": "https://consumer-demo.example"
+      },
+      "issuer": {
+        "id": "https://consumer-demo.example",
+        "type": "platform"
+      },
+      "subject": {
+        "id": "https://consumer-demo.example",
+        "type": "platform"
+      }
+    }
+  ]
+}
