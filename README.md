@@ -81,6 +81,32 @@ Draft companion artifact schemas:
 - Revocation feed: `schemas/revocation-feed.schema.json`
 - Release notes and scope: `spec/release-notes-v0.2.0.md`
 
+## How ATM fits with other agent trust efforts
+
+ATM proposes a portable way to describe a system’s agent-interaction controls and connect those claims to independently assessable evidence.
+
+An agent interaction raises four separate questions:
+
+1. Identity: Who is making the request?
+2. User authorization: What did the user authorize?
+3. Platform permission: Does the receiving platform permit this interaction?
+4. Controls and evidence: What safeguards does the system claim, and what supports those claims?
+
+ATM focuses on the fourth question. Its integration work should preserve the distinctions between all four. Recognizing an agent’s identity does not grant it access, and permission for a transaction does not establish that the surrounding system’s controls are effective.
+
+Related efforts include:
+
+- [Cloudflare signed agents](https://blog.cloudflare.com/signed-agents/): signed HTTP requests that help identify agent traffic
+- [Visa Trusted Agent Protocol](https://developer.visa.com/capabilities/trusted-agent-protocol): signals that help merchants recognize approved commerce agents and associated authorization
+- [Google Agent Payments Protocol](https://cloud.google.com/blog/products/ai-machine-learning/announcing-agents-to-payments-ap2-protocol): signed mandates supporting user authorization and accountability in payments
+- [Mastercard Verifiable Intent](https://www.mastercard.com/us/en/news-and-trends/stories/2026/verifiable-intent.html): evidence linking user authorization to agent actions
+
+ATM is intended to complement these mechanisms with evidence about system controls. It grants no access rights and does not replace identity, authorization or payment protocols.
+
+These are potential integration points. ATM v0.2.0 supplies schemas and structural validation; compatibility with these efforts has not been implemented or tested. References imply no certification, endorsement or partnership.
+
+[Proposed roadmap](ROADMAP.md).
+
 ## Version
 
 Current draft specification: **v0.2.0**. Verification and attestation extension documents retain their v0.1.0 versions. The versioning policy and release checklist are draft project guidance; they do not establish a public governance body or certification program.
