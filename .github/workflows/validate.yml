@@ -25,4 +25,7 @@ jobs:
       - run: python tools/validator/validate.py examples/consumer/operational-status.json schemas/operational-status-feed.schema.json
       - run: python tools/validator/validate.py examples/consumer/stale-manifest.json schemas/agent-trust-manifest.schema.json
       - run: python tools/validator/validate.py examples/consumer/tampered-status.json schemas/operational-status-feed.schema.json
+      - run: python tools/validator/validate.py examples/consumer/platform-controls/manifest.json schemas/agent-trust-manifest.schema.json
+      - run: python tools/validator/validate.py examples/consumer/platform-controls/profile.json schemas/platform-controls-draft-0.1.schema.json
+      - run: python tools/validator/validate.py examples/consumer/platform-controls/expected-context.json schemas/platform-context-draft-0.1.schema.json
       - run: python -m unittest discover -s tests

@@ -1,0 +1,13 @@
+{
+  "subject": {
+    "type": "platform",
+    "id": "urn:example:receiving-platform"
+  },
+  "scope": {
+    "deployment": "public-demo-2026-10",
+    "tenant": "public-demo-tenant",
+    "surface": "https-api",
+    "policy_version": "policy-demo-1"
+  },
+  "capability_id": "export-summary"
+}

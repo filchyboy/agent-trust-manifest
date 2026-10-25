@@ -60,6 +60,30 @@ Prerequisites require a fresh supported manifest, a claimed origin match, declar
 
 Schema validity and authenticity are separate output fields. `authentication` remains `unverified`. A claimed revocation label is not a revocation check; `revocation_checked` remains false.
 
+## Draft platform-control checks (report version 0.2)
+
+The [unreleased profile](../../spec/platform-controls-draft-0.1.md) adds explicit platform subject types, deployment/tenant/surface/policy scope, role separation and capability conditions without changing the v0.2.0 schemas. Run its fictional positive case:
+
+```bash
+.venv/bin/python tools/consumer/consume.py \
+  --manifest examples/consumer/platform-controls/manifest.json \
+  --expected-origin https://consumer-demo.example \
+  --status-file examples/consumer/operational-status.json \
+  --platform-profile-file examples/consumer/platform-controls/profile.json \
+  --expected-context-file examples/consumer/platform-controls/expected-context.json \
+  --at 2026-10-06T18:00:00Z
+```
+
+The operator selects the expected context independently; it cannot be derived from the sidecar as authority. The explicit file is discovered via the manifest's existing `platform_policy` link, but never fetched. Its reference, digest and publication/expiry must match. The profile binds separately to publisher, subject and manifest version; the selected capability and assessment must exactly match platform type/ID, deployment, tenant, surface and policy version. The assessment also repeats the declared control authority, enforcement point and complete capability conditions; a stale snapshot cannot silently cover changed roles or requirements even when the policy version is reused. This experimental profile supports no scope inheritance. Wrong types/scopes, stale input or changed expected policy produce explained `hold`/unresolved output.
+
+`platform_controls.capability` displays declared access conditions and `approval_required`. Listing a capability does not guarantee caller eligibility, and `approval_required` does not imply `approval_granted`. An agent/operator authorization cannot override platform refusal or additional approval. The consumer does not accept agent mandates or invoke capabilities. `policy.caller_eligibility` stays `unresolved`; `access_granted`, `approval_granted` and `runtime_enforcement_performed` stay false.
+
+Missing or malformed requested sidecar/context files produce a source-specific unresolved reason while preserving independently inspected manifest/status results.
+
+A successful `platform_controls.declaration_checks_passed` means only that the local checks matched. Authentication, actual safeguards and revocation remain unverified, and the best decision remains `manual_review`. Missing/stale input leaves capability existence unresolved rather than absent. Without the optional paired profile/context inputs, `platform_controls` reports `profile_not_supplied` and the original demo still checks its narrow legacy status profile. Legacy status subjects must now be exactly the expected platform `id` and `type`, with unsupported qualifiers rejected; publisher and subject equality in that old profile is a supported-demo restriction, not a general ATM identity rule.
+
+The profile checks policy change only against the separately supplied expectation. It cannot discover an undisclosed live deployment/policy change or evaluate the caller's real eligibility. The platform must independently enforce its current policy at invocation. See the [acceptance matrix](../../examples/consumer/platform-controls/cases.json) and [profile limitations](../../spec/platform-controls-draft-0.1.md).
+
 ## Network and resource boundary
 
 - HTTPS only, standard port 443, no origin paths, user information, query strings or fragments. ASCII DNS names or public IP literals only.

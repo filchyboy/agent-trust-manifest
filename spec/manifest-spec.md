@@ -108,6 +108,12 @@ Boolean. Indicates whether the platform can record decision and execution artifa
 
 A core ATM document is a declaration, not proof. Consumers should treat unsigned or unverified manifests as low-assurance claims.
 
+## Platform-control clarification and experimental work
+
+The `issuer` identifies the publisher; it must not be assumed to identify the assessed platform, its control authority, enforcement point or an independent assessor. Evidence about an agent cannot satisfy a platform-control claim merely because identifiers match. An agent's ability and operator consent do not authorize a function the receiving platform does not permit. Capability discovery and structural validation grant no authority; the platform independently enforces current policy. Capability access/approval prerequisites do not establish caller eligibility or approval. Missing or stale information remains unresolved, without permission or an assertion that a capability is absent. Agent mandates remain outside ATM.
+
+The existing v0.2.0 schema does not encode all these role and applicability distinctions. The [unreleased platform-control sidecar](platform-controls-draft-0.1.md) proposes explicit bindings through the existing `platform_policy` artifact link; its stricter profile requirements do not retrofit new required fields into v0.2.0.
+
 ## 7. Conformance
 
 A manifest conforms to ATM v0.2.0 if:
