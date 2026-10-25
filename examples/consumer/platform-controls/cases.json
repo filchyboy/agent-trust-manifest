@@ -1,0 +1,211 @@
+[
+  {
+    "name": "positive",
+    "changes": {},
+    "decision": "manual_review",
+    "reason": "platform_controls_not_authenticated"
+  },
+  {
+    "name": "agent_subject_same_id",
+    "changes": {
+      "evidence.0.applies_to.subject.type": "agent"
+    },
+    "decision": "hold",
+    "reason": "platform_profile_schema_invalid"
+  },
+  {
+    "name": "wrong_subject_id",
+    "changes": {
+      "evidence.0.applies_to.subject.id": "urn:example:other-platform"
+    },
+    "decision": "hold",
+    "reason": "evidence_subject_mismatch"
+  },
+  {
+    "name": "wrong_tenant",
+    "changes": {
+      "evidence.0.applies_to.scope.tenant": "other-tenant"
+    },
+    "decision": "hold",
+    "reason": "evidence_tenant_mismatch"
+  },
+  {
+    "name": "wrong_surface",
+    "changes": {
+      "evidence.0.applies_to.scope.surface": "other-surface"
+    },
+    "decision": "hold",
+    "reason": "evidence_surface_mismatch"
+  },
+  {
+    "name": "wrong_deployment",
+    "changes": {
+      "evidence.0.applies_to.scope.deployment": "other-deployment"
+    },
+    "decision": "hold",
+    "reason": "evidence_deployment_mismatch"
+  },
+  {
+    "name": "wrong_capability",
+    "changes": {
+      "evidence.0.applies_to.capability_id": "delete-record"
+    },
+    "decision": "hold",
+    "reason": "evidence_capability_mismatch"
+  },
+  {
+    "name": "changed_policy",
+    "changes": {
+      "scope.policy_version": "policy-demo-2"
+    },
+    "decision": "hold",
+    "reason": "profile_policy_version_mismatch"
+  },
+  {
+    "name": "changed_evidence_policy",
+    "changes": {
+      "evidence.0.applies_to.scope.policy_version": "old-policy"
+    },
+    "decision": "hold",
+    "reason": "evidence_policy_version_mismatch"
+  },
+  {
+    "name": "stale_profile",
+    "changes": {
+      "expires_at": "2026-10-06T18:00:00Z"
+    },
+    "decision": "hold",
+    "reason": "profile_freshness_stale"
+  },
+  {
+    "name": "stale_evidence",
+    "changes": {
+      "evidence.0.expires_at": "2026-10-06T18:00:00Z"
+    },
+    "decision": "hold",
+    "reason": "evidence_freshness_stale"
+  },
+  {
+    "name": "future_observation",
+    "changes": {
+      "evidence.0.observed_at": "2026-10-06T18:01:00Z"
+    },
+    "decision": "hold",
+    "reason": "evidence_freshness_invalid"
+  },
+  {
+    "name": "platform_refusal",
+    "changes": {
+      "capabilities.0.platform_permission": "refused"
+    },
+    "decision": "hold",
+    "reason": "platform_refusal_declared"
+  },
+  {
+    "name": "permission_unknown",
+    "changes": {
+      "capabilities.0.platform_permission": "unknown"
+    },
+    "decision": "hold",
+    "reason": "platform_permission_unresolved"
+  },
+  {
+    "name": "capability_not_listed",
+    "changes": {
+      "capabilities": []
+    },
+    "decision": "hold",
+    "reason": "capability_unresolved"
+  },
+  {
+    "name": "missing_evidence",
+    "changes": {
+      "evidence": []
+    },
+    "decision": "hold",
+    "reason": "evidence_missing_or_ambiguous"
+  },
+  {
+    "name": "assessment_failed",
+    "changes": {
+      "evidence.0.result": "fail"
+    },
+    "decision": "hold",
+    "reason": "assessment_not_pass"
+  },
+  {
+    "name": "approval_not_required",
+    "changes": {
+      "capabilities.0.approval_required": false,
+      "evidence.0.assessed_controls.capability.approval_required": false
+    },
+    "decision": "manual_review",
+    "reason": "platform_controls_not_authenticated"
+  },
+  {
+    "name": "approval_receipt_rejected",
+    "changes": {
+      "capabilities.0.approval_granted": true
+    },
+    "decision": "hold",
+    "reason": "platform_profile_schema_invalid"
+  },
+  {
+    "name": "wrong_publisher",
+    "changes": {
+      "publisher.id": "https://other.example"
+    },
+    "decision": "hold",
+    "reason": "profile_manifest_binding_mismatch"
+  },
+  {
+    "name": "wrong_manifest_version",
+    "changes": {
+      "manifest_version": "old-manifest"
+    },
+    "decision": "hold",
+    "reason": "profile_manifest_binding_mismatch"
+  },
+  {
+    "name": "changed_control_authority",
+    "changes": {
+      "control_authority.id": "urn:example:other-authority"
+    },
+    "decision": "hold",
+    "reason": "evidence_controls_mismatch"
+  },
+  {
+    "name": "changed_enforcement_point",
+    "changes": {
+      "enforcement_point.id": "urn:example:other-gateway"
+    },
+    "decision": "hold",
+    "reason": "evidence_controls_mismatch"
+  },
+  {
+    "name": "changed_approval_without_assessment",
+    "changes": {
+      "capabilities.0.approval_required": false
+    },
+    "decision": "hold",
+    "reason": "evidence_controls_mismatch"
+  },
+  {
+    "name": "changed_conditions_without_assessment",
+    "changes": {
+      "capabilities.0.access_conditions": [
+        "Different platform prerequisite"
+      ]
+    },
+    "decision": "hold",
+    "reason": "evidence_controls_mismatch"
+  },
+  {
+    "name": "wrong_assessed_permission",
+    "changes": {
+      "evidence.0.assessed_controls.capability.platform_permission": "refused"
+    },
+    "decision": "hold",
+    "reason": "evidence_controls_mismatch"
+  }
+]

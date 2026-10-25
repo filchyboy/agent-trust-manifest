@@ -1,0 +1,310 @@
+{
+  "type": "object",
+  "required": [
+    "profile_version",
+    "atm_version",
+    "manifest_version",
+    "publisher",
+    "control_authority",
+    "applies_to",
+    "published_at",
+    "expires_at",
+    "mechanisms",
+    "requirements"
+  ],
+  "properties": {
+    "profile_version": {
+      "const": "protocol-support-draft/0.1"
+    },
+    "atm_version": {
+      "const": "0.2.0"
+    },
+    "manifest_version": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "publisher": {
+      "type": "object",
+      "required": [
+        "id",
+        "role"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "role": {
+          "enum": [
+            "platform_operator",
+            "tenant_operator"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "control_authority": {
+      "$ref": "platform-controls-draft-0.1.schema.json#/$defs/identity"
+    },
+    "applies_to": {
+      "allOf": [
+        {
+          "$ref": "platform-controls-draft-0.1.schema.json#/$defs/binding"
+        },
+        {
+          "properties": {
+            "capability_id": {
+              "not": {
+                "const": "*"
+              }
+            },
+            "scope": {
+              "properties": {
+                "deployment": {
+                  "not": {
+                    "const": "*"
+                  }
+                },
+                "tenant": {
+                  "not": {
+                    "const": "*"
+                  }
+                },
+                "surface": {
+                  "not": {
+                    "const": "*"
+                  }
+                },
+                "policy_version": {
+                  "not": {
+                    "const": "*"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "published_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "mechanisms": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_]{0,63}$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/mechanism"
+      },
+      "maxProperties": 32
+    },
+    "requirements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "mode",
+          "mechanisms"
+        ],
+        "properties": {
+          "mode": {
+            "enum": [
+              "one_of",
+              "all_of"
+            ]
+          },
+          "mechanisms": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_]{0,63}$"
+            },
+            "minItems": 1,
+            "maxItems": 32,
+            "uniqueItems": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "maxItems": 32
+    }
+  },
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agenttrustmanifest.org/schemas/protocol-support-draft-0.1.schema.json",
+  "title": "Draft external mechanism support declarations for ATM 0.2.0",
+  "$defs": {
+    "https_uri": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https://[^\\s/?#@]+(?:[/?#][^\\s]*)?$"
+    },
+    "mechanism_identity": {
+      "type": "object",
+      "required": [
+        "protocol_id",
+        "specification_uri",
+        "version",
+        "profile"
+      ],
+      "properties": {
+        "protocol_id": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^[a-z][a-z0-9+.-]*:[^\\s]+$"
+        },
+        "specification_uri": {
+          "$ref": "#/$defs/https_uri"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "not": {
+            "enum": [
+              "*",
+              "latest",
+              "current",
+              "unknown"
+            ]
+          }
+        },
+        "profile": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "not": {
+            "enum": [
+              "*",
+              "latest",
+              "current",
+              "unknown"
+            ]
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "mechanism": {
+      "type": "object",
+      "required": [
+        "protocol_id",
+        "specification_uri",
+        "version",
+        "profile",
+        "roles",
+        "support"
+      ],
+      "properties": {
+        "protocol_id": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^[a-z][a-z0-9+.-]*:[^\\s]+$"
+        },
+        "specification_uri": {
+          "$ref": "#/$defs/https_uri"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "not": {
+            "enum": [
+              "*",
+              "latest",
+              "current",
+              "unknown"
+            ]
+          }
+        },
+        "profile": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "not": {
+            "enum": [
+              "*",
+              "latest",
+              "current",
+              "unknown"
+            ]
+          }
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "recognition",
+              "authentication",
+              "payment",
+              "other"
+            ]
+          },
+          "minItems": 1,
+          "maxItems": 4,
+          "uniqueItems": true
+        },
+        "support": {
+          "enum": [
+            "supported",
+            "unsupported",
+            "unknown"
+          ]
+        },
+        "endpoint_uris": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/https_uri"
+          },
+          "maxItems": 16,
+          "uniqueItems": true
+        },
+        "documentation_uris": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/https_uri"
+          },
+          "maxItems": 16,
+          "uniqueItems": true
+        },
+        "test_report": {
+          "type": "object",
+          "required": [
+            "uri",
+            "assessor_id",
+            "relationship"
+          ],
+          "properties": {
+            "uri": {
+              "$ref": "#/$defs/https_uri"
+            },
+            "assessor_id": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "relationship": {
+              "enum": [
+                "self",
+                "affiliated",
+                "independent",
+                "unknown"
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "description": "Declaration-only companion for one exact platform/tenant/deployment/surface/capability/policy binding. No protocol implementation, inheritance, caller eligibility or independent test verification. Requirement groups describe conditions; they do not fulfill them."
+}

@@ -6,6 +6,8 @@ ATM is designed to answer a practical question:
 
 **How can an agent decide whether a system is safe to interact with?**
 
+ATM describes the receiving platform's controls and makes capability conditions discoverable. An agent's ability and operator consent do not authorize a function the platform does not permit. The platform must independently enforce its current policy. Discovery and structural validation grant no caller authority; a listed capability does not guarantee caller eligibility. Missing or stale information remains unresolved, not permission or proof of absence. Agent mandates and delegation protocols remain external.
+
 ATM separates trust into four layers:
 
 1. **Declaration** — machine-readable claims made by a platform.
@@ -70,6 +72,16 @@ A small post-prerelease reference consumer inventories declarations and evidence
 
 Start with the [v0.2.0 documentation index](docs/v0.2.0/index.md), [worked fictional example](docs/v0.2.0/worked-example.md), and [consumer contract](docs/v0.2.0/consumer.md). The [focused RFC questions](docs/rfc/0001-consumer-policy.md) cover scope, minimum evidence, freshness, failure handling and issuer trust. These additions are not in the original tagged prerelease archives.
 
+## Unreleased platform-control profile
+
+A [separately versioned experimental profile](spec/platform-controls-draft-0.1.md) distinguishes publisher, platform subject/deployment/surface, control authority, enforcement point and assessor. It uses the existing `platform_policy` discovery link and explicit offline sidecar/context inputs. Its fixtures test capability conditions, subject type, exact evidence applicability, policy changes and approval requirements while always granting no access. The v0.2.0 schemas remain unchanged; this proposal is not a new release. See [unreleased notes](spec/platform-controls-draft-notes.md). [Issue #1](https://github.com/filchyboy/agent-trust-manifest/issues/1) remains the design record; draft PR #2 remains a bounded consumer testbed.
+
+## Declaring external protocol support
+
+The separate [protocol-support draft 0.1](spec/protocol-support-draft-0.1.md) lets platform or tenant administrators declare external mechanisms for one exact platform/deployment/tenant/surface/capability context. It records protocol/specification identifiers, explicit versions and profiles, supported/unsupported/unknown status, endpoint/documentation references, and optional support versus required alternatives or joint requirements. This is separate from a capability's transport (`fulfillment.protocol`), `auth.context`, and free-text conditions.
+
+Configuration can publish these declarations; it does not install an adapter, enable runtime access, verify interoperability or grant caller authority. An external mechanism such as Visa TAP can be named by its reviewed specification/revision; the [fixtures](examples/consumer/protocol-support/declaration.json) use fictional mechanisms and claim no integration. The original schemas and platform-control draft remain unchanged. A [separate offline illustration](docs/protocol-support-consumers.md) shows possible consumer handling without implementing protocols, fetching providers or enforcing platform policy.
+
 ## Artifact responsibility
 
 Each `governance_artifacts[].owner` identifies an implementation-defined component or role maintaining that artifact. The field accepts a string containing at least one non-whitespace character. Fictional example labels such as `example_catalog_team` are not a prescribed vocabulary. This field does not identify organization ownership or a verifier and does not grant trust or authority. Earlier accepted nonblank labels remain valid; older validators with a fixed vocabulary may reject new labels. See the core draft specification for details.
@@ -96,27 +108,20 @@ Draft companion artifact schemas:
 
 ## How ATM fits with other agent trust efforts
 
-ATM proposes a portable way to describe a system’s agent-interaction controls and connect those claims to independently assessable evidence.
+ATM focuses on portable receiving-platform declarations, capability prerequisites and evidence about controls. Identity, user authorization, platform permission and control effectiveness are separate questions. Related efforts span several of them; they do not fit exclusive agent/platform buckets.
 
-An agent interaction raises four separate questions:
+| Related work | Function and relationship to ATM |
+| --- | --- |
+| [Cloudflare recognition system](https://developers.cloudflare.com/bots/concepts/bot/verified-bots/) (historically signed agents) | Requester recognition and classification that already inform receiving-side traffic rules. ATM could describe surrounding platform controls and evidence. |
+| [Visa Trusted Agent Protocol](https://developer.visa.com/docs/trusted-agent-protocol/trusted-agent-protocol-specifications) | Commerce recognition and consumer/payment signals that merchants can use to admit or limit interactions. |
+| [AP2 v0.2](https://ap2-protocol.org/ap2/specification/) | Checkout/Payment Mandates and verification responsibilities across commerce participants; transaction authorization complements platform-control declarations. |
+| [Verifiable Intent](https://verifiableintent.dev/spec/) | An open draft for cryptographic delegation and transaction evidence, distinct from the Mastercard Agent Pay product; not blanket merchant permission. |
+| [Signature Agent Card](https://www.ietf.org/archive/id/draft-meunier-webbotauth-registry-03.txt) | Individual Internet-Draft coauthored by Thibault Meunier for requester metadata and keys; declared behavior does not establish receiving-platform controls. |
+| [Agent Identity Document](https://www.ietf.org/archive/id/draft-alla-agent-identity-document-01.txt) | Femi Alla's individual Internet-Draft for hosted identity/accountability, separating provider facts from operator assertions. |
 
-1. Identity: Who is making the request?
-2. User authorization: What did the user authorize?
-3. Platform permission: Does the receiving platform permit this interaction?
-4. Controls and evidence: What safeguards does the system claim, and what supports those claims?
+Cloudflare and TAP already support receiving-side policy decisions. ATM does not replace their enforcement, identity discovery, delegation or payment mechanisms. A listed capability does not guarantee caller eligibility; operator consent and agent ability cannot override platform refusal or required additional approval.
 
-ATM focuses on the fourth question. Its integration work should preserve the distinctions between all four. Recognizing an agent’s identity does not grant it access, and permission for a transaction does not establish that the surrounding system’s controls are effective.
-
-Related efforts include:
-
-- [Cloudflare signed agents](https://blog.cloudflare.com/signed-agents/): signed HTTP requests that help identify agent traffic
-- [Visa Trusted Agent Protocol](https://developer.visa.com/capabilities/trusted-agent-protocol): signals that help merchants recognize approved commerce agents and associated authorization
-- [Google Agent Payments Protocol](https://cloud.google.com/blog/products/ai-machine-learning/announcing-agents-to-payments-ap2-protocol): signed mandates supporting user authorization and accountability in payments
-- [Mastercard Verifiable Intent](https://www.mastercard.com/us/en/news-and-trends/stories/2026/verifiable-intent.html): evidence linking user authorization to agent actions
-
-ATM is intended to complement these mechanisms with evidence about system controls. It grants no access rights and does not replace identity, authorization or payment protocols.
-
-These are potential integration points. ATM v0.2.0 supplies schemas and structural validation; compatibility with these efforts has not been implemented or tested. References imply no certification, endorsement or partnership.
+See the [ecosystem analysis](docs/ecosystem-positioning.md) for control subjects, enforcement locations, overlap, an illustrative interaction and primary-source dates/versions. AP2 v0.2 differs from its launch terminology; the identity drafts and VI are work in progress. ATM's local platform-control profile is draft and unpublished. No compatibility with these efforts has been implemented or tested; references imply no certification, endorsement or partnership.
 
 [Proposed roadmap](ROADMAP.md).
 

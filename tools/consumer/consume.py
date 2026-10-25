@@ -132,7 +132,7 @@ def freshness(value, now):
 
 def same_subject(value, origin):
     return (value.get("issuer", {}).get("id") == origin
-            and value.get("subject", {}).get("id") == origin
+            and value.get("subject") == {"id": origin, "type": "platform"}
             and value.get("scope") == {"level": "platform", "identifier": origin})
 
 
@@ -202,14 +202,24 @@ def inspect_evidence(manifest, raw, origin, now):
     return evidence
 
 
+def platform_controls_report(reason="platform_profile_missing"):
+    return {"state": "unresolved", "authentication": "unverified",
+            "declaration_checks_passed": False, "capability_existence": "unresolved",
+            "caller_eligibility": "unresolved", "approval_granted": False,
+            "reason": reason}
+
+
 def base_report():
-    return {"profile": "atm-consumer-demo/0.1", "manifest": {"state": "invalid"},
+    return {"profile": "atm-consumer-demo/0.2", "manifest": {"state": "invalid"},
             "declared_claims": {}, "available_evidence": [],
             "status_evidence": {"state": "missing", "authentication": "unverified"},
-            "policy": {"decision": "hold", "access_granted": False, "reasons": []}}
+            "platform_controls": platform_controls_report("profile_not_supplied"),
+            "policy": {"decision": "hold", "access_granted": False,
+                       "caller_eligibility": "unresolved", "approval_granted": False,
+                       "runtime_enforcement_performed": False, "reasons": []}}
 
 
-def inspect(manifest_raw, status_raw, origin, now):
+def inspect(manifest_raw, status_raw, origin, now, profile_raw=None, expected_context=None):
     report = base_report()
     try:
         manifest = decode_document(manifest_raw)
@@ -267,7 +277,103 @@ def inspect(manifest_raw, status_raw, origin, now):
             "issuer_authentication_unverified", "claims_not_independently_verified",
             "revocation_not_checked",
         ])
+    if profile_raw is not None or expected_context is not None:
+        controls = inspect_platform_controls(profile_raw, expected_context, manifest, origin, now)
+        report["platform_controls"] = controls
+        if not controls["declaration_checks_passed"]:
+            report["policy"].update(decision="hold")
+        report["policy"]["reasons"].append(controls["reason"])
     return report
+
+
+def inspect_platform_controls(raw, expected, manifest, origin, now):
+    """Compare declarations with a separately supplied context; authenticate nothing."""
+    result = platform_controls_report()
+
+    def unresolved(reason):
+        result["reason"] = reason
+        return result
+
+    if raw is None:
+        return result
+    if expected is None or not validate(expected, "platform-context-draft-0.1.schema.json"):
+        return unresolved("expected_context_missing_or_invalid")
+    refs = [ref for ref in manifest.get("governance_artifacts", [])
+            if ref["type"] == "platform_policy"]
+    if len(refs) != 1:
+        return unresolved("platform_profile_reference_missing_or_ambiguous")
+    ref = refs[0]
+    if (ref["schema_uri"] != "https://agenttrustmanifest.org/schemas/platform-controls-draft-0.1.schema.json"
+            or ref["version"] != "platform-controls-draft/0.1"
+            or ref["uri"] != origin + "/.well-known/platform-controls.json"
+            or ref["issuer"] != {"id": manifest["issuer"]["uri"]}
+            or ref["subject"] != expected["subject"]
+            or ref["scope"] != {"level": "surface", "identifier": expected["scope"]["surface"]}):
+        return unresolved("platform_profile_reference_mismatch")
+    state = freshness(ref, now)
+    if state != "fresh":
+        return unresolved("profile_reference_freshness_" + state)
+    if ref.get("revocation_status") != "active":
+        return unresolved("profile_reference_revocation_unresolved")
+    if not re.fullmatch(r"sha256:[0-9a-f]{64}", ref["hash"]):
+        return unresolved("profile_digest_invalid")
+    if not hmac.compare_digest(ref["hash"][7:], hashlib.sha256(raw).hexdigest()):
+        return unresolved("profile_digest_mismatch")
+    try:
+        profile = decode_document(raw)
+    except ConsumerError as exc:
+        return unresolved("profile_" + str(exc))
+    if not validate(profile, "platform-controls-draft-0.1.schema.json"):
+        return unresolved("platform_profile_schema_invalid")
+    if (profile["atm_version"] != manifest["atm_version"]
+            or profile["manifest_version"] != manifest["manifest_version"]
+            or profile["publisher"]["id"] != manifest["issuer"]["uri"]
+            or profile["origin"] != origin):
+        return unresolved("profile_manifest_binding_mismatch")
+    if profile["subject"] != expected["subject"]:
+        return unresolved("profile_subject_mismatch")
+    for key in ("deployment", "tenant", "surface", "policy_version"):
+        if profile["scope"][key] != expected["scope"][key]:
+            return unresolved("profile_" + key + "_mismatch")
+    state = freshness(profile, now)
+    if state != "fresh":
+        return unresolved("profile_freshness_" + state)
+    capabilities = [c for c in profile["capabilities"] if c["id"] == expected["capability_id"]]
+    if len(capabilities) != 1:
+        return unresolved("capability_unresolved")
+    cap = capabilities[0]
+    result.update(capability_existence="declared", capability={
+        "id": cap["id"], "platform_permission": cap["platform_permission"],
+        "access_conditions": cap["access_conditions"], "approval_required": cap["approval_required"]})
+    # The declarations are observable, but no condition is fulfilled by discovery.
+    if cap["platform_permission"] == "refused":
+        return unresolved("platform_refusal_declared")
+    if cap["platform_permission"] != "allowed":
+        return unresolved("platform_permission_unresolved")
+    if len(profile["evidence"]) != 1:
+        return unresolved("evidence_missing_or_ambiguous")
+    evidence = profile["evidence"][0]
+    applies = evidence["applies_to"]
+    if applies["subject"] != expected["subject"]:
+        return unresolved("evidence_subject_mismatch")
+    for key in ("deployment", "tenant", "surface", "policy_version"):
+        if applies["scope"][key] != expected["scope"][key]:
+            return unresolved("evidence_" + key + "_mismatch")
+    if applies["capability_id"] != expected["capability_id"]:
+        return unresolved("evidence_capability_mismatch")
+    assessed_controls = {"control_authority": profile["control_authority"],
+                         "enforcement_point": profile["enforcement_point"], "capability": cap}
+    if evidence["assessed_controls"] != assessed_controls:
+        return unresolved("evidence_controls_mismatch")
+    state = freshness({"published_at": evidence["observed_at"],
+                       "expires_at": evidence["expires_at"]}, now)
+    if state != "fresh":
+        return unresolved("evidence_freshness_" + state)
+    if evidence["result"] != "pass":
+        return unresolved("assessment_not_pass")
+    result.update(state="unverified", declaration_checks_passed=True,
+                  reason="platform_controls_not_authenticated")
+    return result
 
 
 def fetch_manifest(origin):
@@ -298,6 +404,8 @@ def main(argv=None):
     parser.add_argument("--expected-origin", help="Required claimed-origin expectation in offline mode")
     parser.add_argument("--status-file", help="Explicit local operational status bytes; never auto-fetched")
     parser.add_argument("--at", help="Fixture-only RFC3339 decision time; prohibited for network mode")
+    parser.add_argument("--platform-profile-file", help="Explicit draft platform-control sidecar; never fetched")
+    parser.add_argument("--expected-context-file", help="Separately selected platform/deployment/scope/capability/policy context")
     args = parser.parse_args(argv)
     report = base_report()
     try:
@@ -317,7 +425,24 @@ def main(argv=None):
         except ConsumerError as exc:
             status, status_error = None, str(exc)
         now = timestamp(args.at) if args.at else datetime.now(timezone.utc)
-        report = inspect(raw, status, origin, now)
+        profile_raw, expected_context, profile_input_error = None, None, None
+        if args.platform_profile_file or args.expected_context_file:
+            if not (args.platform_profile_file and args.expected_context_file):
+                profile_input_error = "profile_and_expected_context_required"
+            else:
+                source = "platform_profile"
+                try:
+                    profile_raw = read_file(args.platform_profile_file)
+                    source = "expected_context"
+                    expected_context = decode_document(read_file(args.expected_context_file))
+                except ConsumerError as exc:
+                    profile_raw, expected_context = None, None
+                    profile_input_error = source + "_" + str(exc)
+        report = inspect(raw, status, origin, now, profile_raw, expected_context)
+        if profile_input_error:
+            report["platform_controls"] = platform_controls_report(profile_input_error)
+            report["policy"]["decision"] = "hold"
+            report["policy"]["reasons"].append(profile_input_error)
         if status_error:
             report["status_evidence"].update(
                 state="missing" if status_error == "file_unavailable" else "invalid",
