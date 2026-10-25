@@ -29,3 +29,5 @@ These pages navigate the v0.2.0 draft schemas and specifications. The reference 
 ## Unreleased work
 
 [Platform-control profile 0.1](../../spec/platform-controls-draft-0.1.md) is a separately versioned experimental sidecar/context, not part of the v0.2.0 release contract. [Issue #1](https://github.com/filchyboy/agent-trust-manifest/issues/1) remains the open design record.
+
+[External protocol-support declarations](../../spec/protocol-support-draft-0.1.md) are a separate draft companion compatible with core ATM 0.2.0, with [consumer illustrations](../protocol-support-consumers.md). Neither changes the existing release/profile contracts or implements an external protocol.

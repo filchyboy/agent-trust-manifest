@@ -105,3 +105,7 @@ No signing, signature verification, live safeguard tests, deployment attestation
 Missing or unsupported evidence remains unresolved. Further policy choices are captured in the [review questions](../rfc/0001-consumer-policy.md), not silently treated as standards requirements.
 
 Implementation references: Python's [HTTP client](https://docs.python.org/3/library/http.client.html), [default TLS context](https://docs.python.org/3/library/ssl.html#ssl.create_default_context), and [subprocess timeout behavior](https://docs.python.org/3/library/subprocess.html#subprocess.run).
+
+## Separate protocol-support illustration
+
+External mechanism support is declared in a [new companion schema](../../spec/protocol-support-draft-0.1.md), rather than added to this consumer's existing platform-control profile. The published consumer and both existing draft schemas are preserved. A [non-normative offline reader](../protocol-support-consumers.md) demonstrates how a separate consumer might display support and requirement groups. It implements no protocol payloads, provider fetching, caller authorization or runtime enforcement; its vocabulary and triage choices are illustrative.

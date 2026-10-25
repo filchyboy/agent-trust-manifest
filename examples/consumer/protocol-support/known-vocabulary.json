@@ -1,0 +1,22 @@
+{
+  "recognized_tuples": [
+    {
+      "protocol_id": "urn:example:mechanism:recognition-a",
+      "specification_uri": "https://specs.example/recognition-a/1.0",
+      "version": "1.0",
+      "profile": "example-recognition-a"
+    },
+    {
+      "protocol_id": "urn:example:mechanism:recognition-b",
+      "specification_uri": "https://specs.example/recognition-b/1.0",
+      "version": "1.0",
+      "profile": "example-recognition-b"
+    },
+    {
+      "protocol_id": "urn:example:mechanism:payment-a",
+      "specification_uri": "https://specs.example/payment-a/1.0",
+      "version": "1.0",
+      "profile": "example-payment-a"
+    }
+  ]
+}
