@@ -21,6 +21,8 @@ ATM gives a visiting agent a path from a platform's claim to a validator's claim
 
 The publisher's claim, its description of a validation, and the validator's own finding are separate statements. A `report_uri` is a route to the latter, not an instruction to trust the publisher's summary. The agent must be able to distinguish proof of who made a statement from evidence that its substance is true. A signature or matching domain alone cannot establish control effectiveness, independence, or permission to act.
 
+The third party is responsible for the validity of its own assessment and statement. The visiting agent verifies its authorship/signature and applicable bindings, then chooses whether to rely on that third party under its own trust policy. It need not reproduce the assessment to rely on an authenticated, appropriately scoped finding from an assessor it trusts. Publisher endorsement cannot make the third party's statement true, and ATM does not designate universally trusted assessors.
+
 See the [verification extension](spec/verification-spec.md#5-claim-to-validation-discovery) and [worked validation chain](docs/v0.2.0/validation-chain.md). The current schema describes discovery; it does not fully specify an authenticated external-report format. The reference tools check only their documented local constraints and do not follow validation links or verify third-party findings.
 
 ## Goals
@@ -69,6 +71,8 @@ Validate an example manifest using that environment:
 ```
 
 ## Implemented validation
+
+The supplied validator and reference consumer are optional tools. Independent implementations can consume and verify ATM documents without using either; conformance concerns the applicable schemas and specification semantics, not a particular executable.
 
 The Python CLI accepts a JSON document and a schema path. It parses both files, loads neighboring `*.schema.json` files for reference resolution, and uses `jsonschema` to check the selected schema and validate declared field types, required fields, enums, constants, string lengths and patterns, numeric bounds, object properties, and array items. It reports schema validation failures and returns a nonzero exit code. The workflow runs this CLI against the example documents and runs the regression tests.
 

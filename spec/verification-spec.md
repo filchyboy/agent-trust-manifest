@@ -38,7 +38,7 @@ When this record is embedded in a publisher's manifest, these fields are the pub
 - `mixed`
 - `unknown`
 
-A claimed `pass` is not a blanket verdict on the platform. The visitor must establish which claim, subject, scope, version and observation it applies to and assess the supporting evidence.
+A claimed `pass` is not a blanket verdict on the platform. The visitor must establish which claim, subject, scope, version and observation it applies to, and apply its own policy for trusting the assessor and the finding. Reliance may be based on the authenticated, appropriately scoped statement of a trusted assessor; ATM does not require the visitor to repeat the assessment.
 
 ## 5. Claim-to-validation discovery
 
@@ -47,7 +47,11 @@ The intended chain is:
 1. **Publisher claim:** identify the statement being evaluated and the platform or other subject it describes.
 2. **Reference to validation:** locate the claimed assessment through `report_uri` (or an appropriate typed companion artifact). A reference is a discovery assertion, not an endorsement or proof.
 3. **Validator claim:** obtain the assessor's own finding, preserving who made it and what it is about. Do not silently substitute the publisher's copy or summary for authenticated assessor authorship.
-4. **Visiting-agent verification:** check the finding's provenance, applicability, currency and supporting evidence, then decide how much reliance is justified under the visitor's policy.
+4. **Visiting-agent verification and reliance:** authenticate the third party's authorship/signature, check claim/scope/version and currency bindings, and decide whether to rely on that party's finding under the visitor's own trust policy. Inspect supporting evidence to the extent that policy requires; reproducing the assessment is not a prerequisite imposed by ATM.
+
+The third-party signatory is responsible for the validity of its own assessment and statement, including its claimed scope and limitations. Authentication attributes the statement to that signatory; it does not make the statement infallible. The platform publishes the claim and discovery path but cannot make another party's assertion true by linking to, copying or endorsing it. It may inspect or independently assess the assertion, but its endorsement cannot substitute for the visiting agent's choice of whom to trust.
+
+The visitor may rely on an authenticated, appropriately scoped third-party finding from an assessor it trusts without redoing that assessor's tests or audit. ATM neither mandates a particular assessor nor requires an unbounded chain of further assessors. Additional scrutiny is a relying-party policy choice, not a requirement to independently re-prove every substantive claim before reliance.
 
 This permits independent validation of a publisher's self-asserted claim. Provenance answers who made a statement and how it was obtained; it does not by itself establish the statement's truth. Evidence about an agent's identity does not establish the receiving platform's controls. A common domain may disclose possible self-assessment, but neither matching nor different domains alone proves independence or control effectiveness.
 

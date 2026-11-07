@@ -29,7 +29,7 @@
         "properties": {
           "entity": {
             "type": "string",
-            "description": "Claimed assessor identity. A publisher naming an assessor does not authenticate that assessor's authorship or independence."
+            "description": "Claimed assessor identity. A publisher naming an assessor does not authenticate that assessor's authorship or independence. The third-party signatory is responsible for its own statement; the visiting agent chooses whether to trust that signatory."
           },
           "method": {
             "enum": [
@@ -37,7 +37,7 @@
               "active",
               "audit"
             ],
-            "description": "Declared assessment method; the visitor evaluates whether the actual evidence and method support the particular claim."
+            "description": "Declared assessment method. The visiting agent decides under its own trust policy whether the authenticated, scoped finding is sufficient; ATM does not require it to reproduce the assessor's work."
           },
           "timestamp": {
             "type": "string",
@@ -51,7 +51,7 @@
               "mixed",
               "unknown"
             ],
-            "description": "Claimed result for the assessed claims, not a blanket platform trust decision. Obtain the assessor's finding and evaluate provenance, scope and evidence before relying on it."
+            "description": "Claimed finding for the assessed claims, not a blanket platform trust decision. The third-party signatory is responsible for its statement. A visitor can rely on an authenticated, appropriately scoped finding from a signatory it trusts without repeating the assessment; publisher endorsement alone cannot establish truth."
           },
           "report_uri": {
             "type": "string",

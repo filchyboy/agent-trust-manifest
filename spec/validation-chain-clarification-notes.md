@@ -4,6 +4,8 @@ This clarification makes the existing intended flow explicit: a publisher states
 
 - Adds field-level schema descriptions separating publisher summaries from authenticated assessor statements.
 - Expands verification and core guidance, including safe retrieval and precise result presentation.
+- Makes third-party signatory responsibility and visitor-selected trust explicit: authenticated, scoped findings may be relied on without repeating the assessment; publisher endorsement does not establish their truth.
+- States that the supplied validator and reference consumer are optional, not mandated implementations.
 - Adds an offline worked chain with a manifest, a fictional outside finding, and reproducible exact-byte manifest binding.
 - Explains the existing report schema's optional fields and incomplete authentication/applicability bindings without claiming those mechanisms are implemented.
 

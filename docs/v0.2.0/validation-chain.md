@@ -30,9 +30,11 @@ shasum -a 256 examples/validation-chain/manifest.json
 
 The digest must match the finding's digest. That only shows which bytes the finding names. It does not authenticate the finding or prove the control works. The visiting agent must obtain its expected deployment independently, not adopt a report's scope simply because the report names it. A different deployment or claim cannot inherit this result.
 
-## 4. Evaluate the finding's substance
+## 4. Choose whether to rely on the signatory
 
-Authenticated authorship is not synonymous with correctness. The visitor considers the method, observations, supporting records, limitations and assessor relationship under its own reliance policy. A domain-ownership check is evidence about domain control, not a test of a platform's invocation boundary. A shared domain can signal self-assessment; a different domain alone does not establish independence.
+The third-party signatory is responsible for the validity of its assessment and statement. After authenticating the statement and checking its claim, version, scope and time bindings, the visitor chooses whether to trust that signatory's finding. It may rely on an appropriately scoped finding from a trusted assessor without reproducing the assessment. It may also inspect the method, observations, supporting records and assessor relationship when its own policy requires that scrutiny. ATM does not require either blind acceptance or an endless chain of independent re-validation.
+
+Authenticated authorship is not synonymous with correctness: the trusted signatory may still be wrong. Neither ATM nor the publisher guarantees its conclusion. The publisher can inspect a third-party report, but linking to or endorsing it cannot make it true or determine the visitor's trust policy. A domain-ownership check is evidence about domain control, not a test of a platform's invocation boundary. A shared domain can signal self-assessment; a different domain alone does not establish independence.
 
 This fixture offers no authenticated assessor statement or actual observation records. Therefore its result remains unverified. In a real deployment with adequate authentic, applicable evidence, the visitor could accept the assessment for the covered claim; ATM does not prohibit that conclusion or require perpetual uncertainty. The decision is made by the relying party using the evidence, not by trusting the publisher's link alone.
 
