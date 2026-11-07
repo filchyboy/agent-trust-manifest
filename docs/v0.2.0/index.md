@@ -9,8 +9,9 @@ These pages navigate the v0.2.0 draft schemas and specifications. The reference 
 1. [Core manifest](../../spec/manifest-spec.md): declarations, artifact references, issuer hints and responsibility labels.
 2. [Verification](../../spec/verification-spec.md), [reputation](../../spec/reputation-spec.md), and [attestation](../../spec/attestation-spec.md): evidence models and consumer responsibilities. Verification and attestation retain v0.1.0 document versions.
 3. [Worked fictional example](worked-example.md): compare exact status bytes with a manifest digest, then observe a decision that grants no access.
-4. [Reference consumer](consumer.md): supported inputs, states, limits and network boundary.
-5. [Design-review questions](../rfc/0001-consumer-policy.md): scope, freshness, failure behavior and issuer trust remain review topics.
+4. [Claim-to-validation example](validation-chain.md): follow a publisher reference to a validator's own finding and distinguish provenance from truth. This is the intended flow, not an implemented network verifier.
+5. [Reference consumer](consumer.md): supported inputs, states, limits and network boundary.
+6. [Design-review questions](../rfc/0001-consumer-policy.md): scope, freshness, failure behavior and issuer trust remain review topics.
 
 ## Schemas
 

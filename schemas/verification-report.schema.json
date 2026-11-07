@@ -3,25 +3,74 @@
   "$id": "https://agenttrustmanifest.org/schemas/verification-report.schema.json",
   "title": "Verification Report",
   "type": "object",
-  "required": ["level", "verified_by"],
+  "required": [
+    "level",
+    "verified_by"
+  ],
   "properties": {
-    "level": {"enum": ["static", "active", "audit"]},
+    "level": {
+      "enum": [
+        "static",
+        "active",
+        "audit"
+      ],
+      "description": "Declared class of verification, not an assurance verdict or proof that any check occurred."
+    },
     "verified_by": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["entity", "method", "timestamp", "result"],
+        "required": [
+          "entity",
+          "method",
+          "timestamp",
+          "result"
+        ],
         "properties": {
-          "entity": {"type": "string"},
-          "method": {"enum": ["static", "active", "audit"]},
-          "timestamp": {"type": "string", "format": "date-time"},
-          "result": {"enum": ["pass", "fail", "mixed", "unknown"]},
-          "report_uri": {"type": "string", "format": "uri"},
-          "covered_claims": {"type": "array", "items": {"type": "string"}}
+          "entity": {
+            "type": "string",
+            "description": "Claimed assessor identity. A publisher naming an assessor does not authenticate that assessor's authorship or independence."
+          },
+          "method": {
+            "enum": [
+              "static",
+              "active",
+              "audit"
+            ],
+            "description": "Declared assessment method; the visitor evaluates whether the actual evidence and method support the particular claim."
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Claimed observation timestamp, not a verified freshness or validity guarantee."
+          },
+          "result": {
+            "enum": [
+              "pass",
+              "fail",
+              "mixed",
+              "unknown"
+            ],
+            "description": "Claimed result for the assessed claims, not a blanket platform trust decision. Obtain the assessor's finding and evaluate provenance, scope and evidence before relying on it."
+          },
+          "report_uri": {
+            "type": "string",
+            "format": "uri",
+            "description": "Discovery link to the validator's own finding and evidence about the platform claim. The visiting agent may follow it under its retrieval policy to verify provenance, applicability and substance. The publisher's link or summary does not authenticate that finding. Optional for compatibility; omission does not provide a followable validation chain."
+          },
+          "covered_claims": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Claims said to be covered by this record. Resolve them in the exact assessed document/version and scope using the external report/profile. The legacy schema does not standardize claim identifiers or enforce these bindings; omission leaves coverage unspecified."
+          }
         },
         "additionalProperties": false
-      }
+      },
+      "description": "Claims about assessments. A name or declared pass is not itself independent validation; each relied-on finding needs its own provenance and claim/scope binding."
     }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "description": "Discovery of claimed verification. When embedded in a publisher manifest, this is the publisher's account, not an authenticated assessor statement. A visiting agent can follow report_uri to obtain and evaluate the validator's claim. Structural validity does not establish authorship, independence, applicability or truth."
 }

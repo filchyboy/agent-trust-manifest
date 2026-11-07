@@ -1,0 +1,32 @@
+{
+  "atm_version": "0.2.0",
+  "manifest_version": "validation-chain-example-1",
+  "issuer": {
+    "name": "Example Platform",
+    "uri": "https://platform.example",
+    "domain": "platform.example"
+  },
+  "published_at": "2026-11-07T12:05:00Z",
+  "expires_at": "2026-11-08T11:00:00Z",
+  "interaction_profile": {
+    "content_triggered_execution": false,
+    "explicit_invocation_required": true,
+    "provenance_available": true,
+    "audit_logging_available": true
+  },
+  "verification": {
+    "level": "active",
+    "verified_by": [
+      {
+        "entity": "Example Independent Assessor",
+        "method": "active",
+        "timestamp": "2026-11-07T12:00:00Z",
+        "result": "pass",
+        "report_uri": "https://assessor.example/reports/invocation-1",
+        "covered_claims": [
+          "interaction_profile.explicit_invocation_required"
+        ]
+      }
+    ]
+  }
+}

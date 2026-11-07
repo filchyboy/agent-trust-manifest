@@ -30,7 +30,7 @@
       },
       "additionalProperties": true
     },
-    "verification": {"$ref": "verification-report.schema.json"},
+    "verification": {"$ref": "verification-report.schema.json", "description": "Publisher-supplied discovery of claimed assessments; a visitor follows validation references to assess the validator's own statement. Naming a verifier or signing this manifest does not authenticate a third-party finding."},
     "reputation": {
       "type": "object",
       "required": ["provider", "scorecard_uri", "last_updated"],
@@ -63,7 +63,7 @@
               "revocation_feed"
             ]
           },
-          "uri": {"type": "string", "format": "uri"},
+          "uri": {"type": "string", "format": "uri", "description": "Discovery location for the companion artifact, not proof of its contents or of the named issuer. Retrieval and independent validation are consumer responsibilities."},
           "schema_uri": {"type": "string", "format": "uri"},
           "version": {"type": "string"},
           "owner": {
@@ -72,7 +72,7 @@
             "pattern": "\\S",
             "description": "Implementation-defined identifier for the responsible component or role maintaining this artifact. Must contain a non-whitespace character. It does not identify organization ownership or verifier identity and does not grant trust or authority."
           },
-          "hash": {"type": "string"},
+          "hash": {"type": "string", "description": "Publisher-declared digest binding referenced bytes, not proof of the artifact issuer's authorship or of the truth of its claims."},
           "last_updated": {"type": "string", "format": "date-time"},
           "published_at": {"type": "string", "format": "date-time"},
           "expires_at": {"type": "string", "format": "date-time"},
@@ -81,6 +81,7 @@
             "enum": ["static_reference", "catalog", "policy_state", "revocation_state", "attestation", "operational_state"]
           },
           "assurance_level": {
+            "description": "Declared assurance category, not evidence that verification succeeded. The visitor must evaluate the referenced evidence; the label alone establishes neither independence nor truth.",
             "enum": ["declaration", "hash_pinned", "signed", "third_party_attested", "deployment_bound", "hardware_attested"]
           },
           "revocation_status": {
@@ -95,8 +96,8 @@
             },
             "additionalProperties": false
           },
-          "issuer": {"type": "object", "additionalProperties": true},
-          "subject": {"type": "object", "additionalProperties": true}
+          "issuer": {"type": "object", "additionalProperties": true, "description": "Declared author of the companion artifact; must be distinguished from this manifest publisher and from the subject. This object alone does not authenticate authorship."},
+          "subject": {"type": "object", "additionalProperties": true, "description": "Declared entity or system the companion claims concern, not necessarily its issuer. A visitor must establish applicability to the specific claim and scope before relying on it."}
         },
         "additionalProperties": false
       }

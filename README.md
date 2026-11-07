@@ -15,6 +15,14 @@ ATM separates trust into four layers:
 3. **Reputation** — time-based and observer-based trust signals.
 4. **Attestation** — cryptographic proof binding claims to identity and system state.
 
+## Claim → linked validation → visiting-agent verification
+
+ATM gives a visiting agent a path from a platform's claim to a validator's claim about it. The agent can follow that reference, authenticate the validator's statement, check what it covers, and evaluate its evidence under the agent's own policy. A self-asserted platform claim is **eligible for independent validation**; being self-asserted does not make it unverifiable.
+
+The publisher's claim, its description of a validation, and the validator's own finding are separate statements. A `report_uri` is a route to the latter, not an instruction to trust the publisher's summary. The agent must be able to distinguish proof of who made a statement from evidence that its substance is true. A signature or matching domain alone cannot establish control effectiveness, independence, or permission to act.
+
+See the [verification extension](spec/verification-spec.md#5-claim-to-validation-discovery) and [worked validation chain](docs/v0.2.0/validation-chain.md). The current schema describes discovery; it does not fully specify an authenticated external-report format. The reference tools check only their documented local constraints and do not follow validation links or verify third-party findings.
+
 ## Goals
 
 - Provide a standard location and schema for trust declarations.
@@ -74,7 +82,7 @@ Start with the [v0.2.0 documentation index](docs/v0.2.0/index.md), [worked ficti
 
 ## Unreleased platform-control profile
 
-A [separately versioned experimental profile](spec/platform-controls-draft-0.1.md) distinguishes publisher, platform subject/deployment/surface, control authority, enforcement point and assessor. It uses the existing `platform_policy` discovery link and explicit offline sidecar/context inputs. Its fixtures test capability conditions, subject type, exact evidence applicability, policy changes and approval requirements while always granting no access. The v0.2.0 schemas remain unchanged; this proposal is not a new release. See [unreleased notes](spec/platform-controls-draft-notes.md). [Issue #1](https://github.com/filchyboy/agent-trust-manifest/issues/1) remains the design record; draft PR #2 remains a bounded consumer testbed.
+A [separately versioned experimental profile](spec/platform-controls-draft-0.1.md) distinguishes publisher, platform subject/deployment/surface, control authority, enforcement point and assessor. It uses the existing `platform_policy` discovery link and explicit offline sidecar/context inputs. Its fixtures test capability conditions, subject type, exact evidence applicability, policy changes and approval requirements while always granting no access. The v0.2.0 schema contracts remain unchanged; this proposal is not a new release. See [unreleased notes](spec/platform-controls-draft-notes.md). [Issue #1](https://github.com/filchyboy/agent-trust-manifest/issues/1) remains the design record; draft PR #2 remains a bounded consumer testbed.
 
 ## Declaring external protocol support
 

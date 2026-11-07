@@ -17,6 +17,8 @@ The sidecar requires these separately named roles; one entity may occupy several
 - `enforcement_point.id`: claimed platform component applying that policy to actual invocations.
 - `evidence[].assessor.id` and `relationship`: claimed assessor and self/independent/affiliated/unknown relationship. These labels disclose claims; they do not authenticate independence.
 
+The intended independent-validation flow is [claim → linked validator finding → visiting-agent verification](verification-spec.md#5-claim-to-validation-discovery). This profile's embedded assessment and offline applicability checks illustrate only part of that chain. Its unauthenticated fixture results are not a statement that self-asserted controls cannot be validated by outside parties.
+
 Roles do not carry signatures or endorsements. Structural validation does not authenticate any role, delegation or relationship. The historical `governance_artifacts[].owner` remains an artifact-maintenance responsibility label.
 
 ## Discovery and conditions

@@ -106,7 +106,7 @@ Boolean. Indicates whether the platform can record decision and execution artifa
 
 ## 6. Security considerations
 
-A core ATM document is a declaration, not proof. Consumers should treat unsigned or unverified manifests as low-assurance claims.
+A core ATM document is a declaration, not proof. Consumers should treat unsigned or unverified manifests as low-assurance claims. This distinction does not make self-asserted claims unverifiable: ATM lets an outside party follow a link to a validator's claim about them and evaluate that finding's provenance and substance. The publisher's verification summary is not a substitute for the validator's authenticated statement. See the [claim-to-validation chain](verification-spec.md#5-claim-to-validation-discovery).
 
 ## Platform-control clarification and experimental work
 
