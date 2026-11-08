@@ -10,3 +10,7 @@ This clarification makes the existing intended flow explicit: a publisher states
 - Explains the existing report schema's optional fields and incomplete authentication/applicability bindings without claiming those mechanisms are implemented.
 
 No JSON Schema assertions, required fields, enum values, document shapes, release tags or runtime consumer behavior change. The external finding is an illustrative report, not a newly standardized format. A future normative verification profile would need separate review and versioning.
+
+## Detailed third-party and lifecycle proposal
+
+Adds design guidance for tenant/claim bindings, open provider ecosystems, normalized provider-native ratings, host withdrawal and tenant notification, conflict handling, outages, expiry and restoration. Includes a fictional normalized reputation-feed fixture and consistency checks using the existing enums. No new schema fields or enum values are introduced; raw source formats remain provider-specific. Host lifecycle operations and cryptographic verification are design work, not implemented capabilities.

@@ -94,6 +94,10 @@ The separate [protocol-support draft 0.1](spec/protocol-support-draft-0.1.md) le
 
 Configuration can publish these declarations; it does not install an adapter, enable runtime access, verify interoperability or grant caller authority. An external mechanism such as Visa TAP can be named by its reviewed specification/revision; the [fixtures](examples/consumer/protocol-support/declaration.json) use fictional mechanisms and claim no integration. The original schemas and platform-control draft remain unchanged. A [separate offline illustration](docs/protocol-support-consumers.md) shows possible consumer handling without implementing protocols, fetching providers or enforcing platform policy.
 
+## Third-party findings and host lifecycle design
+
+The [detailed proposal](docs/rfc/0002-third-party-claims-and-host-lifecycle.md) develops an open ecosystem of third-party findings, tenant/claim bindings, visitor-selected trust and provider-native rating normalization. It separates portable evidence/status semantics from a host's withdrawal, tenant-notification and remediation workflow. A substantive failed assessment, a provider outage and evidence expiry are different conditions. The proposal and [rating example](examples/rating-normalization/README.md) do not change existing schema contracts or implement these lifecycle operations.
+
 ## Artifact responsibility
 
 Each `governance_artifacts[].owner` identifies an implementation-defined component or role maintaining that artifact. The field accepts a string containing at least one non-whitespace character. Fictional example labels such as `example_catalog_team` are not a prescribed vocabulary. This field does not identify organization ownership or a verifier and does not grant trust or authority. Earlier accepted nonblank labels remain valid; older validators with a fixed vocabulary may reject new labels. See the core draft specification for details.
