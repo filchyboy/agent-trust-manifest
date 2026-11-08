@@ -61,7 +61,7 @@ Create an isolated Python environment and install the validator dependency:
 
 ```bash
 python3 -m venv .venv
-.venv/bin/python -m pip install jsonschema
+.venv/bin/python -m pip install -r requirements.txt
 ```
 
 Validate an example manifest using that environment:

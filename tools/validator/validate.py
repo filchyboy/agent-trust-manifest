@@ -6,7 +6,7 @@ from pathlib import Path
 try:
     import jsonschema
 except ImportError:
-    print("Install jsonschema first: python -m pip install jsonschema", file=sys.stderr)
+    print("Install jsonschema first: python -m pip install -r requirements.txt", file=sys.stderr)
     sys.exit(2)
 
 
