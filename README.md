@@ -57,12 +57,15 @@ Example manifest location:
 /.well-known/agent-trust.json
 ```
 
-Create an isolated Python environment and install the validator dependency:
+Use a supported, security-patched Python runtime. This checkout and CI select Python 3.11.18; keep that pin current with security releases. Create an isolated environment and bootstrap patched pip before downloading the validator dependency:
 
 ```bash
-python3 -m venv .venv
+python3.11 -m venv .venv
+.venv/bin/python -m pip --isolated --disable-pip-version-check install --no-cache-dir --no-deps 'pip @ https://files.pythonhosted.org/packages/3f/06/3e4420302363fbb71be3c7f35ce042f54bfca330e3e66b3a2e3c4cca579f/pip-26.2.2-py3-none-any.whl#sha256=fd7f4dfa8190e014013b9f08f3e973f4e4c26ffd179a204895533a7254813a70'
 .venv/bin/python -m pip install -r requirements.txt
 ```
+
+Check `python3.11 --version` first: the executable name alone does not establish its patch level. The hash-pinned bootstrap above follows the [Python security advisory](https://discuss.python.org/t/information-for-python-users-regarding-emudhra-emsign-ca-certificate-security-incident/109576). A patched interpreter does not update pip in an existing virtual environment. See the [runtime remediation record](docs/python-runtime-security.md) for verified versions, scope and limitations.
 
 Validate an example manifest using that environment:
 
