@@ -94,9 +94,9 @@ corresponding failures, but must reject each case.
 `check_vectors.py` runs all two positive and 39 negative cases through the
 Python profile verifier. The four cases marked `independent_crypto: true`
 change only signed bytes, signature bytes or a public key and are also consumed
-and rejected by Node's independent standard-crypto path. The remaining 35
-parsing/profile/metadata failures are exported for independent implementers,
-but are currently executed by Python only. This is shared-vector cryptographic
+and rejected by Node's independent standard-crypto path. The original harness still limits itself to those four primitive cases. The
+separate [independent Node prototype](../../tools/independent-verifier/README.md)
+now checks all 39 negative cases for DNS origins, including parsing and metadata. This is shared-vector cryptographic
 interoperability, not a complete second implementation of the profile or its
 finding-reliance policy. The existing finding applicability tests remain in
 the Python suite.

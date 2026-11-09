@@ -48,4 +48,6 @@ jobs:
       - run: python tools/validator/validate.py --strict-formats examples/signing/assessor.jwks.json schemas/signing-jwks-v1.schema.json
       - run: python tools/signing/check_vectors.py
       - run: node tools/signing/interop.mjs
+      - run: npm ci --ignore-scripts --prefix tools/independent-verifier
+      - run: npm test --prefix tools/independent-verifier
       - run: python -m unittest discover -s tests
