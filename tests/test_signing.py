@@ -313,7 +313,7 @@ class SigningTests(unittest.TestCase):
         pointer = '/interaction_profile/explicit_invocation_required'
         self.assertIn('claim_accepted:' + pointer, result['policy']['reasons'])
         self.assertIn('other_claims_without_accepted_findings', result['policy']['reasons'])
-        self.assertIn('revocation_not_checked', result['policy']['reasons'])
+        self.assertIn('operational_status_revocation_not_checked', result['policy']['reasons'])
         self.assertEqual(result['policy']['claim_acceptance'][pointer], 'accepted_for_claim')
         for key, value in result['policy']['claim_acceptance'].items():
             if key != pointer:
@@ -368,14 +368,18 @@ class SigningTests(unittest.TestCase):
         consume.reconcile_authentication(result)
         self.assertEqual(result['policy'], policy)
 
-    def test_invalid_publisher_signature_cannot_clear_unverified_issuer_reason(self):
+    def test_invalid_publisher_signature_holds_with_specific_reason(self):
         result = consume.inspect(self.manifest, (ROOT/'examples/consumer/operational-status.json').read_bytes(),
                                  PUB, consume.timestamp('2026-10-06T18:00:00Z'))
         result['manifest_authentication'] = p.authenticate(self.manifest + b' ', self.sig, self.keys, PUB, p.MANIFEST, NOW)
         consume.reconcile_authentication(result)
         self.assertEqual(result['manifest_authentication']['state'], 'invalid')
         self.assertEqual(result['manifest']['authentication'], 'invalid')
-        self.assertIn('issuer_authentication_unverified', result['policy']['reasons'])
+        self.assertNotIn('issuer_authentication_unverified', result['policy']['reasons'])
+        self.assertIn('manifest_signature_invalid:signature_mismatch', result['policy']['reasons'])
+        self.assertEqual(result['policy']['decision'], 'hold')
+        consume.reconcile_authentication(result)
+        self.assertEqual(result['policy']['reasons'].count('manifest_signature_invalid:signature_mismatch'), 1)
         self.assertFalse(result['policy']['access_granted'])
 
     def test_finding_verifies_once_and_reuses_local_schema_registry(self):
@@ -392,6 +396,7 @@ class SigningTests(unittest.TestCase):
         self.assertTrue(result['passed'], result['failures'])
         self.assertEqual(result['positive'], 2)
         self.assertEqual(result['negative'], 39)
+        self.assertEqual(result['authentication_cases'], 8)
 
     def test_package_and_direct_entry_points_work_from_other_directory(self):
         with tempfile.TemporaryDirectory() as directory:

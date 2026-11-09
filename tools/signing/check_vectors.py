@@ -6,7 +6,7 @@ import sys
 
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
-from tools.signing.atm_signing import VerificationError, verify
+from tools.signing.atm_signing import VerificationError, authenticate, verify
 
 
 def inputs(directory, vector, overrides=None):
@@ -34,7 +34,19 @@ def check(directory):
             reason = str(exc)
         if reason != case['expected_reason']:
             failures.append({'id': case['id'], 'expected': case['expected_reason'], 'actual': reason})
+    outcomes = json.loads((directory / 'authentication-vectors.json').read_bytes())
+    for case in outcomes['cases']:
+        args = list(inputs(directory, outcomes['inputs'], case['overrides']))
+        if not case.get('signature_supplied', True):
+            args[1] = None
+        if not case.get('keys_supplied', True):
+            args[2] = None
+        report = authenticate(*args)
+        actual = {key: report.get(key) for key in case['expected']}
+        if actual != case['expected']:
+            failures.append({'id': case['id'], 'expected': case['expected'], 'actual': actual})
     return {'positive': len(bases), 'negative': len(corpus['negative_vectors']),
+            'authentication_cases': len(outcomes['cases']),
             'passed': not failures, 'failures': failures}
 
 

@@ -41,6 +41,9 @@ names only the accepted claim. `policy.claim_acceptance` leaves all other
 interaction claims unresolved; independence remains unproven. Removing the
 visitor-selected trusted assessor leaves acceptance unresolved.
 Altering even manifest whitespace invalidates its signature and finding digest.
+Invalid requested publisher authentication forces `hold`, exit 1 and
+`manifest_signature_invalid:<reason>`, even when an assessor finding is accepted.
+Missing/unavailable material remains unverified; only signature HTTP 404 is unsigned.
 
 For real signing, supply a separately generated secret raw 32-byte Ed25519
 seed file and explicit bounded NumericDate window to the offline CLI:
@@ -122,3 +125,10 @@ truth/independence and false access are checked separately. Origin cases assert
 accept/reject classification rather than standardizing every diagnostic string.
 Regenerate these added cases with `python examples/signing/generate_consumer_vectors.py`;
 the original signing payloads, signatures and 39-case corpus are unchanged.
+
+`authentication-vectors.json` supplies eight offline authentication outcomes,
+including a changed `provenance_available` value, malformed/expired/wrong-origin
+signatures, revoked keys and missing supplied material. Python's
+`tools/signing/check_vectors.py` and Node's `check-corpus.mjs` check the same
+state/reason expectations. They test authentication, not the Python consumer's
+operational-status triage policy; its hold/exit behavior has separate CLI tests.

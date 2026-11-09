@@ -8,7 +8,7 @@ no keys. It verifies exact bytes with Node's standard Ed25519 crypto API.
 
 ## Run
 
-Use Node 22 or later. Install the one pinned parser dependency locally from the
+Use Node 22 or later. Install the pinned parser and schema-validator dependencies locally from the
 lockfile, with package scripts disabled:
 
 ```sh
@@ -27,7 +27,8 @@ signature authentication, and exit 1 means unverified/rejected input, with a
 JSON reason on stderr. No result grants access or proves a claim's truth.
 
 `npm test` runs 12 parser, key-lifecycle and CLI test groups, then executes
-both positive and all 39 negative shared signature vectors, 56 finding-consumer
+both positive and all 39 negative shared signature vectors, eight shared
+authentication outcomes, 56 finding-consumer
 cases and 159 origin cases. Unlike the old primitive
 harness, this verifier checks the protected profile/type/origin, lexical integer
 dates, JSON and base64 rules, public-only unique-kid JWKS, compromise/retirement

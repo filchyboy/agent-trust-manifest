@@ -3,7 +3,7 @@ import {parseArgs} from 'node:util';
 import {readLocal} from './io.mjs';
 import {inspectFinding} from './finding.mjs';
 import {Rejection} from './errors.mjs';
-import {verify} from './verifier.mjs';
+import {authenticate} from './verifier.mjs';
 try {
   const options=Object.fromEntries(['finding','signature','jwks','manifest','platform-origin','assessor-origin','manifest-signature','manifest-jwks','at','max-finding-age-seconds'].map(k=>[k,{type:'string'}]));
   options['trusted-assessor']={type:'string',multiple:true,default:[]};
@@ -21,9 +21,8 @@ try {
   if (publisherRequested) {
     try {
       if (!v['manifest-signature'] || !v['manifest-jwks']) throw new Rejection('manifest_signature_and_keys_required');
-      const h=verify(manifest,readLocal(v['manifest-signature'],4096),readLocal(v['manifest-jwks'],16384),
-        v['platform-origin'],'application/atm-manifest+json',now);
-      result.manifest_authentication={state:'authenticated',issuer:h.origin,kid:h.kid,reason:'signature_valid',claims_truth:'unresolved'};
+      result.manifest_authentication=authenticate(manifest,readLocal(v['manifest-signature'],4096),
+        readLocal(v['manifest-jwks'],16384),v['platform-origin'],'application/atm-manifest+json',now);
     } catch(e) {
       if (!(e instanceof Rejection)) throw e;
       const inputError=['file_unavailable','file_too_large','manifest_signature_and_keys_required'].includes(e.message);

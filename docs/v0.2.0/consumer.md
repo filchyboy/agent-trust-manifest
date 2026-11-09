@@ -53,7 +53,7 @@ Hashing uses the raw file bytes, including whitespace and the final newline. It 
 | `status_evidence.state: unverified` | Even a supplied, structurally valid, fresh, digest-matched file is not independently authenticated or audited. |
 | `available_evidence[].state: unverified` | A reference or embedded extension is present; its truth/authenticity was not verified. |
 | `policy.decision: hold` | One or more demonstration prerequisites failed. |
-| `policy.decision: manual_review` | Original triage prerequisites passed; optional authentication and per-claim acceptance are reported separately, with remaining evidence limits still visible. |
+| `policy.decision: manual_review` | Declaration/status triage prerequisites passed and requested manifest authentication is not invalid; authentication and per-claim acceptance remain separate, with evidence limits visible. |
 | `policy.access_granted: false` | Neither decision grants access or approves an action. |
 
 Prerequisites require a fresh supported manifest, a claimed origin match, declarations of explicit invocation and no content-triggered execution, and the single status file passing the listed checks while reporting `operational`. This is an explicit illustrative triage policy; it does not define minimum evidence for the ATM specification or substantiate those safeguard declarations.
@@ -144,11 +144,24 @@ the blanket claim reason with `other_claims_without_accepted_findings`.
 `policy.claim_acceptance` lists the four interaction-profile pointers separately;
 only the assessed claim becomes `accepted_for_claim`, and the other three stay
 `unresolved`. Acceptance does not prove organizational independence.
-`revocation_not_checked` still concerns the separately supplied operational-status
-evidence; it does not say that the selected signing JWKS was ignored. Other
-hold reasons remain in force, and no accepted finding changes a hold into approval.
-Consumer exit 0 still means manual review, even if optional authentication
-failed. It is not an authentication success flag.
+`operational_status_revocation_not_checked` concerns the separately supplied
+operational-status evidence: its `active` label is declared, not independently
+checked for withdrawal. This replaces the former `revocation_not_checked`
+reason code. Signing-key status is checked against the supplied current-window
+JWKS, which can still miss subsequent compromise until refreshed. Finding
+withdrawal/status checking is a separate, unimplemented capability.
+
+Invalid requested publisher authentication forces `hold`, exit 1 and
+`manifest_signature_invalid:<reason>` (for example, `signature_mismatch`). It
+retains other hold reasons and the independently evaluated finding result; an
+accepted assessor finding cannot clear this publisher-authentication hold.
+A mismatch can indicate changed bytes or a deployment race, not proof of intent.
+Unrequested authentication, a confirmed signature HTTP 404 (`unsigned`), and
+unavailable material (`unverified`) remain distinct and retain existing triage
+behavior. Exit 0 still means manual review, including when authentication was
+not established because inputs were unavailable. It is not an authentication
+success flag; visitors requiring authentication must inspect its state.
+No accepted finding changes a hold into approval.
 
 ## Visitor-selected observation age
 
