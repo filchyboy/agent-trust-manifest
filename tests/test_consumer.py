@@ -217,6 +217,12 @@ class ConsumerTests(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertIn("offline_option_in_network_mode", output.getvalue())
 
+    def test_incomplete_body_worker_reason_is_preserved(self):
+        run = subprocess.CompletedProcess([], 1, b"", b"incomplete_body\n")
+        with patch.object(consume.subprocess, "run", return_value=run):
+            with self.assertRaisesRegex(consume.ConsumerError, "^incomplete_body$"):
+                consume.fetch_manifest(ORIGIN)
+
     def test_fetch_timeout_and_unsanitized_worker_errors(self):
         with patch.object(consume.subprocess, "run", side_effect=subprocess.TimeoutExpired("worker", 8)):
             with self.assertRaisesRegex(consume.ConsumerError, "^fetch_timeout$"):

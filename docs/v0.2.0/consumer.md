@@ -109,3 +109,7 @@ Implementation references: Python's [HTTP client](https://docs.python.org/3/libr
 ## Separate protocol-support illustration
 
 External mechanism support is declared in a [new companion schema](../../spec/protocol-support-draft-0.1.md), rather than added to this consumer's existing platform-control profile. The published consumer and both existing draft schemas are preserved. A [non-normative offline reader](../protocol-support-consumers.md) demonstrates how a separate consumer might display support and requirement groups. It implements no protocol payloads, provider fetching, caller authorization or runtime enforcement; its vocabulary and triage choices are illustrative.
+
+## Declared findings versus unresolved evidence
+
+The additive `platform_controls.declared_assessment_result` field reports a current, scope-matched declared `pass`, `fail` or `unknown`; otherwise it is `null`. It never authenticates a finding. Existing reasons and hold/manual-review behavior are preserved. See the [issue #1 decision record](../rfc/0001-consumer-policy-resolution.md).

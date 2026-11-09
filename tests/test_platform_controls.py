@@ -58,6 +58,47 @@ class PlatformControlTests(unittest.TestCase):
                 self.assertEqual(report['platform_controls']['reason'], case['reason'])
                 self.assert_no_authority(report)
 
+    def test_assessor_labels_and_claimed_active_status_do_not_authenticate(self):
+        for relation in ('self', 'independent'):
+            with self.subTest(relation=relation):
+                profile = copy.deepcopy(self.profile)
+                profile['evidence'][0]['assessor']['id'] = 'urn:example:untrusted-assessor'
+                profile['evidence'][0]['relationship'] = relation
+                report = self.inspect(profile)
+                self.assertTrue(report['platform_controls']['declaration_checks_passed'])
+                self.assertEqual(report['policy']['decision'], 'manual_review')
+                self.assertEqual(report['platform_controls']['authentication'], 'unverified')
+                self.assert_no_authority(report)
+
+    def test_declared_results_are_distinct_without_authentication_or_authority(self):
+        for finding in ("pass", "fail", "unknown"):
+            with self.subTest(finding=finding):
+                profile = copy.deepcopy(self.profile)
+                profile['evidence'][0]['result'] = finding
+                report = self.inspect(profile)
+                controls = report['platform_controls']
+                self.assertEqual(controls['declared_assessment_result'], finding)
+                self.assertEqual(controls['authentication'], 'unverified')
+                self.assertEqual(report['policy']['decision'],
+                                 'manual_review' if finding == 'pass' else 'hold')
+                self.assert_no_authority(report)
+
+    def test_stale_and_missing_findings_are_not_reported_as_failed_assessments(self):
+        for missing in (False, True):
+            with self.subTest(missing=missing):
+                profile = copy.deepcopy(self.profile)
+                if missing:
+                    profile['evidence'] = []
+                else:
+                    profile['evidence'][0]['result'] = 'fail'
+                    profile['evidence'][0]['expires_at'] = '2026-10-06T18:00:00Z'
+                report = self.inspect(profile)
+                self.assertIsNone(report['platform_controls']['declared_assessment_result'])
+                self.assertEqual(report['platform_controls']['reason'],
+                                 'evidence_missing_or_ambiguous' if missing else 'evidence_freshness_stale')
+                self.assertEqual(report['policy']['decision'], 'hold')
+                self.assert_no_authority(report)
+
     def test_capability_discovery_exposes_prerequisites_without_fulfilling_them(self):
         report = self.inspect()
         cap = report['platform_controls']['capability']

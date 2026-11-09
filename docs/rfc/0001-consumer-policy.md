@@ -4,6 +4,8 @@ Status: open design decision record in [issue #1](https://github.com/filchyboy/a
 
 [Consumer contract](../v0.2.0/consumer.md) · [Draft platform-control profile](../../spec/platform-controls-draft-0.1.md)
 
+See the [bounded decision and coverage record](0001-consumer-policy-resolution.md) for current rules, regression coverage and unresolved production-profile choices.
+
 ## Context
 
 The small reference consumer checks a fictional platform-scoped manifest and explicitly supplied status bytes. It inventories other evidence, detects stale or missing input and byte tampering relative to the supplied manifest, and returns `hold` or `manual_review`. It never grants access, authenticates a publisher, verifies a signature or tests live safeguards.

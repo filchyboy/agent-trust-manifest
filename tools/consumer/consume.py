@@ -205,6 +205,7 @@ def inspect_evidence(manifest, raw, origin, now):
 def platform_controls_report(reason="platform_profile_missing"):
     return {"state": "unresolved", "authentication": "unverified",
             "declaration_checks_passed": False, "capability_existence": "unresolved",
+            "declared_assessment_result": None,
             "caller_eligibility": "unresolved", "approval_granted": False,
             "reason": reason}
 
@@ -373,6 +374,8 @@ def inspect_platform_controls(raw, expected, manifest, origin, now):
                        "expires_at": evidence["expires_at"]}, now)
     if state != "fresh":
         return unresolved("evidence_freshness_" + state)
+    # Display only a current, applicable declaration, never a verified verdict.
+    result["declared_assessment_result"] = evidence["result"]
     if evidence["result"] != "pass":
         return unresolved("assessment_not_pass")
     result.update(state="unverified", declaration_checks_passed=True,
@@ -392,7 +395,7 @@ def fetch_manifest(origin):
     if run.returncode:
         allowed = {"invalid_origin", "unsafe_address", "redirect_rejected", "http_failure",
                    "unsupported_content_type", "unsupported_encoding", "ambiguous_length",
-                   "document_too_large", "network_failure"}
+                   "document_too_large", "incomplete_body", "network_failure"}
         code = run.stderr.decode("ascii", errors="ignore").strip()
         raise ConsumerError(code if code in allowed else "fetch_failed")
     if len(run.stdout) > MAX_BYTES:
