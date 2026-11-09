@@ -1,0 +1,19 @@
+{
+  "profile": "atm-detached-jws/1",
+  "origin": "https://consumer-demo.example",
+  "issued_at": 1791306000,
+  "expires_at": 1791313200,
+  "keys": [
+    {
+      "kty": "OKP",
+      "crv": "Ed25519",
+      "alg": "Ed25519",
+      "use": "sig",
+      "kid": "fictional-1",
+      "x": "A6EHv_POEL4dcN0Y50vAmWfk1jCbpQ1fHdyGZBJVMbg",
+      "status": "active",
+      "nbf": 1791306000,
+      "exp": 1791313200
+    }
+  ]
+}

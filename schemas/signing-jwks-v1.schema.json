@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agenttrustmanifest.org/schemas/signing-jwks-v1.schema.json",
+  "title": "signing-jwks-v1",
+  "description": "Structural checks only. Exact JSON integer lexical type, origin, date order, byte bounds and cryptographic rules require signing-profile-v1 runtime validation.",
+  "type": "object",
+  "required": [
+    "profile",
+    "origin",
+    "issued_at",
+    "expires_at",
+    "keys"
+  ],
+  "properties": {
+    "profile": {
+      "const": "atm-detached-jws/1"
+    },
+    "origin": {
+      "type": "string",
+      "format": "uri",
+      "maxLength": 256,
+      "description": "Canonical expected HTTPS origin; runtime origin rules in signing profile v1 also apply."
+    },
+    "issued_at": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 253402300799
+    },
+    "expires_at": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 253402300799
+    },
+    "keys": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "required": [
+          "kty",
+          "crv",
+          "alg",
+          "use",
+          "kid",
+          "x",
+          "status",
+          "nbf",
+          "exp"
+        ],
+        "properties": {
+          "kty": {
+            "const": "OKP"
+          },
+          "crv": {
+            "const": "Ed25519"
+          },
+          "alg": {
+            "const": "Ed25519"
+          },
+          "use": {
+            "const": "sig"
+          },
+          "kid": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]{1,64}$"
+          },
+          "x": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]{43}$"
+          },
+          "status": {
+            "enum": [
+              "active",
+              "retired",
+              "revoked",
+              "compromised"
+            ]
+          },
+          "nbf": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 253402300799
+          },
+          "exp": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 253402300799
+          },
+          "retired_at": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 253402300799
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "retired"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "retired_at"
+              ]
+            },
+            "else": {
+              "not": {
+                "required": [
+                  "retired_at"
+                ]
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -37,4 +37,15 @@ Consumers should reject expired attestations and should verify signatures before
 
 ## 6. Implementation status
 
-This draft describes attestation fields and consumer responsibilities. The repository does not implement signing or signature-verification helpers. Its example signatures and deployment identifiers are fictional placeholders, not cryptographic evidence.
+The embedded envelope remains a legacy metadata shape, with no interoperable
+self-containing signature procedure defined by this draft. Its historical
+example signatures and deployment identifiers are fictional placeholders.
+Preserve useful metadata, but treat it as unverified unless a separately
+selected profile authenticates it.
+
+The optional [detached signing profile v1](signing-profile-v1.md) and
+[reference tooling](../examples/signing/README.md) sign the exact final manifest
+bytes with an external JWS sidecar. This avoids a self-signature cycle and
+leaves existing schemas compatible. It authenticates publisher attribution,
+not deployment state, substantive claim truth, or access permission. Deployment
+and hardware assurance levels above remain unimplemented.

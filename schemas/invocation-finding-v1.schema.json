@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agenttrustmanifest.org/schemas/invocation-finding-v1.schema.json",
+  "title": "invocation-finding-v1",
+  "description": "Structural checks only. Exact JSON integer lexical type, origin, date order, byte bounds and cryptographic rules require signing-profile-v1 runtime validation.",
+  "type": "object",
+  "required": [
+    "profile",
+    "id",
+    "assessor",
+    "subject",
+    "manifest_sha256",
+    "claim",
+    "observation",
+    "issued_at",
+    "expires_at",
+    "method",
+    "result",
+    "limitations"
+  ],
+  "properties": {
+    "profile": {
+      "const": "atm-invocation-finding/1"
+    },
+    "id": {
+      "type": "string",
+      "format": "uri",
+      "maxLength": 512
+    },
+    "assessor": {
+      "type": "object",
+      "required": [
+        "origin",
+        "relationship"
+      ],
+      "properties": {
+        "origin": {
+          "type": "string",
+          "format": "uri",
+          "maxLength": 256,
+          "description": "Canonical expected HTTPS origin; runtime origin rules in signing profile v1 also apply."
+        },
+        "relationship": {
+          "enum": [
+            "independent",
+            "affiliated",
+            "self"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "subject": {
+      "type": "object",
+      "required": [
+        "origin",
+        "type"
+      ],
+      "properties": {
+        "origin": {
+          "type": "string",
+          "format": "uri",
+          "maxLength": 256,
+          "description": "Canonical expected HTTPS origin; runtime origin rules in signing profile v1 also apply."
+        },
+        "type": {
+          "const": "platform"
+        }
+      },
+      "additionalProperties": false
+    },
+    "manifest_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "claim": {
+      "type": "object",
+      "required": [
+        "pointer",
+        "value"
+      ],
+      "properties": {
+        "pointer": {
+          "const": "/interaction_profile/explicit_invocation_required"
+        },
+        "value": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "observation": {
+      "type": "object",
+      "required": [
+        "start",
+        "end"
+      ],
+      "properties": {
+        "start": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 253402300799
+        },
+        "end": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 253402300799
+        }
+      },
+      "additionalProperties": false
+    },
+    "issued_at": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 253402300799
+    },
+    "expires_at": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 253402300799
+    },
+    "method": {
+      "enum": [
+        "static",
+        "active",
+        "audit"
+      ]
+    },
+    "result": {
+      "enum": [
+        "pass",
+        "fail",
+        "unknown"
+      ]
+    },
+    "limitations": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2048
+    }
+  },
+  "additionalProperties": false
+}

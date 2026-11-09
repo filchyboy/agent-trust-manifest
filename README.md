@@ -79,7 +79,7 @@ The supplied validator and reference consumer are optional tools. Independent im
 
 The Python CLI accepts a JSON document and a schema path. It parses both files, loads neighboring `*.schema.json` files for reference resolution, and uses `jsonschema` to check the selected schema and validate declared field types, required fields, enums, constants, string lengths and patterns, numeric bounds, object properties, and array items. It reports schema validation failures and returns a nonzero exit code. The workflow runs this CLI against the example documents and runs the regression tests.
 
-By default the CLI preserves structural-only checks. Pass `--strict-formats` to additionally enforce supported JSON Schema `format` annotations, including URI and date-time syntax. The pinned requirements supply the URI and timestamp checkers; missing required checkers fail closed. Unknown references are local-only errors, never network retrievals. Malformed JSON (including duplicate keys and nonfinite constants), missing files and invalid schemas produce clean errors (exit 2); invalid documents produce sorted JSON-pointer diagnostics (exit 1). It does not perform signing, signature verification, hash verification, key generation, expiry enforcement, live interaction checks, or certification. Signing and signature-verification helpers are not implemented in this repository. A successful validation result establishes only the structural constraints checked by this CLI; it does not establish full specification compliance, authenticity, or truthful claims.
+By default the CLI preserves structural-only checks. Pass `--strict-formats` to additionally enforce supported JSON Schema `format` annotations, including URI and date-time syntax. The pinned requirements supply the URI and timestamp checkers; missing required checkers fail closed. Unknown references are local-only errors, never network retrievals. Malformed JSON (including duplicate keys and nonfinite constants), missing files and invalid schemas produce clean errors (exit 2); invalid documents produce sorted JSON-pointer diagnostics (exit 1). It does not perform signing, signature verification, hash verification, key generation, expiry enforcement, live interaction checks, or certification. Separate optional [detached signing tools](examples/signing/README.md) implement the versioned [signing profile](spec/signing-profile-v1.md); they do not change this validator. A successful validation result establishes only the structural constraints checked by this CLI; it does not establish full specification compliance, authenticity, or truthful claims.
 
 For explicit format checks:
 
@@ -117,7 +117,7 @@ Run the regression tests with `.venv/bin/python -m unittest discover -s tests`.
 
 ## Example limitations
 
-All files under `examples/` are fictional, static fixtures. Their historical dates, scores, verification results, deployment identifiers, signatures, and hashes do not establish live freshness, certification, successful cryptographic verification, or production readiness. Placeholder signatures and hashes must be replaced and verified before operational use. The minimal validator checks schema structure; it does not verify signatures, hashes, current expiry, or live platform behavior. Schema identifiers under `agenttrustmanifest.org` are identifiers in this draft; hosted availability and domain control are not established here.
+All files under `examples/` are fictional, static fixtures. Their historical dates, scores, verification results, deployment identifiers, signatures, and hashes do not establish live freshness, certification, successful cryptographic verification, or production readiness. Legacy placeholder signatures and hashes must be replaced and verified before operational use. The new `examples/signing/` fixtures have reproducible real test signatures over fictional content and publicly disclosed test keys; they supply no operational assurance. The minimal validator checks schema structure; it does not verify signatures, hashes, current expiry, or live platform behavior. Schema identifiers under `agenttrustmanifest.org` are identifiers in this draft; hosted availability and domain control are not established here.
 
 ## Specification set
 
@@ -165,3 +165,14 @@ This project is licensed under the Apache License, Version 2.0. See [LICENSE](LI
 ## Further design work
 
 The [fictional business-rating evidence profile](docs/rfc/0003-signatory-evidence-profile.md) develops one concrete signatory use case without mandating a universal authentication format. The [adjacent-specification comparison](docs/related-work.md) identifies reuse candidates and their limits. Both are design guidance, not implemented integrations.
+
+## Optional provenance pilot
+
+[Detached signing profile v1](spec/signing-profile-v1.md) uses exact-byte detached
+JWS with Ed25519, explicit origin/type/expiry binding and bounded same-origin key
+discovery. The [fictional assessor demonstration](examples/signing/README.md)
+adds one typed invocation finding without changing core schemas, rating enums
+or existing assessed-controls snapshots. Run the shared Node/Python vectors
+and full regression suite as documented there. Authentication, applicability
+and visitor acceptance remain separate; no tool establishes claim truth,
+assessor independence, live deployment controls or caller permission.

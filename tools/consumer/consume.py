@@ -212,6 +212,9 @@ def platform_controls_report(reason="platform_profile_missing"):
 
 def base_report():
     return {"profile": "atm-consumer-demo/0.2", "manifest": {"state": "invalid"},
+            "manifest_authentication": {"state": "unverified", "reason": "not_requested"},
+            "assessor_finding": {"authentication": {"state": "unverified"},
+                                 "applicability": "unresolved", "acceptance": "unresolved"},
             "declared_claims": {}, "available_evidence": [],
             "status_evidence": {"state": "missing", "authentication": "unverified"},
             "platform_controls": platform_controls_report("profile_not_supplied"),
@@ -383,11 +386,16 @@ def inspect_platform_controls(raw, expected, manifest, origin, now):
     return result
 
 
-def fetch_manifest(origin):
+def fetch_manifest(origin, resource="manifest"):
     origin = normalize_origin(origin)
+    from fetch_manifest import RESOURCES
+    if resource not in RESOURCES:
+        raise ConsumerError("unsupported_resource")
+    command = [sys.executable, "-B", str(Path(__file__).with_name("fetch_manifest.py")), origin]
+    if resource != "manifest":
+        command.append(resource)
     try:
-        run = subprocess.run([sys.executable, "-B", str(Path(__file__).with_name("fetch_manifest.py")),
-                              origin], capture_output=True, timeout=FETCH_TIMEOUT)
+        run = subprocess.run(command, capture_output=True, timeout=FETCH_TIMEOUT)
     except subprocess.TimeoutExpired:
         raise ConsumerError("fetch_timeout") from None
     except OSError:
@@ -395,12 +403,52 @@ def fetch_manifest(origin):
     if run.returncode:
         allowed = {"invalid_origin", "unsafe_address", "redirect_rejected", "http_failure",
                    "unsupported_content_type", "unsupported_encoding", "ambiguous_length",
-                   "document_too_large", "incomplete_body", "network_failure"}
+                   "document_too_large", "incomplete_body", "network_failure", "signature_absent"}
         code = run.stderr.decode("ascii", errors="ignore").strip()
         raise ConsumerError(code if code in allowed else "fetch_failed")
-    if len(run.stdout) > MAX_BYTES:
+    if len(run.stdout) > RESOURCES[resource][2]:
         raise ConsumerError("document_too_large")
     return run.stdout
+
+
+def add_authentication(report, raw, expected_origin, now, args):
+    requested = args.authenticate_manifest or args.manifest_signature_file or args.manifest_keys_file
+    finding_requested = any((args.finding_file, args.finding_signature_file, args.assessor_keys_file, args.assessor_origin))
+    if not (requested or finding_requested):
+        return
+    try:
+        sys.path.insert(0, str(ROOT / "tools/signing"))
+        from atm_signing import authenticate, inspect_finding, MANIFEST
+    except ImportError:
+        report["manifest_authentication"] = {"state": "unverified", "reason": "signing_dependency_missing"}
+        return
+    at = int(now.timestamp())
+    if requested:
+        try:
+            if args.origin:
+                signature = fetch_manifest(expected_origin, "signature")
+                keys = fetch_manifest(expected_origin, "keys")
+            else:
+                if not (args.manifest_signature_file and args.manifest_keys_file):
+                    raise ConsumerError("offline_signature_and_keys_required")
+                signature = read_file(args.manifest_signature_file)
+                keys = read_file(args.manifest_keys_file)
+            report["manifest_authentication"] = authenticate(raw, signature, keys, expected_origin, MANIFEST, at)
+        except ConsumerError as exc:
+            report["manifest_authentication"] = {
+                "state": "unsigned" if str(exc) == "signature_absent" else "unverified", "reason": str(exc)}
+    if finding_requested:
+        try:
+            if not all((args.finding_file, args.finding_signature_file, args.assessor_keys_file, args.assessor_origin)):
+                raise ConsumerError("finding_inputs_required")
+            assessor = normalize_origin(args.assessor_origin)
+            trusted = [normalize_origin(item) for item in args.trusted_assessor]
+            report["assessor_finding"] = inspect_finding(
+                read_file(args.finding_file), read_file(args.finding_signature_file),
+                read_file(args.assessor_keys_file), raw, expected_origin, assessor, trusted, at)
+        except (ConsumerError, FetchError) as exc:
+            report["assessor_finding"] = {"authentication": {"state": "unverified"},
+                "applicability": "unresolved", "acceptance": "unresolved", "reason": str(exc)}
 
 
 def main(argv=None):
@@ -413,6 +461,14 @@ def main(argv=None):
     parser.add_argument("--at", help="Fixture-only RFC3339 decision time; prohibited for network mode")
     parser.add_argument("--platform-profile-file", help="Explicit draft platform-control sidecar; never fetched")
     parser.add_argument("--expected-context-file", help="Separately selected platform/deployment/scope/capability/policy context")
+    parser.add_argument("--authenticate-manifest", action="store_true", help="Fetch same-origin detached JWS and JWKS in network mode")
+    parser.add_argument("--manifest-signature-file", help="Offline detached signature; exact bytes")
+    parser.add_argument("--manifest-keys-file", help="Explicitly trusted offline publisher JWKS snapshot")
+    parser.add_argument("--finding-file", help="Offline assessor finding; no report URI is fetched")
+    parser.add_argument("--finding-signature-file")
+    parser.add_argument("--assessor-keys-file", help="Explicitly trusted offline assessor JWKS snapshot")
+    parser.add_argument("--assessor-origin", help="Visitor-selected expected assessor origin")
+    parser.add_argument("--trusted-assessor", action="append", default=[], help="Visitor-selected assessor origins; maximum eight")
     args = parser.parse_args(argv)
     report = base_report()
     try:
@@ -426,6 +482,12 @@ def main(argv=None):
                 raise ConsumerError("offline_option_in_network_mode")
             origin = normalize_origin(args.origin)
             raw = fetch_manifest(origin)
+        if args.origin and (args.manifest_signature_file or args.manifest_keys_file):
+            raise ConsumerError("offline_option_in_network_mode")
+        if args.manifest and args.authenticate_manifest and not (args.manifest_signature_file and args.manifest_keys_file):
+            raise ConsumerError("offline_signature_and_keys_required")
+        if len(args.trusted_assessor) > 8:
+            raise ConsumerError("too_many_assessors")
         status_error = None
         try:
             status = read_file(args.status_file) if args.status_file else None
@@ -446,6 +508,7 @@ def main(argv=None):
                     profile_raw, expected_context = None, None
                     profile_input_error = source + "_" + str(exc)
         report = inspect(raw, status, origin, now, profile_raw, expected_context)
+        add_authentication(report, raw, origin, now, args)
         if profile_input_error:
             report["platform_controls"] = platform_controls_report(profile_input_error)
             report["policy"]["decision"] = "hold"

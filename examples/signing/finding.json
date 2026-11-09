@@ -1,0 +1,26 @@
+{
+  "profile": "atm-invocation-finding/1",
+  "id": "https://assessor.example/findings/invocation-1",
+  "assessor": {
+    "origin": "https://assessor.example",
+    "relationship": "independent"
+  },
+  "subject": {
+    "origin": "https://consumer-demo.example",
+    "type": "platform"
+  },
+  "manifest_sha256": "d1e0d37f7f3ac540ba2820704db85714e6ab8ed54f9398a0347ef731460e2dd1",
+  "claim": {
+    "pointer": "/interaction_profile/explicit_invocation_required",
+    "value": true
+  },
+  "observation": {
+    "start": 1791306000,
+    "end": 1791309300
+  },
+  "issued_at": 1791309300,
+  "expires_at": 1791313200,
+  "method": "active",
+  "result": "pass",
+  "limitations": "Fictional observation of one platform claim; no live tests, deployment binding, or independence investigation occurred."
+}

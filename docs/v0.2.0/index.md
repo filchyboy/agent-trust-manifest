@@ -34,3 +34,10 @@ These pages navigate the v0.2.0 draft schemas and specifications. The reference 
 [External protocol-support declarations](../../spec/protocol-support-draft-0.1.md) are a separate draft companion compatible with core ATM 0.2.0, with [consumer illustrations](../protocol-support-consumers.md). Neither changes the existing release/profile contracts or implements an external protocol.
 
 [Third-party findings and host claim lifecycle](../rfc/0002-third-party-claims-and-host-lifecycle.md) develops tenant scope, normalized ratings, chosen trust and failure/withdrawal/notification policy. This is an unreleased design, not implemented behavior or a schema expansion.
+
+[Detached signing v1](../../spec/signing-profile-v1.md) and the additive
+[invocation finding v1](../../spec/finding-profile-v1.md) now have optional
+reference tooling, shared interoperability vectors and a
+[fictional demonstration](../../examples/signing/README.md). They do not
+change the v0.2.0 core schema or claim full lifecycle/independence verification.
+See the [unreleased notes](../signing-v1-release-notes.md).
