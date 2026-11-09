@@ -59,7 +59,7 @@ Freshness, policy changes and evidence applicability remain necessary external c
 
 ## Schema validation and semantic validation
 
-The schema checks types, required fields, enum values, closed objects, explicit bindings, nonempty groups, local-key syntax and declared URI/revision shape. As with the existing validator, URI/date-time `format` annotations alone are not enforced by the repository CLI. Its HTTPS/identifier patterns are structural checks, not URL-safety or authority verification.
+The schema checks types, required fields, enum values, closed objects, explicit bindings, nonempty groups, local-key syntax and declared URI/revision shape. The repository CLI checks URI/date-time `format` annotations only when `--strict-formats` is selected. Its HTTPS/identifier patterns are structural checks, not URL-safety or authority verification.
 
 Portable JSON Schema does not compare arbitrary external contexts or resolve dynamic map references. Cross-tenant applicability, referenced-key resolution, tuple ambiguity, manifest/publisher binding, freshness and actual requirement satisfaction need separate semantic checks by an external implementation. A structurally valid wrong-tenant declaration is still inapplicable. Tests distinguish schema rejection from the offline illustration's explicitly labelled semantic choices.
 

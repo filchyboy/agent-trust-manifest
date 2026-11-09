@@ -79,7 +79,15 @@ The supplied validator and reference consumer are optional tools. Independent im
 
 The Python CLI accepts a JSON document and a schema path. It parses both files, loads neighboring `*.schema.json` files for reference resolution, and uses `jsonschema` to check the selected schema and validate declared field types, required fields, enums, constants, string lengths and patterns, numeric bounds, object properties, and array items. It reports schema validation failures and returns a nonzero exit code. The workflow runs this CLI against the example documents and runs the regression tests.
 
-The CLI does not enforce JSON Schema `format` annotations, including URI and date-time syntax. It does not perform signing, signature verification, hash verification, key generation, expiry enforcement, live interaction checks, or certification. Signing and signature-verification helpers are not implemented in this repository. A successful validation result establishes only the structural constraints checked by this CLI; it does not establish full specification compliance, authenticity, or truthful claims.
+By default the CLI preserves structural-only checks. Pass `--strict-formats` to additionally enforce supported JSON Schema `format` annotations, including URI and date-time syntax. The pinned requirements supply the URI and timestamp checkers; missing required checkers fail closed. Unknown references are local-only errors, never network retrievals. Malformed JSON (including duplicate keys and nonfinite constants), missing files and invalid schemas produce clean errors (exit 2); invalid documents produce sorted JSON-pointer diagnostics (exit 1). It does not perform signing, signature verification, hash verification, key generation, expiry enforcement, live interaction checks, or certification. Signing and signature-verification helpers are not implemented in this repository. A successful validation result establishes only the structural constraints checked by this CLI; it does not establish full specification compliance, authenticity, or truthful claims.
+
+For explicit format checks:
+
+```bash
+.venv/bin/python tools/validator/validate.py --strict-formats examples/signed-manifest.json schemas/agent-trust-manifest.schema.json
+```
+
+Format checks do not add unstated version, algorithm or signature rules. Legacy empty signatures, arbitrary version strings and empty verification arrays remain structurally permissible; no result from this CLI should be treated as trust approval. See the [validator hardening notes](spec/validator-hardening-notes.md).
 
 ## Reference consumer and versioned documentation
 
@@ -153,3 +161,7 @@ Current draft specification: **v0.2.0**. Verification and attestation extension 
 Copyright 2026 Christopher Filkins.
 
 This project is licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) for the complete terms and [NOTICE](NOTICE) for attribution.
+
+## Further design work
+
+The [fictional business-rating evidence profile](docs/rfc/0003-signatory-evidence-profile.md) develops one concrete signatory use case without mandating a universal authentication format. The [adjacent-specification comparison](docs/related-work.md) identifies reuse candidates and their limits. Both are design guidance, not implemented integrations.

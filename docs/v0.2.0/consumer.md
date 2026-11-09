@@ -98,7 +98,7 @@ Network-boundary tests use controlled transports and DNS answers; no live third-
 
 ## Explicit limitations
 
-The original structural validator is unchanged and still does not enforce JSON Schema format annotations. The consumer separately checks only timestamps it uses, accepting a conservative RFC3339 subset with up to six fractional digits, valid numeric offsets, and no leap seconds or unknown `-00:00` offsets. It does not claim full format or specification conformance.
+The structural validator defaults to not enforcing JSON Schema format annotations; its optional `--strict-formats` mode adds format checks independently of this consumer. The consumer separately checks only timestamps it uses, accepting a conservative RFC3339 subset with up to six fractional digits, valid numeric offsets, and no leap seconds or unknown `-00:00` offsets. It does not claim full format or specification conformance.
 
 No signing, signature verification, live safeguard tests, deployment attestation, tenant/surface authorization, issuer registry, independent-verifier discovery, reputation scoring or authoritative revocation checking is implemented. Other evidence is inventoried only. Cache TTLs are displayed in the input artifacts but not enforced; this profile uses explicit expiry without an independent maximum-age policy. Machine clock accuracy is assumed.
 
