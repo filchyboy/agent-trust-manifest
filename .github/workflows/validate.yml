@@ -21,4 +21,8 @@ jobs:
       - run: python tools/validator/validate.py examples/capability-catalog.json schemas/capability-catalog.schema.json
       - run: python tools/validator/validate.py examples/operational-status-feed.json schemas/operational-status-feed.schema.json
       - run: python tools/validator/validate.py examples/revocation-feed.json schemas/revocation-feed.schema.json
+      - run: python tools/validator/validate.py examples/consumer/manifest.json schemas/agent-trust-manifest.schema.json
+      - run: python tools/validator/validate.py examples/consumer/operational-status.json schemas/operational-status-feed.schema.json
+      - run: python tools/validator/validate.py examples/consumer/stale-manifest.json schemas/agent-trust-manifest.schema.json
+      - run: python tools/validator/validate.py examples/consumer/tampered-status.json schemas/operational-status-feed.schema.json
       - run: python -m unittest discover -s tests
