@@ -10,7 +10,12 @@ This roadmap proposes an implementation sequence and acceptance criteria. It doe
 
 The initial package contains specifications, JSON Schemas, fictional examples, and structural validation tooling. It establishes a common format for manifests and supporting artifacts.
 
-The tooling does not yet verify signatures, test live behavior, conduct independent audits, or establish that a publisher’s claims are true.
+The optional [detached signing v1 pilot](examples/signing/README.md) implements
+signature attribution with shared Python/Node vectors and one fictional
+assessor finding. It does not test live behavior, conduct independent audits,
+establish independence, or establish that a publisher’s claims are true.
+Milestones below remain broader goals; this pilot does not complete the
+finding lifecycle, deployment attestation or production assessor integration.
 
 ## Roles
 

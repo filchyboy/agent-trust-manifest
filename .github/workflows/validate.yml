@@ -39,4 +39,12 @@ jobs:
       - run: python tools/validator/validate.py examples/validation-chain/manifest.json schemas/agent-trust-manifest.schema.json
       - run: python tools/validator/validate.py examples/rating-normalization/normalized-feed.json schemas/reputation-feed.schema.json
       - run: python tools/validator/validate.py --strict-formats examples/signed-manifest.json schemas/agent-trust-manifest.schema.json
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: python tools/validator/validate.py --strict-formats examples/signing/manifest.json schemas/agent-trust-manifest.schema.json
+      - run: python tools/validator/validate.py --strict-formats examples/signing/finding.json schemas/invocation-finding-v1.schema.json
+      - run: python tools/validator/validate.py --strict-formats examples/signing/publisher.jwks.json schemas/signing-jwks-v1.schema.json
+      - run: python tools/validator/validate.py --strict-formats examples/signing/assessor.jwks.json schemas/signing-jwks-v1.schema.json
+      - run: node tools/signing/interop.mjs
       - run: python -m unittest discover -s tests

@@ -73,3 +73,12 @@ A host cannot retract the assessor's statement, and host acceptance does not for
 6. Verify host withdrawal/notification separately if a host implementation is built. Reference consumers and validators remain optional.
 
 This proposal provides a concrete next design target, not a signing implementation, a live BBB feed, production evidence retrieval, or a reason to close issue #1.
+
+## Subsequent optional provenance pilot
+
+The [detached signing profile v1](../../spec/signing-profile-v1.md) selects a
+concrete portable JWS variant for a separate platform invocation-claim pilot.
+It does not implement this business-rating proposal, replace its provider-native
+normalization, or mandate signing over the authenticated assessor-origin
+publication variant A. Existing `assessed_controls` snapshots remain valid
+within their own draft semantics. See the [fictional demonstration](../../examples/signing/README.md).

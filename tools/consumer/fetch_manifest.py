@@ -1,4 +1,4 @@
-"""One bounded public-HTTPS manifest request; no redirects, proxies or evidence fetches."""
+"""One bounded public-HTTPS request for a fixed manifest/signature/key resource."""
 import http.client
 import ipaddress
 import re
@@ -10,6 +10,11 @@ from urllib.parse import urlsplit
 MAX_BYTES = 65536
 SOCKET_TIMEOUT = 3
 MANIFEST_PATH = "/.well-known/agent-trust.json"
+RESOURCES = {
+    "manifest": (MANIFEST_PATH, "application/json", MAX_BYTES),
+    "signature": (MANIFEST_PATH + ".jws", "application/jose", 4096),
+    "keys": ("/.well-known/agent-trust-keys.json", "application/json", 16384),
+}
 
 
 class FetchError(Exception):
@@ -87,7 +92,10 @@ class PinnedHTTPSConnection(http.client.HTTPSConnection):
             raise
 
 
-def fetch(origin, resolver=socket.getaddrinfo, connection=PinnedHTTPSConnection):
+def fetch(origin, resolver=socket.getaddrinfo, connection=PinnedHTTPSConnection, resource="manifest"):
+    if resource not in RESOURCES:
+        raise FetchError("unsupported_resource")
+    path, media_type, limit = RESOURCES[resource]
     origin = normalize_origin(origin)
     host = urlsplit(origin).hostname
     endpoints = resolver(host, 443, type=socket.SOCK_STREAM)
@@ -96,17 +104,19 @@ def fetch(origin, resolver=socket.getaddrinfo, connection=PinnedHTTPSConnection)
         raise FetchError("unsafe_address")
     client = connection(host, endpoints[0])
     try:
-        client.request("GET", MANIFEST_PATH, headers={
-            "Accept": "application/json", "Accept-Encoding": "identity",
+        client.request("GET", path, headers={
+            "Accept": media_type, "Accept-Encoding": "identity",
             "User-Agent": "atm-reference-consumer/0.1",
         })
         response = client.getresponse()
         if 300 <= response.status < 400:
             raise FetchError("redirect_rejected")
+        if response.status == 404 and resource == "signature":
+            raise FetchError("signature_absent")
         if response.status != 200:
             raise FetchError("http_failure")
         content_type = response.getheader("Content-Type", "").lower()
-        if content_type.split(";", 1)[0].strip() != "application/json":
+        if content_type.split(";", 1)[0].strip() != media_type:
             raise FetchError("unsupported_content_type")
         if response.getheader("Content-Encoding", "identity").lower() != "identity":
             raise FetchError("unsupported_encoding")
@@ -116,10 +126,10 @@ def fetch(origin, resolver=socket.getaddrinfo, connection=PinnedHTTPSConnection)
         if lengths:
             if not re.fullmatch(r"[0-9]+", lengths[0]) or len(lengths[0]) > 10:
                 raise FetchError("ambiguous_length")
-            if int(lengths[0]) > MAX_BYTES:
+            if int(lengths[0]) > limit:
                 raise FetchError("document_too_large")
-        body = response.read(MAX_BYTES + 1)
-        if len(body) > MAX_BYTES:
+        body = response.read(limit + 1)
+        if len(body) > limit:
             raise FetchError("document_too_large")
         if lengths and len(body) != int(lengths[0]):
             raise FetchError("incomplete_body")
@@ -130,9 +140,9 @@ def fetch(origin, resolver=socket.getaddrinfo, connection=PinnedHTTPSConnection)
 
 if __name__ == "__main__":
     try:
-        if len(sys.argv) != 2:
+        if len(sys.argv) not in (2, 3):
             raise FetchError("invalid_origin")
-        sys.stdout.buffer.write(fetch(sys.argv[1]))
+        sys.stdout.buffer.write(fetch(sys.argv[1], resource=sys.argv[2] if len(sys.argv) == 3 else "manifest"))
     except FetchError as exc:
         print(str(exc), file=sys.stderr)
         raise SystemExit(1)

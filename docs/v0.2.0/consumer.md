@@ -6,7 +6,7 @@ The consumer displays four declared interaction controls, inventories evidence, 
 
 ## Inputs and commands
 
-Use the Python environment from the [README](../../README.md#quick-start). The existing `jsonschema` dependency provides structural checks; there are no new package dependencies.
+Use the Python environment from the [README](../../README.md#quick-start). The existing `jsonschema` dependency provides structural checks; optional detached authentication also uses the pinned `cryptography` dependency.
 
 Offline:
 
@@ -58,7 +58,7 @@ Hashing uses the raw file bytes, including whitespace and the final newline. It 
 
 Prerequisites require a fresh supported manifest, a claimed origin match, declarations of explicit invocation and no content-triggered execution, and the single status file passing the listed checks while reporting `operational`. This is an explicit illustrative triage policy; it does not define minimum evidence for the ATM specification or substantiate those safeguard declarations.
 
-Schema validity and authenticity are separate output fields. `authentication` remains `unverified`. A claimed revocation label is not a revocation check; `revocation_checked` remains false.
+Schema validity and authenticity are separate output fields. The original nested `authentication` fields remain `unverified`; optional detached checks use separate additive fields described below. A claimed revocation label is not a revocation check; `revocation_checked` remains false.
 
 ## Draft platform-control checks (report version 0.2)
 
@@ -100,7 +100,7 @@ Network-boundary tests use controlled transports and DNS answers; no live third-
 
 The structural validator defaults to not enforcing JSON Schema format annotations; its optional `--strict-formats` mode adds format checks independently of this consumer. The consumer separately checks only timestamps it uses, accepting a conservative RFC3339 subset with up to six fractional digits, valid numeric offsets, and no leap seconds or unknown `-00:00` offsets. It does not claim full format or specification conformance.
 
-No signing, signature verification, live safeguard tests, deployment attestation, tenant/surface authorization, issuer registry, independent-verifier discovery, reputation scoring or authoritative revocation checking is implemented. Other evidence is inventoried only. Cache TTLs are displayed in the input artifacts but not enforced; this profile uses explicit expiry without an independent maximum-age policy. Machine clock accuracy is assumed.
+Without the separately selected detached profile, this original demonstration performs no signature verification. Live safeguard tests, deployment attestation, tenant/surface authorization, issuer registry, independent-verifier discovery, reputation scoring and authoritative finding-revocation checking remain unimplemented. Other evidence is inventoried only. Cache TTLs are displayed in the input artifacts but not enforced; this profile uses explicit expiry without an independent maximum-age policy. Machine clock accuracy is assumed.
 
 Missing or unsupported evidence remains unresolved. Further policy choices are captured in the [review questions](../rfc/0001-consumer-policy.md), not silently treated as standards requirements.
 
@@ -113,3 +113,31 @@ External mechanism support is declared in a [new companion schema](../../spec/pr
 ## Declared findings versus unresolved evidence
 
 The additive `platform_controls.declared_assessment_result` field reports a current, scope-matched declared `pass`, `fail` or `unknown`; otherwise it is `null`. It never authenticates a finding. Existing reasons and hold/manual-review behavior are preserved. See the [issue #1 decision record](../rfc/0001-consumer-policy-resolution.md).
+
+## Optional detached authentication and finding inputs
+
+The [signing v1 demonstration](../../examples/signing/README.md) adds
+`manifest_authentication` and `assessor_finding` without changing the existing
+triage decision or platform-controls snapshot rules. Explicit offline files
+provide payload/signature/JWKS snapshots. `--authenticate-manifest` in network
+mode permits two additional fixed same-origin requests: the signature and
+public keys. All original address, TLS, redirect, encoding and time bounds
+apply separately, with 4 KiB signatures and 16 KiB JWKS. Assessor findings
+are offline only, with at most eight visitor-selected assessor origins.
+No generic `report_uri` or evidence-selected key URL is fetched.
+
+Only signature HTTP 404 reports `unsigned`; unavailable endpoints and other
+HTTP failures report `unverified`, while malformed/incorrect signatures report
+`invalid`. An offline absent file is not confirmed remote absence. Key status
+is checked from the selected current-window snapshot; revoked/compromised keys
+are unusable even for backdated signatures. Stale/offline snapshots can miss
+newer revocations. There is no finding revocation/status implementation.
+
+Authentication attributes bytes to an origin-bound key, applicability checks
+typed claims, subject, digest and current observation windows, and acceptance
+uses the visitor's chosen assessor. A different origin's self-declared
+`independent` relationship stays `independence: unproven`. Access/approval
+remain false. Original `policy.reasons` continue to describe the original
+triage checks; inspect the additive fields for the optional provenance result.
+Consumer exit 0 still means manual review, even if optional authentication
+failed. It is not an authentication success flag.
