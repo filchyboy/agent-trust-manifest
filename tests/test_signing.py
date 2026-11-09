@@ -1,5 +1,7 @@
 """Profile attack cases, explicit trust boundaries, CLI, and independent shared vectors."""
 import copy
+import contextlib
+import io
 import json
 from pathlib import Path
 import subprocess
@@ -9,11 +11,9 @@ import unittest
 from unittest.mock import Mock, patch
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "tools/signing"))
-sys.path.insert(0, str(ROOT / "tools/consumer"))
-import atm_signing as p
-import consume
-import fetch_manifest as net
+from tools.signing import atm_signing as p
+from tools.consumer import consume
+from tools.consumer import fetch_manifest as net
 
 FIX = ROOT / "examples/signing"
 NOW = 1791309600
@@ -59,6 +59,11 @@ class SigningTests(unittest.TestCase):
         output = json.loads(run.stdout)
         vectors = json.loads((FIX / 'vectors.json').read_text())['vectors']
         self.assertEqual(len(output), 2)
+        checked = {c['id'] for result in output for c in result['negative_vectors'] if c['rejected']}
+        expected = {c['id'] for c in json.loads((FIX / 'vectors.json').read_text())['negative_vectors']
+                    if c['independent_crypto']}
+        self.assertEqual(checked, expected)
+        self.assertEqual(len(checked), 4)
         for v, other in zip(vectors, output):
             self.assertTrue(other['verified'] and other['tamper_rejected'])
             p.verify((FIX / v['payload']).read_bytes(), other['node_jws'].encode(),
@@ -302,6 +307,117 @@ class SigningTests(unittest.TestCase):
         self.assertEqual(result['policy']['decision'],'manual_review')
         self.assertFalse(result['policy']['access_granted'])
         self.assertFalse(result['policy']['approval_granted'])
+        self.assertEqual(result['manifest']['authentication'], 'authenticated')
+        self.assertNotIn('issuer_authentication_unverified', result['policy']['reasons'])
+        self.assertNotIn('claims_not_independently_verified', result['policy']['reasons'])
+        pointer = '/interaction_profile/explicit_invocation_required'
+        self.assertIn('claim_accepted:' + pointer, result['policy']['reasons'])
+        self.assertIn('other_claims_without_accepted_findings', result['policy']['reasons'])
+        self.assertIn('revocation_not_checked', result['policy']['reasons'])
+        self.assertEqual(result['policy']['claim_acceptance'][pointer], 'accepted_for_claim')
+        for key, value in result['policy']['claim_acceptance'].items():
+            if key != pointer:
+                self.assertEqual(value, 'unresolved')
+        self.assertEqual(result['assessor_finding']['independence'], 'unproven')
+
+    def consumer_report(self, publisher=True, finding=False, trusted=True, status=True):
+        args = ['--manifest', str(FIX/'manifest.json'), '--expected-origin', PUB,
+                '--at', '2026-10-06T18:00:00Z']
+        if status:
+            args += ['--status-file', str(ROOT/'examples/consumer/operational-status.json')]
+        if publisher:
+            args += ['--manifest-signature-file', str(FIX/'manifest.jws'),
+                     '--manifest-keys-file', str(FIX/'publisher.jwks.json')]
+        if finding:
+            args += ['--finding-file', str(FIX/'finding.json'), '--finding-signature-file', str(FIX/'finding.jws'),
+                     '--assessor-keys-file', str(FIX/'assessor.jwks.json'), '--assessor-origin', ASS]
+            if trusted:
+                args += ['--trusted-assessor', ASS]
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            code = consume.main(args)
+        return code, json.loads(output.getvalue())
+
+    def test_publisher_authentication_does_not_accept_any_claim(self):
+        code, result = self.consumer_report()
+        self.assertEqual(code, 0)
+        self.assertNotIn('issuer_authentication_unverified', result['policy']['reasons'])
+        self.assertIn('claims_not_independently_verified', result['policy']['reasons'])
+        self.assertEqual(set(result['policy']['claim_acceptance'].values()), {'unresolved'})
+
+    def test_unselected_finding_does_not_remove_unresolved_claim_reason(self):
+        _, result = self.consumer_report(finding=True, trusted=False)
+        self.assertEqual(result['assessor_finding']['authentication']['state'], 'authenticated')
+        self.assertEqual(result['assessor_finding']['acceptance'], 'unresolved')
+        self.assertIn('claims_not_independently_verified', result['policy']['reasons'])
+        self.assertEqual(set(result['policy']['claim_acceptance'].values()), {'unresolved'})
+
+    def test_accepted_finding_cannot_authenticate_its_publisher(self):
+        _, result = self.consumer_report(publisher=False, finding=True)
+        self.assertEqual(result['assessor_finding']['acceptance'], 'accepted_for_claim')
+        self.assertIn('issuer_authentication_unverified', result['policy']['reasons'])
+        self.assertEqual(result['manifest']['authentication'], 'unverified')
+
+    def test_claim_acceptance_keeps_other_hold_prerequisites_and_is_idempotent(self):
+        code, result = self.consumer_report(finding=True, status=False)
+        self.assertEqual(code, 1)
+        self.assertEqual(result['policy']['decision'], 'hold')
+        self.assertIn('status_file_not_supplied', result['policy']['reasons'])
+        self.assertFalse(result['policy']['access_granted'])
+        policy = copy.deepcopy(result['policy'])
+        consume.reconcile_authentication(result)
+        self.assertEqual(result['policy'], policy)
+
+    def test_invalid_publisher_signature_cannot_clear_unverified_issuer_reason(self):
+        result = consume.inspect(self.manifest, (ROOT/'examples/consumer/operational-status.json').read_bytes(),
+                                 PUB, consume.timestamp('2026-10-06T18:00:00Z'))
+        result['manifest_authentication'] = p.authenticate(self.manifest + b' ', self.sig, self.keys, PUB, p.MANIFEST, NOW)
+        consume.reconcile_authentication(result)
+        self.assertEqual(result['manifest_authentication']['state'], 'invalid')
+        self.assertEqual(result['manifest']['authentication'], 'invalid')
+        self.assertIn('issuer_authentication_unverified', result['policy']['reasons'])
+        self.assertFalse(result['policy']['access_granted'])
+
+    def test_finding_verifies_once_and_reuses_local_schema_registry(self):
+        p.manifest_validator.cache_clear()
+        with patch.object(p, 'verify', wraps=p.verify) as verification:
+            self.assertEqual(self.finding_result()['acceptance'], 'accepted_for_claim')
+            self.assertEqual(verification.call_count, 1)
+        with patch.object(Path, 'read_text', side_effect=AssertionError('schema reloaded')):
+            self.assertEqual(self.finding_result()['acceptance'], 'accepted_for_claim')
+
+    def test_exported_negative_vector_corpus(self):
+        from tools.signing.check_vectors import check
+        result = check(FIX)
+        self.assertTrue(result['passed'], result['failures'])
+        self.assertEqual(result['positive'], 2)
+        self.assertEqual(result['negative'], 39)
+
+    def test_package_and_direct_entry_points_work_from_other_directory(self):
+        with tempfile.TemporaryDirectory() as directory:
+            run = subprocess.run([sys.executable, str(ROOT/'tools/signing/cli.py'), 'verify',
+                '--payload', str(FIX/'manifest.json'), '--signature', str(FIX/'manifest.jws'),
+                '--jwks', str(FIX/'publisher.jwks.json'), '--origin', PUB, '--type', 'manifest', '--at', str(NOW)],
+                cwd=directory, capture_output=True, text=True)
+            self.assertEqual(run.returncode, 0, run.stderr)
+            run = subprocess.run([sys.executable, str(ROOT/'tools/signing/check_vectors.py'), str(FIX)],
+                cwd=directory, capture_output=True, text=True)
+            self.assertEqual(run.returncode, 0, run.stderr)
+            run = subprocess.run([sys.executable, str(ROOT/'tools/consumer/consume.py'),
+                '--manifest', str(FIX/'manifest.json'), '--expected-origin', PUB, '--at', '2026-10-06T18:00:00Z'],
+                cwd=directory, capture_output=True, text=True)
+            self.assertEqual(run.returncode, 1, run.stderr)  # Missing status still holds, but imports work.
+            self.assertEqual(json.loads(run.stdout)['manifest']['schema'], 'valid')
+            run = subprocess.run([sys.executable, str(ROOT/'tools/consumer/fetch_manifest.py'), 'https://127.0.0.1'],
+                cwd=directory, capture_output=True, text=True)
+            self.assertEqual(run.returncode, 1)
+            self.assertEqual(run.stderr.strip(), 'invalid_origin')  # No network request.
+            run = subprocess.run([sys.executable, str(ROOT/'tools/consumer/illustrate_protocol_support.py'), '--help'],
+                cwd=directory, capture_output=True, text=True)
+            self.assertEqual(run.returncode, 0, run.stderr)
+        run = subprocess.run([sys.executable, '-m', 'tools.signing.check_vectors', str(FIX)],
+                             cwd=ROOT, capture_output=True, text=True)
+        self.assertEqual(run.returncode, 0, run.stderr)
 
     def auth_args(self):
         return Mock(authenticate_manifest=True,manifest_signature_file=None,manifest_keys_file=None,

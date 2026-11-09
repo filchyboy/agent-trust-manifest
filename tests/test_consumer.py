@@ -14,9 +14,8 @@ import unittest
 from unittest.mock import Mock, patch
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "tools/consumer"))
-import consume
-import fetch_manifest as network
+from tools.consumer import consume
+from tools.consumer import fetch_manifest as network
 
 ORIGIN = "https://consumer-demo.example"
 NOW = consume.timestamp("2026-10-06T18:00:00Z")

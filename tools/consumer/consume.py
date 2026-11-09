@@ -11,7 +11,9 @@ import sys
 from datetime import datetime, timezone
 from urllib.parse import urlsplit
 
-from fetch_manifest import FetchError, MAX_BYTES, normalize_origin
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from tools.consumer.fetch_manifest import FetchError, MAX_BYTES, normalize_origin
 
 ROOT = Path(__file__).resolve().parents[2]
 FETCH_TIMEOUT = 8
@@ -220,7 +222,8 @@ def base_report():
             "platform_controls": platform_controls_report("profile_not_supplied"),
             "policy": {"decision": "hold", "access_granted": False,
                        "caller_eligibility": "unresolved", "approval_granted": False,
-                       "runtime_enforcement_performed": False, "reasons": []}}
+                       "runtime_enforcement_performed": False, "reasons": [],
+                       "claim_acceptance": {"/interaction_profile/" + key: "unresolved" for key in CLAIMS}}}
 
 
 def inspect(manifest_raw, status_raw, origin, now, profile_raw=None, expected_context=None):
@@ -388,7 +391,7 @@ def inspect_platform_controls(raw, expected, manifest, origin, now):
 
 def fetch_manifest(origin, resource="manifest"):
     origin = normalize_origin(origin)
-    from fetch_manifest import RESOURCES
+    from tools.consumer.fetch_manifest import RESOURCES
     if resource not in RESOURCES:
         raise ConsumerError("unsupported_resource")
     command = [sys.executable, "-B", str(Path(__file__).with_name("fetch_manifest.py")), origin]
@@ -417,8 +420,7 @@ def add_authentication(report, raw, expected_origin, now, args):
     if not (requested or finding_requested):
         return
     try:
-        sys.path.insert(0, str(ROOT / "tools/signing"))
-        from atm_signing import authenticate, inspect_finding, MANIFEST
+        from tools.signing.atm_signing import authenticate, inspect_finding, MANIFEST
     except ImportError:
         report["manifest_authentication"] = {"state": "unverified", "reason": "signing_dependency_missing"}
         return
@@ -449,6 +451,28 @@ def add_authentication(report, raw, expected_origin, now, args):
         except (ConsumerError, FetchError) as exc:
             report["assessor_finding"] = {"authentication": {"state": "unverified"},
                 "applicability": "unresolved", "acceptance": "unresolved", "reason": str(exc)}
+
+
+def reconcile_authentication(report):
+    """Update the explanation of existing triage without upgrading its decision."""
+    policy = report["policy"]
+    reasons = policy["reasons"]
+    authentication = report["manifest_authentication"]
+    if authentication.get("reason") != "not_requested" and "authentication" in report["manifest"]:
+        report["manifest"]["authentication"] = authentication["state"]
+    if authentication["state"] == "authenticated":
+        reasons = [reason for reason in reasons if reason != "issuer_authentication_unverified"]
+    finding = report["assessor_finding"]
+    pointer = "/interaction_profile/explicit_invocation_required"
+    claim = finding.get("claim")
+    if (finding.get("acceptance") == "accepted_for_claim" and isinstance(claim, dict)
+            and claim.get("pointer") == pointer and claim.get("value") is True):
+        policy["claim_acceptance"][pointer] = "accepted_for_claim"
+        reasons = [reason for reason in reasons if reason != "claims_not_independently_verified"]
+        for reason in ("claim_accepted:" + pointer, "other_claims_without_accepted_findings"):
+            if reason not in reasons:
+                reasons.append(reason)
+    policy["reasons"] = reasons
 
 
 def main(argv=None):
@@ -509,6 +533,7 @@ def main(argv=None):
                     profile_input_error = source + "_" + str(exc)
         report = inspect(raw, status, origin, now, profile_raw, expected_context)
         add_authentication(report, raw, origin, now, args)
+        reconcile_authentication(report)
         if profile_input_error:
             report["platform_controls"] = platform_controls_report(profile_input_error)
             report["policy"]["decision"] = "hold"

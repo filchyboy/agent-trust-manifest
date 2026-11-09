@@ -13,6 +13,7 @@ From the repository root, with Python 3.11.18 and project requirements installed
 
 ```sh
 python examples/signing/generate.py
+python tools/signing/check_vectors.py
 node tools/signing/interop.mjs
 python tools/signing/cli.py verify --payload examples/signing/manifest.json \
   --signature examples/signing/manifest.jws --jwks examples/signing/publisher.jwks.json \
@@ -34,7 +35,10 @@ Expected: manifest authentication `authenticated`; finding authentication
 `authenticated`, applicability `matched`, acceptance `accepted_for_claim`,
 independence `unproven`. Existing consumer policy stays `manual_review`;
 access and approval remain false, operational status remains unverified.
-Removing the visitor-selected trusted assessor leaves acceptance unresolved.
+The policy explanation removes the stale issuer-authentication reason and
+names only the accepted claim. `policy.claim_acceptance` leaves all other
+interaction claims unresolved; independence remains unproven. Removing the
+visitor-selected trusted assessor leaves acceptance unresolved.
 Altering even manifest whitespace invalidates its signature and finding digest.
 
 For real signing, supply a separately generated secret raw 32-byte Ed25519
@@ -76,6 +80,31 @@ again. Python tests verify those Node-produced signatures. Node is used for
 shared-vector interoperability only; it is not a full hostile-input profile
 verifier or a second relying-party implementation. General verification uses
 the restricted Python wrapper and the pinned PyCA primitive.
+
+The portable corpus also exports **39 negative cases**, each with a stable `id`,
+a `base_vector` naming a positive vector's payload filename, exact `overrides`,
+and an `expected_reason`. Start each case from its named base, then replace only
+specified inputs: `payload_hex`, `signature_hex` and `jwks_hex` are complete raw
+byte strings in lowercase hex; `origin`, `type` and `now` replace verifier
+expectations. Cases are independent, not cumulative. No Python mutation code
+is needed to consume them. Expected reasons are the reference verifier's
+specific rejection diagnostics; another implementation can map its own
+corresponding failures, but must reject each case.
+
+`check_vectors.py` runs all two positive and 39 negative cases through the
+Python profile verifier. The four cases marked `independent_crypto: true`
+change only signed bytes, signature bytes or a public key and are also consumed
+and rejected by Node's independent standard-crypto path. The remaining 35
+parsing/profile/metadata failures are exported for independent implementers,
+but are currently executed by Python only. This is shared-vector cryptographic
+interoperability, not a complete second implementation of the profile or its
+finding-reliance policy. The existing finding applicability tests remain in
+the Python suite.
+
+Imports use the `tools` package and shared offline origin rules. Existing direct
+script commands remain supported from other working directories; from the
+repository root, `python -m tools.signing.cli` and
+`python -m tools.signing.check_vectors` are also supported.
 
 Profiles: [signing](../../spec/signing-profile-v1.md),
 [finding](../../spec/finding-profile-v1.md). Neither tooling nor profile requires

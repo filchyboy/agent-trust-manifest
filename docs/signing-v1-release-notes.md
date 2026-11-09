@@ -27,3 +27,18 @@ transparency or deployment attestation, grant access, remove tenants, or send
 notifications. No provider partnership or business-rating integration is claimed.
 See [instructions and vectors](../examples/signing/README.md) and
 [threat model](threat-model.md).
+
+## Follow-up reporting and interoperability fixes
+
+Publisher authentication now clears its stale unverified-issuer explanation.
+An accepted finding is named and reported per claim; other interaction claims
+remain unresolved. Nested manifest authentication agrees with the separate
+provenance result. Triage decisions, operational-status evidence requirements,
+and access/approval behavior are unchanged.
+
+The portable corpus now includes 39 explicit negative inputs and expected
+rejections. Node independently rejects the four cryptographic tamper cases;
+Python executes the full corpus. Signing and consumer modules use a shared
+origin package, findings authenticate once, and local manifest schemas are
+cached per process. See [CHANGELOG](../CHANGELOG.md) for unreleased status and
+the time-policy decisions preserved by this follow-up.

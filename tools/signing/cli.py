@@ -4,7 +4,9 @@ import json
 import sys
 import time
 from pathlib import Path
-from atm_signing import MANIFEST, FINDING, VerificationError, sign, verify, require
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from tools.signing.atm_signing import MANIFEST, FINDING, VerificationError, sign, verify, require
 
 
 def read(path, limit=65536):

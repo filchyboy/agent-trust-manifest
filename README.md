@@ -1,4 +1,10 @@
-# Agent Trust Manifest — v0.2.0 Draft Specification
+# Agent Trust Manifest
+
+Core schema: **v0.2.0 draft**. `main` also contains unreleased optional normative
+[signing](spec/signing-profile-v1.md) and [finding](spec/finding-profile-v1.md)
+profiles, experimental companion drafts, and reference tooling. See the
+[Unreleased changelog](CHANGELOG.md) for their separate status; no v0.3.0 release
+or tag is implied.
 
 Agent Trust Manifest (ATM) is an open draft specification for declaring, validating, and progressively strengthening trust signals between software platforms and autonomous agents.
 
@@ -23,7 +29,7 @@ The publisher's claim, its description of a validation, and the validator's own 
 
 The third party is responsible for the validity of its own assessment and statement. The visiting agent verifies its authorship (and signature when signed) and applicable bindings, then chooses whether to rely on that third party under its own trust policy. It need not reproduce the assessment to rely on an authenticated, appropriately scoped finding from an assessor it trusts. Publisher endorsement cannot make the third party's statement true, and ATM does not designate universally trusted assessors.
 
-See the [verification extension](spec/verification-spec.md#5-claim-to-validation-discovery) and [worked validation chain](docs/v0.2.0/validation-chain.md). The current schema describes discovery; it does not fully specify an authenticated external-report format. The reference tools check only their documented local constraints and do not follow validation links or verify third-party findings.
+See the [verification extension](spec/verification-spec.md#5-claim-to-validation-discovery) and [worked validation chain](docs/v0.2.0/validation-chain.md). The core verification schema describes discovery. The optional [invocation finding profile](spec/finding-profile-v1.md) authenticates explicitly supplied assessor findings for one typed claim. Reference tools never automatically follow generic validation links.
 
 ## Goals
 
@@ -91,13 +97,13 @@ Format checks do not add unstated version, algorithm or signature rules. Legacy 
 
 ## Reference consumer and versioned documentation
 
-A small post-prerelease reference consumer inventories declarations and evidence, checks the exact bytes of an explicitly supplied operational-status file, and reports freshness and failure states. Its illustrative policy returns `hold` or `manual_review`; neither grants access or proves trust. Evidence is never automatically fetched, and publisher authentication and independent assessment remain unverified.
+The optional reference consumer checks declarations, freshness and supplied operational-status bytes. Detached signature inputs additionally authenticate publisher bytes and assessor findings; accepted findings are reported per claim. Its triage result remains `hold` or `manual_review`. Generic evidence links are never automatically fetched.
 
 Start with the [v0.2.0 documentation index](docs/v0.2.0/index.md), [worked fictional example](docs/v0.2.0/worked-example.md), and [consumer contract](docs/v0.2.0/consumer.md). The [focused RFC questions](docs/rfc/0001-consumer-policy.md) cover scope, minimum evidence, freshness, failure handling and issuer trust. These additions are not in the original tagged prerelease archives.
 
 ## Unreleased platform-control profile
 
-A [separately versioned experimental profile](spec/platform-controls-draft-0.1.md) distinguishes publisher, platform subject/deployment/surface, control authority, enforcement point and assessor. It uses the existing `platform_policy` discovery link and explicit offline sidecar/context inputs. Its fixtures test capability conditions, subject type, exact evidence applicability, policy changes and approval requirements while always granting no access. The v0.2.0 schema contracts remain unchanged; this proposal is not a new release. See [unreleased notes](spec/platform-controls-draft-notes.md). [Issue #1](https://github.com/filchyboy/agent-trust-manifest/issues/1) remains the design record; draft PR #2 remains a bounded consumer testbed.
+A [separately versioned experimental profile](spec/platform-controls-draft-0.1.md) distinguishes publisher, platform subject/deployment/surface, control authority, enforcement point and assessor. It uses the existing `platform_policy` discovery link and explicit offline sidecar/context inputs. Its fixtures test capability conditions, subject type, exact evidence applicability, policy changes and approval requirements while always granting no access. The v0.2.0 schema contracts remain unchanged; this proposal is not a new release. See [unreleased notes](spec/platform-controls-draft-notes.md). [Issue #1](https://github.com/filchyboy/agent-trust-manifest/issues/1) remains the design record.
 
 ## Declaring external protocol support
 
@@ -154,7 +160,7 @@ See the [ecosystem analysis](docs/ecosystem-positioning.md) for control subjects
 
 ## Version
 
-Current draft specification: **v0.2.0**. Verification and attestation extension documents retain their v0.1.0 versions. The versioning policy and release checklist are draft project guidance; they do not establish a public governance body or certification program.
+Core draft specification: **v0.2.0**. The optional signing/finding profiles have independent v1 identifiers and remain unreleased. Verification and embedded attestation extension documents retain their v0.1.0 versions. The versioning policy and release checklist are draft project guidance; they do not establish a public governance body or certification program.
 
 ## License
 
