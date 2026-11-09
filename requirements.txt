@@ -1,2 +1,6 @@
 # Shared dependency for the reference validator and regression tests.
 jsonschema==4.26.0
+
+# Required for explicit --strict-formats timestamp and URI checking.
+rfc3339-validator==0.1.4
+rfc3986-validator==0.1.1

@@ -38,4 +38,5 @@ jobs:
       - run: python tools/validator/validate.py examples/consumer/protocol-support/known-vocabulary.json schemas/protocol-vocabulary-demo-0.1.schema.json
       - run: python tools/validator/validate.py examples/validation-chain/manifest.json schemas/agent-trust-manifest.schema.json
       - run: python tools/validator/validate.py examples/rating-normalization/normalized-feed.json schemas/reputation-feed.schema.json
+      - run: python tools/validator/validate.py --strict-formats examples/signed-manifest.json schemas/agent-trust-manifest.schema.json
       - run: python -m unittest discover -s tests

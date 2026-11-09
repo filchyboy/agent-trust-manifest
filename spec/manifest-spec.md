@@ -86,7 +86,7 @@ This field does not identify the owner of an organization or a verifier, establi
 
 This draft widens the earlier fixed owner vocabulary to accept any nonblank string while retaining the existing field name and artifact shape. Previously accepted owner labels remain valid. Validators using the earlier fixed vocabulary may reject new implementation-defined labels until their schema is updated.
 
-Companion artifacts should not expose private implementation details such as internal policy rule IDs, internal TOON bindings, tenant identifiers, raw evidence payloads, secrets, or private guardrail configuration.
+Companion artifacts should not expose private implementation details such as internal policy rule IDs, private serialization bindings, tenant identifiers, raw evidence payloads, secrets, or private guardrail configuration.
 
 The legacy `reputation` extension remains a lightweight pointer to an external scorecard. New implementations that need hash pinning, issuer/subject responsibility, freshness metadata, acceptance controls, or multiple companion artifacts should use `governance_artifacts` entries of type `reputation_feed`.
 
@@ -123,4 +123,4 @@ A manifest conforms to ATM v0.2.0 if:
 - timestamps are syntactically valid
 - extension sections, if present, conform to their extension specs
 
-The reference CLI checks structural schema constraints only. It does not enforce URI or timestamp formats, verify signatures or hashes, or establish the truth of declared claims. Passing the CLI alone does not demonstrate all of the conformance requirements above or establish authenticity.
+The reference CLI defaults to structural schema constraints. Its optional `--strict-formats` mode also checks URI and timestamp formats. Neither mode verifies signatures or hashes or establishes the truth of declared claims. Passing the CLI alone does not demonstrate all of the conformance requirements above or establish authenticity.
