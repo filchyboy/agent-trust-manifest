@@ -1,10 +1,11 @@
-// Separate implementation of the v1 signature checks for canonical DNS origins.
+// Separate implementation of the v1 signature checks for canonical public origins.
 // No Python process, shared production validator, network access, or custom crypto.
 import {parseTree} from 'jsonc-parser';
 import {createPublicKey, verify as verifySignature} from 'node:crypto';
-import {isIP} from 'node:net';
+import {canonicalOrigin} from './origins.mjs';
+import {Rejection} from './errors.mjs';
+export {Rejection} from './errors.mjs';
 
-export class Rejection extends Error {}
 function need(test, reason) { if (!test) throw new Rejection(reason); }
 const object = v => v !== null && typeof v === 'object' && !Array.isArray(v);
 const sameMembers = (v, names) => {
@@ -73,19 +74,8 @@ export function decode64(text) {
   return bytes;
 }
 
-export function dnsOrigin(value) {
-  need(typeof value === 'string' && value.length <= 256 && /^[\x21-\x7e]+$/.test(value), 'invalid_origin');
-  let url;
-  try { url = new URL(value); } catch { throw new Rejection('invalid_origin'); }
-  need(url.protocol === 'https:' && !url.username && !url.password && !url.port
-    && url.pathname === '/' && !/[?#%]/.test(value), 'invalid_origin');
-  need(!isIP(url.hostname.replace(/^\[|\]$/g, '')), 'unsupported_ip_origin');
-  const labels = url.hostname.split('.');
-  need(labels.length >= 2 && labels.every(v => /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(v))
-    && !/^[0-9.]+$/.test(url.hostname), 'invalid_origin');
-  need('https://' + url.hostname === value, 'noncanonical_origin');
-  return value;
-}
+// Kept as a compatibility alias; public-IP origins are now supported.
+export const dnsOrigin = canonicalOrigin;
 
 export function verify(payload, signature, jwks, expectedOrigin, type, now) {
   strictJSON(payload);
@@ -100,14 +90,14 @@ export function verify(payload, signature, jwks, expectedOrigin, type, now) {
   need(h.alg === 'Ed25519' && h.b64 === false && h.atm_profile === 'atm-detached-jws/1'
     && JSON.stringify(h.crit) === JSON.stringify(['b64', 'atm_profile', 'origin', 'iat', 'exp']), 'unsupported_profile');
   need(['application/atm-manifest+json', 'application/atm-finding+json'].includes(type) && h.typ === type, 'wrong_type');
-  need(dnsOrigin(h.origin) === dnsOrigin(expectedOrigin), 'wrong_origin');
+  need(canonicalOrigin(h.origin) === canonicalOrigin(expectedOrigin), 'wrong_origin');
   need(kidOK(h.kid), 'invalid_kid');
   need(date(now) && hd.integer(h, 'iat') && hd.integer(h, 'exp') && h.iat <= now && now < h.exp
     && h.exp > h.iat && h.exp - h.iat <= 86400, 'invalid_signature_time');
 
   const kd = strictJSON(jwks, 16384), ks = kd.value;
   need(sameMembers(ks, ['profile', 'origin', 'issued_at', 'expires_at', 'keys']) && ks.profile === 'atm-detached-jws/1', 'invalid_jwks');
-  need(dnsOrigin(ks.origin) === dnsOrigin(expectedOrigin), 'wrong_key_origin');
+  need(canonicalOrigin(ks.origin) === canonicalOrigin(expectedOrigin), 'wrong_key_origin');
   need(kd.integer(ks, 'issued_at') && kd.integer(ks, 'expires_at') && ks.issued_at <= now && now < ks.expires_at
     && ks.expires_at > ks.issued_at && ks.expires_at - ks.issued_at <= 86400, 'stale_or_invalid_jwks');
   need(Array.isArray(ks.keys) && ks.keys.length >= 1 && ks.keys.length <= 16, 'invalid_keys');

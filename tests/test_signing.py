@@ -422,7 +422,7 @@ class SigningTests(unittest.TestCase):
     def auth_args(self):
         return Mock(authenticate_manifest=True,manifest_signature_file=None,manifest_keys_file=None,
                     finding_file=None,finding_signature_file=None,assessor_keys_file=None,assessor_origin=None,
-                    origin=PUB)
+                    origin=PUB, max_finding_age_seconds=None)
 
     def test_network_only_404_is_unsigned_errors_are_unverified(self):
         for error,state in [('signature_absent','unsigned'),('fetch_timeout','unverified'),

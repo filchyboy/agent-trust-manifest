@@ -416,7 +416,7 @@ def fetch_manifest(origin, resource="manifest"):
 
 def add_authentication(report, raw, expected_origin, now, args):
     requested = args.authenticate_manifest or args.manifest_signature_file or args.manifest_keys_file
-    finding_requested = any((args.finding_file, args.finding_signature_file, args.assessor_keys_file, args.assessor_origin))
+    finding_requested = any((args.finding_file, args.finding_signature_file, args.assessor_keys_file, args.assessor_origin)) or args.max_finding_age_seconds is not None
     if not (requested or finding_requested):
         return
     try:
@@ -447,7 +447,8 @@ def add_authentication(report, raw, expected_origin, now, args):
             trusted = [normalize_origin(item) for item in args.trusted_assessor]
             report["assessor_finding"] = inspect_finding(
                 read_file(args.finding_file), read_file(args.finding_signature_file),
-                read_file(args.assessor_keys_file), raw, expected_origin, assessor, trusted, at)
+                read_file(args.assessor_keys_file), raw, expected_origin, assessor, trusted, at,
+                max_observation_age=args.max_finding_age_seconds)
         except (ConsumerError, FetchError) as exc:
             report["assessor_finding"] = {"authentication": {"state": "unverified"},
                 "applicability": "unresolved", "acceptance": "unresolved", "reason": str(exc)}
@@ -493,6 +494,7 @@ def main(argv=None):
     parser.add_argument("--assessor-keys-file", help="Explicitly trusted offline assessor JWKS snapshot")
     parser.add_argument("--assessor-origin", help="Visitor-selected expected assessor origin")
     parser.add_argument("--trusted-assessor", action="append", default=[], help="Visitor-selected assessor origins; maximum eight")
+    parser.add_argument("--max-finding-age-seconds", type=int, help="Visitor-selected observation age limit, 0..86400; never extends v1 validity")
     args = parser.parse_args(argv)
     report = base_report()
     try:

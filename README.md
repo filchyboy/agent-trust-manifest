@@ -59,6 +59,7 @@ the pinned Python/pip security bootstrap and project requirements. Then:
 .venv/bin/python tools/validator/validate.py examples/basic-manifest.json schemas/agent-trust-manifest.schema.json
 .venv/bin/python tools/validator/validate.py --strict-formats examples/basic-manifest.json schemas/agent-trust-manifest.schema.json
 .venv/bin/python -m unittest discover -s tests
+.venv/bin/python tools/validator/check_examples.py --strict-formats
 ```
 
 The validator defaults to structural schema checks. `--strict-formats` adds
@@ -71,7 +72,10 @@ passed constraints exit 0. Diagnostics identify JSON pointers.
 [Validator history](CHANGELOG.md#validator-hardening-record) explains compatibility
 limits, including legacy permissions for empty signatures and arbitrary version
 strings. Strict mode is recommended explicitly where format checking is wanted;
-the default is retained for existing callers.
+the default is retained for existing callers. `--structural-only` makes that
+choice explicit. CI now checks all 25 distinct catalogued examples in strict
+format mode; the old 26-command list repeated one fixture. See the
+[conformance matrix](spec/conformance.md) for the limits of each check.
 
 ## Run the provenance demonstration
 
@@ -91,9 +95,10 @@ node tools/signing/interop.mjs
 The portable corpus contains two valid cases and 39 exact negative inputs with
 expected rejection reasons. Python runs the complete corpus; the original Node
 harness independently checks the positive signatures and four cryptographic
-negative cases. A [separate Node prototype](tools/independent-verifier/README.md)
-now checks all 39 negatives for DNS origins, but does not yet implement public-IP
-origins or finding applicability/visitor acceptance.
+negative cases. A [separate Node offline consumer](tools/independent-verifier/README.md)
+now checks the signature corpus plus 56 shared finding-consumer cases and 159
+origin cases, with public-IP origins and independent finding applicability and
+visitor acceptance. These checks preserve unresolved truth and independence.
 
 Network manifest authentication is optional and limited to fixed same-origin
 manifest/signature/JWKS paths. Generic evidence links are never automatically

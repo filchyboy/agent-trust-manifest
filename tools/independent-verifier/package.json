@@ -3,8 +3,15 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Offline DNS-origin ATM signature-profile interoperability prototype",
-  "engines": {"node": ">=22"},
-  "scripts": {"test": "node --test verifier.test.mjs && node check-corpus.mjs"},
-  "dependencies": {"jsonc-parser": "3.3.1"}
+  "description": "Offline ATM v1 signature and finding consumer with independent implementation",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test *.test.mjs && node check-corpus.mjs && node check-consumer-corpus.mjs"
+  },
+  "dependencies": {
+    "jsonc-parser": "3.3.1",
+    "ajv": "8.20.0"
+  }
 }

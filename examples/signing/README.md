@@ -14,6 +14,7 @@ From the repository root, with Python 3.11.18 and project requirements installed
 ```sh
 python examples/signing/generate.py
 python tools/signing/check_vectors.py
+python tools/signing/check_consumer_vectors.py
 node tools/signing/interop.mjs
 python tools/signing/cli.py verify --payload examples/signing/manifest.json \
   --signature examples/signing/manifest.jws --jwks examples/signing/publisher.jwks.json \
@@ -95,10 +96,11 @@ corresponding failures, but must reject each case.
 Python profile verifier. The four cases marked `independent_crypto: true`
 change only signed bytes, signature bytes or a public key and are also consumed
 and rejected by Node's independent standard-crypto path. The original harness still limits itself to those four primitive cases. The
-separate [independent Node prototype](../../tools/independent-verifier/README.md)
-now checks all 39 negative cases for DNS origins, including parsing and metadata. This is shared-vector cryptographic
-interoperability, not a complete second implementation of the profile or its
-finding-reliance policy. The existing finding applicability tests remain in
+separate [independent Node consumer](../../tools/independent-verifier/README.md)
+now checks all 39 negative cases, 56 independent finding-consumer cases and
+159 origin cases, including public-IP origins and finding applicability and
+visitor-selected acceptance. This is shared-vector cryptographic
+interoperability, not a complete second implementation of all ATM profiles or any network retrieval policy. The existing finding applicability tests remain in
 the Python suite.
 
 Imports use the `tools` package and shared offline origin rules. Existing direct
@@ -110,3 +112,13 @@ Profiles: [signing](../../spec/signing-profile-v1.md),
 [finding](../../spec/finding-profile-v1.md). Neither tooling nor profile requires
 a specific assessor. The HTTPS-origin publication option in RFC 0003 remains
 valid; business ratings and existing assessed-controls snapshots are unchanged.
+
+The new `consumer-vectors.json` is an offline acceptance contract. Each case
+starts from `inputs`, replaces only `overrides`, and compares the stated
+`expected` fields. Hex fields are exact raw bytes; origin, assessor selection,
+clock and optional maximum observation age are independently selected inputs.
+Authentication and its reason, applicability, visitor acceptance, unresolved
+truth/independence and false access are checked separately. Origin cases assert
+accept/reject classification rather than standardizing every diagnostic string.
+Regenerate these added cases with `python examples/signing/generate_consumer_vectors.py`;
+the original signing payloads, signatures and 39-case corpus are unchanged.

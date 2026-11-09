@@ -1,0 +1,643 @@
+{
+  "profile": "atm-origin-cases/1",
+  "source": "CPython 3.11.18 ipaddress constants; pinned to existing ATM reference behavior",
+  "warning": "Address syntax/classification only; no requests or real issuer-ownership claims.",
+  "cases": [
+    {
+      "origin": "http://consumer-demo.example",
+      "accepted": false
+    },
+    {
+      "origin": "https://0.0.0.0",
+      "accepted": false
+    },
+    {
+      "origin": "https://0.255.255.255",
+      "accepted": false
+    },
+    {
+      "origin": "https://1.0.0.0",
+      "accepted": true
+    },
+    {
+      "origin": "https://10.0.0.0",
+      "accepted": false
+    },
+    {
+      "origin": "https://10.255.255.255",
+      "accepted": false
+    },
+    {
+      "origin": "https://100.127.255.255",
+      "accepted": false
+    },
+    {
+      "origin": "https://100.128.0.0",
+      "accepted": true
+    },
+    {
+      "origin": "https://100.63.255.255",
+      "accepted": true
+    },
+    {
+      "origin": "https://100.64.0.0",
+      "accepted": false
+    },
+    {
+      "origin": "https://11.0.0.0",
+      "accepted": true
+    },
+    {
+      "origin": "https://126.255.255.255",
+      "accepted": true
+    },
+    {
+      "origin": "https://127.0.0.0",
+      "accepted": false
+    },
+    {
+      "origin": "https://127.255.255.255",
+      "accepted": false
+    },
+    {
+      "origin": "https://128.0.0.0",
+      "accepted": true
+    },
+    {
+      "origin": "https://169.253.255.255",
+      "accepted": true
+    },
+    {
+      "origin": "https://169.254.0.0",
+      "accepted": false
+    },
+    {
+      "origin": "https://169.254.255.255",
+      "accepted": false
+    },
+    {
+      "origin": "https://169.255.0.0",
+      "accepted": true
+    },
+    {
+      "origin": "https://172.15.255.255",
+      "accepted": true
+    },
+    {
+      "origin": "https://172.16.0.0",
+      "accepted": false
+    },
+    {
+      "origin": "https://172.31.255.255",
+      "accepted": false
+    },
+    {
+      "origin": "https://172.32.0.0",
+      "accepted": true
+    },
+    {
+      "origin": "https://191.255.255.255",
+      "accepted": true
+    },
+    {
+      "origin": "https://192.0.0.0",
+      "accepted": false
+    },
+    {
+      "origin": "https://192.0.0.10",
+      "accepted": true
+    },
+    {
+      "origin": "https://192.0.0.11",
+      "accepted": false
+    },
+    {
+      "origin": "https://192.0.0.169",
+      "accepted": false
+    },
+    {
+      "origin": "https://192.0.0.170",
+      "accepted": false
+    },
+    {
+      "origin": "https://192.0.0.171",
+      "accepted": false
+    },
+    {
+      "origin": "https://192.0.0.172",
+      "accepted": false
+    },
+    {
+      "origin": "https://192.0.0.255",
+      "accepted": false
+    },
+    {
+      "origin": "https://192.0.0.8",
+      "accepted": false
+    },
+    {
+      "origin": "https://192.0.0.9",
+      "accepted": true
+    },
+    {
+      "origin": "https://192.0.1.0",
+      "accepted": true
+    },
+    {
+      "origin": "https://192.0.1.255",
+      "accepted": true
+    },
+    {
+      "origin": "https://192.0.2.0",
+      "accepted": false
+    },
+    {
+      "origin": "https://192.0.2.255",
+      "accepted": false
+    },
+    {
+      "origin": "https://192.0.3.0",
+      "accepted": true
+    },
+    {
+      "origin": "https://192.167.255.255",
+      "accepted": true
+    },
+    {
+      "origin": "https://192.168.0.0",
+      "accepted": false
+    },
+    {
+      "origin": "https://192.168.255.255",
+      "accepted": false
+    },
+    {
+      "origin": "https://192.169.0.0",
+      "accepted": true
+    },
+    {
+      "origin": "https://198.17.255.255",
+      "accepted": true
+    },
+    {
+      "origin": "https://198.18.0.0",
+      "accepted": false
+    },
+    {
+      "origin": "https://198.19.255.255",
+      "accepted": false
+    },
+    {
+      "origin": "https://198.20.0.0",
+      "accepted": true
+    },
+    {
+      "origin": "https://198.51.100.0",
+      "accepted": false
+    },
+    {
+      "origin": "https://198.51.100.255",
+      "accepted": false
+    },
+    {
+      "origin": "https://198.51.101.0",
+      "accepted": true
+    },
+    {
+      "origin": "https://198.51.99.255",
+      "accepted": true
+    },
+    {
+      "origin": "https://203.0.112.255",
+      "accepted": true
+    },
+    {
+      "origin": "https://203.0.113.0",
+      "accepted": false
+    },
+    {
+      "origin": "https://203.0.113.255",
+      "accepted": false
+    },
+    {
+      "origin": "https://203.0.114.0",
+      "accepted": true
+    },
+    {
+      "origin": "https://223.255.255.255",
+      "accepted": true
+    },
+    {
+      "origin": "https://224.0.0.0",
+      "accepted": false
+    },
+    {
+      "origin": "https://239.255.255.255",
+      "accepted": false
+    },
+    {
+      "origin": "https://240.0.0.0",
+      "accepted": false
+    },
+    {
+      "origin": "https://255.255.255.254",
+      "accepted": false
+    },
+    {
+      "origin": "https://255.255.255.255",
+      "accepted": false
+    },
+    {
+      "origin": "https://8.8.8.8",
+      "accepted": true
+    },
+    {
+      "origin": "https://9.255.255.255",
+      "accepted": true
+    },
+    {
+      "origin": "https://CONSUMER-DEMO.example",
+      "accepted": false
+    },
+    {
+      "origin": "https://[1000::]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[100:0:0:1::]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[100::]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[100::ffff:ffff:ffff:ffff]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[1ff:ffff:ffff:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[1fff:ffff:ffff:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[2000::]",
+      "accepted": true
+    },
+    {
+      "origin": "https://[2000:ffff:ffff:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": true
+    },
+    {
+      "origin": "https://[2001:0:ffff:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[2001:1::1]",
+      "accepted": true
+    },
+    {
+      "origin": "https://[2001:1::2]",
+      "accepted": true
+    },
+    {
+      "origin": "https://[2001:1::3]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[2001:1::]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[2001:1f:ffff:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[2001:1ff:ffff:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[2001:200::]",
+      "accepted": true
+    },
+    {
+      "origin": "https://[2001:20::]",
+      "accepted": true
+    },
+    {
+      "origin": "https://[2001:2:ffff:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[2001:2f:ffff:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": true
+    },
+    {
+      "origin": "https://[2001:30::]",
+      "accepted": true
+    },
+    {
+      "origin": "https://[2001:3::]",
+      "accepted": true
+    },
+    {
+      "origin": "https://[2001:3:ffff:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": true
+    },
+    {
+      "origin": "https://[2001:3f:ffff:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": true
+    },
+    {
+      "origin": "https://[2001:40::]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[2001:4:111:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[2001:4:112::]",
+      "accepted": true
+    },
+    {
+      "origin": "https://[2001:4:112:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": true
+    },
+    {
+      "origin": "https://[2001:4:113::]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[2001:4::]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[2001::]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[2001:db7:ffff:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": true
+    },
+    {
+      "origin": "https://[2001:db8::]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[2001:db8:ffff:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[2001:db9::]",
+      "accepted": true
+    },
+    {
+      "origin": "https://[2001:ffff:ffff:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": true
+    },
+    {
+      "origin": "https://[2002::]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[2002:ffff:ffff:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[2003::]",
+      "accepted": true
+    },
+    {
+      "origin": "https://[200::]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[2606:4700:4700::1111]",
+      "accepted": true
+    },
+    {
+      "origin": "https://[3ff:ffff:ffff:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[3ffe:ffff:ffff:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": true
+    },
+    {
+      "origin": "https://[3fff:1000::]",
+      "accepted": true
+    },
+    {
+      "origin": "https://[3fff::]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[3fff:fff:ffff:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[3fff:ffff:ffff:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": true
+    },
+    {
+      "origin": "https://[4000::]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[400::]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[5fff:ffff:ffff:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[6000::]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[64:ff9b:0:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[64:ff9b:1::]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[64:ff9b:1:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[64:ff9b:2::]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[7ff:ffff:ffff:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[7fff:ffff:ffff:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[8000::]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[800::]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[9fff:ffff:ffff:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[::1:0:0:0]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[::1]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[::2]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[::]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[::fffe:ffff:ffff]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[::ffff:0.0.0.0]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[::ffff:255.255.255.255]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[a000::]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[bfff:ffff:ffff:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[c000::]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[dfff:ffff:ffff:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[e000::]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[efff:ffff:ffff:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[f000::]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[f7ff:ffff:ffff:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[f800::]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[fbff:ffff:ffff:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[fc00::]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[fdff:ffff:ffff:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[fe00::]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[fe7f:ffff:ffff:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[fe80::]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[febf:ffff:ffff:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[fec0::]",
+      "accepted": true
+    },
+    {
+      "origin": "https://[feff:ffff:ffff:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": true
+    },
+    {
+      "origin": "https://[ff00::]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[ff:ffff:ffff:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[fff:ffff:ffff:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": false
+    },
+    {
+      "origin": "https://[ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff]",
+      "accepted": false
+    },
+    {
+      "origin": "https://consumer-demo.example",
+      "accepted": true
+    },
+    {
+      "origin": "https://consumer-demo.example/",
+      "accepted": false
+    },
+    {
+      "origin": "https://consumer-demo.example/key",
+      "accepted": false
+    },
+    {
+      "origin": "https://consumer-demo.example:443",
+      "accepted": false
+    },
+    {
+      "origin": "https://consumer-demo.example?",
+      "accepted": false
+    },
+    {
+      "origin": "https://localhost",
+      "accepted": false
+    },
+    {
+      "origin": "https://user@consumer-demo.example",
+      "accepted": false
+    }
+  ]
+}

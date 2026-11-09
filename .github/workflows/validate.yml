@@ -17,36 +17,12 @@ jobs:
           python -m pip --isolated --disable-pip-version-check install --no-cache-dir --no-deps
           'pip @ https://files.pythonhosted.org/packages/3f/06/3e4420302363fbb71be3c7f35ce042f54bfca330e3e66b3a2e3c4cca579f/pip-26.2.2-py3-none-any.whl#sha256=fd7f4dfa8190e014013b9f08f3e973f4e4c26ffd179a204895533a7254813a70'
       - run: python -m pip install -r requirements.txt
-      - run: python tools/validator/validate.py examples/basic-manifest.json schemas/agent-trust-manifest.schema.json
-      - run: python tools/validator/validate.py examples/signed-manifest.json schemas/agent-trust-manifest.schema.json
-      - run: python tools/validator/validate.py examples/verification-report.json schemas/verification-report.schema.json
-      - run: python tools/validator/validate.py examples/reputation-feed.json schemas/reputation-feed.schema.json
-      - run: python tools/validator/validate.py examples/attestation-envelope.json schemas/attestation-envelope.schema.json
-      - run: python tools/validator/validate.py examples/capability-catalog.json schemas/capability-catalog.schema.json
-      - run: python tools/validator/validate.py examples/operational-status-feed.json schemas/operational-status-feed.schema.json
-      - run: python tools/validator/validate.py examples/revocation-feed.json schemas/revocation-feed.schema.json
-      - run: python tools/validator/validate.py examples/consumer/manifest.json schemas/agent-trust-manifest.schema.json
-      - run: python tools/validator/validate.py examples/consumer/operational-status.json schemas/operational-status-feed.schema.json
-      - run: python tools/validator/validate.py examples/consumer/stale-manifest.json schemas/agent-trust-manifest.schema.json
-      - run: python tools/validator/validate.py examples/consumer/tampered-status.json schemas/operational-status-feed.schema.json
-      - run: python tools/validator/validate.py examples/consumer/platform-controls/manifest.json schemas/agent-trust-manifest.schema.json
-      - run: python tools/validator/validate.py examples/consumer/platform-controls/profile.json schemas/platform-controls-draft-0.1.schema.json
-      - run: python tools/validator/validate.py examples/consumer/platform-controls/expected-context.json schemas/platform-context-draft-0.1.schema.json
-      - run: python tools/validator/validate.py examples/consumer/protocol-support/manifest.json schemas/agent-trust-manifest.schema.json
-      - run: python tools/validator/validate.py examples/consumer/protocol-support/declaration.json schemas/protocol-support-draft-0.1.schema.json
-      - run: python tools/validator/validate.py examples/consumer/protocol-support/expected-context.json schemas/platform-context-draft-0.1.schema.json
-      - run: python tools/validator/validate.py examples/consumer/protocol-support/known-vocabulary.json schemas/protocol-vocabulary-demo-0.1.schema.json
-      - run: python tools/validator/validate.py examples/validation-chain/manifest.json schemas/agent-trust-manifest.schema.json
-      - run: python tools/validator/validate.py examples/rating-normalization/normalized-feed.json schemas/reputation-feed.schema.json
-      - run: python tools/validator/validate.py --strict-formats examples/signed-manifest.json schemas/agent-trust-manifest.schema.json
+      - run: python tools/validator/check_examples.py --strict-formats
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: python tools/validator/validate.py --strict-formats examples/signing/manifest.json schemas/agent-trust-manifest.schema.json
-      - run: python tools/validator/validate.py --strict-formats examples/signing/finding.json schemas/invocation-finding-v1.schema.json
-      - run: python tools/validator/validate.py --strict-formats examples/signing/publisher.jwks.json schemas/signing-jwks-v1.schema.json
-      - run: python tools/validator/validate.py --strict-formats examples/signing/assessor.jwks.json schemas/signing-jwks-v1.schema.json
       - run: python tools/signing/check_vectors.py
+      - run: python tools/signing/check_consumer_vectors.py
       - run: node tools/signing/interop.mjs
       - run: npm ci --ignore-scripts --prefix tools/independent-verifier
       - run: npm test --prefix tools/independent-verifier

@@ -43,10 +43,11 @@ test('prototype-looking keys remain data and integer dates retain lexical type',
   assert(!d.integer(d.value, 'b') && !d.integer(d.value, 'c') && !d.integer(d.value, 'd'));
 });
 
-test('canonical DNS-only scope fails closed on IP origins and malformed destinations', () => {
+test('canonical public-IP and DNS origins reject unsafe or malformed destinations', () => {
   assert.equal(dnsOrigin(origin), origin);
-  for (const value of ['https://127.0.0.1', 'https://8.8.8.8', 'https://[2606:4700:4700::1111]'])
-    rejects(() => dnsOrigin(value), 'unsupported_ip_origin');
+  for (const value of ['https://8.8.8.8','https://[2606:4700:4700::1111]']) assert.equal(dnsOrigin(value),value);
+  for (const value of ['https://127.0.0.1','https://10.0.0.1','https://[::1]','https://[::ffff:808:808]'])
+    rejects(() => dnsOrigin(value), 'invalid_origin');
   for (const value of ['http://public.example', 'https://user@public.example', 'https://public.example/key',
     'https://public.example?', 'https://public.example:8443', 'https://localhost'])
     rejects(() => dnsOrigin(value), 'invalid_origin');
