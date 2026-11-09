@@ -129,3 +129,17 @@ export function verify(payload, signature, jwks, expectedOrigin, type, now) {
   need(valid, 'signature_mismatch');
   return h;
 }
+
+// Authentication outcomes are separate from relying-party acceptance and triage.
+export function authenticate(payload, signature, jwks, origin, type, now) {
+  if (signature === null) return {state:'unverified',reason:'signature_not_supplied'};
+  if (jwks === null) return {state:'unverified',reason:'keys_not_supplied'};
+  try {
+    const h=verify(payload,signature,jwks,origin,type,now);
+    return {state:'authenticated',issuer:h.origin,kid:h.kid,expires_at:h.exp,
+      reason:'signature_valid',claims_truth:'unresolved'};
+  } catch(e) {
+    if (!(e instanceof Rejection)) throw e;
+    return {state:'invalid',reason:e.message};
+  }
+}

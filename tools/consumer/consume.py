@@ -282,7 +282,7 @@ def inspect(manifest_raw, status_raw, origin, now, profile_raw=None, expected_co
     else:
         report["policy"].update(decision="manual_review", reasons=[
             "issuer_authentication_unverified", "claims_not_independently_verified",
-            "revocation_not_checked",
+            "operational_status_revocation_not_checked",
         ])
     if profile_raw is not None or expected_context is not None:
         controls = inspect_platform_controls(profile_raw, expected_context, manifest, origin, now)
@@ -455,7 +455,7 @@ def add_authentication(report, raw, expected_origin, now, args):
 
 
 def reconcile_authentication(report):
-    """Update the explanation of existing triage without upgrading its decision."""
+    """Reconcile optional evidence; invalid publisher authentication holds triage."""
     policy = report["policy"]
     reasons = policy["reasons"]
     authentication = report["manifest_authentication"]
@@ -463,6 +463,12 @@ def reconcile_authentication(report):
         report["manifest"]["authentication"] = authentication["state"]
     if authentication["state"] == "authenticated":
         reasons = [reason for reason in reasons if reason != "issuer_authentication_unverified"]
+    if authentication["state"] == "invalid":
+        policy["decision"] = "hold"
+        reasons = [reason for reason in reasons if reason != "issuer_authentication_unverified"]
+        reason = "manifest_signature_invalid:" + authentication["reason"]
+        if reason not in reasons:
+            reasons.append(reason)
     finding = report["assessor_finding"]
     pointer = "/interaction_profile/explicit_invocation_required"
     claim = finding.get("claim")

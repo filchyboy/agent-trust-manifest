@@ -3,20 +3,6 @@
 Status: decision brief, updated with implemented offline-consumer coverage.
 **Not a normative timing-profile revision.**
 Current `atm-detached-jws/1` and `atm-invocation-finding/1` rules remain unchanged.
-No release, tag, merge, branch deletion or deployment is authorized by this brief.
-
-## Confirmed review findings and completed corrections
-
-The consumer's stale authentication explanation was reproducible. PR #9 fixes
-that explanation and reports acceptance per claim; accepting the invocation
-claim does not accept the other controls or prove assessor independence. It
-also exports 39 negative cases, verifies findings once, caches trusted local
-schemas and removes consumer/signing sibling import coupling.
-
-The review's count of 30 CI validator steps meant 30 total run steps; 26 were
-validator invocations. PR #9 adds the portable corpus step. This distinction
-matters when reporting exactly what was tested, rather than treating a setup
-or test-suite command as an additional schema check.
 
 ## 1. Time limits are different policy dimensions
 

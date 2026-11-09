@@ -13,7 +13,26 @@ not announce a new release or tag. Core schemas retain their existing versions.
 | Consumer | Optional bounded reference demonstration; publisher authentication and one claim's visitor-selected acceptance are separate from access decisions |
 | Rating normalization and host lifecycle proposals | Fictional normalization fixtures and design guidance; no provider integration or automated host lifecycle |
 
-### Remaining original review completion
+### Publisher authentication failure handling
+
+- Invalid requested manifest authentication now forces `hold`, exit 1 and
+  `manifest_signature_invalid:<reason>`, preserving other hold reasons and
+  independently reported assessor-claim acceptance. A valid finding cannot
+  clear this publisher-authentication hold.
+- Not requested, confirmed signature HTTP 404 (`unsigned`), and unavailable
+  authentication material (`unverified`) remain distinct. Those outcomes retain
+  existing triage behavior; manual review and exit 0 never establish authentication.
+- Rename the ambiguous `revocation_not_checked` policy reason to
+  `operational_status_revocation_not_checked`. It describes operational-status
+  evidence, not the signing-key checks or finding withdrawal. Callers consuming
+  reason codes must update to the new spelling.
+- Add eight shared offline authentication outcomes for Python and Node, including
+  a changed manifest value. Policy-level CLI tests separately cover hold/exit
+  behavior, unavailable inputs and accepted findings alongside invalid signatures.
+- Document synchronized clocks and publication margins without changing v1's
+  time rules.
+
+### Offline consumers and conformance
 
 - Add an independent offline Node finding consumer and bounded CLI. Both
   implementations check 56 shared acceptance/applicability cases and 159 origin
@@ -30,9 +49,6 @@ not announce a new release or tag. Core schemas retain their existing versions.
 - Restate existing core conformance requirements using BCP 14 words and publish
   a class/check matrix. No core schema assertions, required fields, enums or
   legacy placeholder permissions change; no truth or access guarantee is added.
-- Audit the six older remote branch tips rather than deleting from a review
-  label alone. Three are not ancestors of current main and all six names are
-  used by local worktrees. Preserve them and all worktrees. No release is tagged.
 
 The unresolved product decision is a new audit/timing profile: actual control
 snapshot, acceptable observation age/replay horizon, status/withdrawal evidence
@@ -40,17 +56,16 @@ and consistent clock allowance. No universal long lifetime or v2 default is
 invented. Independent organizational review, network conformance, finding
 status/revocation and deployment-bound evidence remain outside this change.
 
-### Reporting and vector follow-up
+### Reporting and vector coverage
 
 - Reconcile successful publisher authentication with the consumer's reason
   codes. Report an accepted finding for its exact claim, while other interaction
-  claims remain unresolved. Preserve hold/manual-review decisions and false
-  access/approval outputs.
+  claims remain unresolved. Access and approval outputs remain false.
 - Export 39 exact negative JWS inputs and expected rejection reasons alongside
   the two positive vectors. Run the whole corpus with the reference Python
   verifier; independently reject four cryptographic tamper cases with Node.
   The original primitive-only harness did not cover full profile parsing or
-  finding acceptance; the remaining-review completion below adds that coverage.
+  finding acceptance; the offline consumers described above add that coverage.
 - Authenticate a finding once, cache the local schema registry per process,
   and use package imports with shared offline origin validation. Preserve direct
   CLI entry points and bounded fetch behavior.
@@ -91,13 +106,12 @@ runtime. Accurate clocks and a planned publication margin are deployment
 requirements of the current profile; observation timestamps must not be
 fabricated to work around clock differences.
 
-### Release and maintenance boundaries
+### Compatibility records
 
 The useful existing specification notes and
 [runtime security record](docs/development.md#historical-remediation-record) remain linked and
-preserved; they document compatibility and security decisions. Merged remote
-branches have not been deleted. No release/tag, deployment, notification,
-trust-registry integration, or full finding lifecycle is introduced here.
+preserved; they document compatibility and security decisions. Finding lifecycle
+and trust-registry integration remain outside the implemented profiles.
 
 ### Initial independent-verifier and documentation follow-up (historical)
 

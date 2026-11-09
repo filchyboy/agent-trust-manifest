@@ -132,6 +132,22 @@ An absent local signature means not supplied, not a network absence claim.
 Missing/invalid signatures MUST NOT confer trust. Authentication status is
 separate from schema validity, freshness, applicability and reliance.
 
+Publishers and assessors SHOULD synchronize their clocks and plan a publication
+margin between issuing a signed snapshot and first serving it. For example,
+signing at time T and serving no earlier than T+60 seconds can accommodate a
+verifier up to 60 seconds behind that issuance time, provided every other
+not-before/publication timestamp is also valid at the verifier. This is
+operational guidance, not a verifier allowance or a guarantee: manifest
+`published_at`, JWKS `issued_at`, key `nbf` and finding timestamps also matter.
+A later future-dated publication field can still cause rejection. Keep enough
+remaining validity for distribution and evaluation; expiry receives no grace.
+
+Use truthful issuance and observation times. Do not mechanically subtract 60
+seconds from `iat`: it must remain within the key's validity, and finding
+signature `iat` must equal finding `issued_at` and follow observation end.
+Do not fabricate observation or publication times to accommodate clock errors.
+Publish a correctly timed complete snapshot after synchronization if necessary.
+
 Publishers SHOULD deploy manifest and signature as one atomic release, serve
 stable bytes through their CDN, and publish new keys before signing with them.
 Keep retired public keys until their final signature expiry. Sequential GETs
