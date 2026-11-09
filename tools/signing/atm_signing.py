@@ -4,15 +4,14 @@ import hashlib
 import json
 import math
 import re
-import sys
 from datetime import datetime, timezone
+from functools import lru_cache
 from pathlib import Path
 
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey, Ed25519PublicKey
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "consumer"))
-from fetch_manifest import normalize_origin, FetchError
+from tools.common.origins import normalize_origin, FetchError
 
 PROFILE = "atm-detached-jws/1"
 MANIFEST = "application/atm-manifest+json"
@@ -180,21 +179,26 @@ def sign(payload, seed, issuer_origin, kind, kid, issued_at, expires_at):
     return (protected + ".." + b64(sig)).encode("ascii")
 
 
-def authenticate(payload, signature, jwks, expected_origin, kind, now):
+def _authenticate(payload, signature, jwks, expected_origin, kind, now):
     result = {"state": "unverified", "reason": "signature_not_supplied"}
     if signature is None:
-        return result
+        return result, None
     if jwks is None:
-        return {"state": "unverified", "reason": "keys_not_supplied"}
+        return {"state": "unverified", "reason": "keys_not_supplied"}, None
     try:
         h = verify(payload, signature, jwks, expected_origin, kind, now)
         return {"state": "authenticated", "issuer": h["origin"], "kid": h["kid"],
-                "expires_at": h["exp"], "reason": "signature_valid", "claims_truth": "unresolved"}
+                "expires_at": h["exp"], "reason": "signature_valid", "claims_truth": "unresolved"}, h
     except VerificationError as exc:
-        return {"state": "invalid", "reason": str(exc)}
+        return {"state": "invalid", "reason": str(exc)}, None
 
 
-def applicable_manifest(manifest, expected_origin, now):
+def authenticate(payload, signature, jwks, expected_origin, kind, now):
+    return _authenticate(payload, signature, jwks, expected_origin, kind, now)[0]
+
+
+@lru_cache(maxsize=1)
+def manifest_validator():
     # Structural validation remains local: never resolve evidence-provided schemas.
     from jsonschema import Draft202012Validator
     from referencing import Registry, Resource
@@ -202,7 +206,11 @@ def applicable_manifest(manifest, expected_origin, now):
                (Path(__file__).resolve().parents[2] / "schemas").glob("*.json")]
     registry = Registry().with_resources((s["$id"], Resource.from_contents(s)) for s in schemas)
     schema = next(s for s in schemas if s["$id"].endswith("/agent-trust-manifest.schema.json"))
-    require(Draft202012Validator(schema, registry=registry).is_valid(manifest), "invalid_manifest_schema")
+    return Draft202012Validator(schema, registry=registry)
+
+
+def applicable_manifest(manifest, expected_origin, now):
+    require(manifest_validator().is_valid(manifest), "invalid_manifest_schema")
     require(manifest["atm_version"] == "0.2.0" and manifest["issuer"]["uri"] == expected_origin
             and manifest["issuer"]["domain"].lower() == expected_origin.split("//", 1)[1].strip("[]"),
             "manifest_subject_mismatch")
@@ -221,7 +229,8 @@ def applicable_manifest(manifest, expected_origin, now):
 
 def inspect_finding(raw, signature, jwks, manifest_raw, platform_origin, assessor_origin, trusted_assessors, now):
     """Authenticate separately from applicability and explicit visitor acceptance."""
-    result = {"authentication": authenticate(raw, signature, jwks, assessor_origin, FINDING, now),
+    authentication, h = _authenticate(raw, signature, jwks, assessor_origin, FINDING, now)
+    result = {"authentication": authentication,
               "applicability": "unresolved", "acceptance": "unresolved", "access_granted": False}
     try:
         require(isinstance(trusted_assessors, (list, tuple)) and len(trusted_assessors) <= 8, "too_many_assessors")
@@ -249,11 +258,10 @@ def inspect_finding(raw, signature, jwks, manifest_raw, platform_origin, assesso
                 and all(integer(v) for v in (obs["start"], obs["end"], f["issued_at"], f["expires_at"]))
                 and obs["start"] <= obs["end"] <= f["issued_at"] <= now < f["expires_at"]
                 and f["expires_at"] - obs["start"] <= 86400, "invalid_finding_time")
-        h = verify(raw, signature, jwks, assessor_origin, FINDING, now)
         require(h["iat"] == f["issued_at"] and h["exp"] == f["expires_at"], "finding_time_mismatch")
         require(f["method"] in ("static", "active", "audit") and f["result"] in ("pass", "fail", "unknown")
                 and isinstance(f["limitations"], str) and bool(f["limitations"]), "invalid_finding_metadata")
-        result.update(applicability="matched", declared_result=f["result"], method=f["method"],
+        result.update(applicability="matched", claim=claim, declared_result=f["result"], method=f["method"],
                       relationship=f["assessor"]["relationship"], independence="unproven",
                       limitations=f["limitations"])
         require(assessor_origin in selected, "assessor_not_selected")

@@ -10,9 +10,8 @@ import unittest
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / 'tools/consumer'))
-import consume
-import illustrate_protocol_support as demo
+from tools.consumer import consume
+from tools.consumer import illustrate_protocol_support as demo
 
 FIXTURES = ROOT / 'examples/consumer/protocol-support'
 NOW = consume.timestamp('2026-10-06T18:00:00Z')

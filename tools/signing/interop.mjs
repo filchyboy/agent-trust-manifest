@@ -5,7 +5,8 @@ import {createPublicKey, createPrivateKey, verify, sign, createHash} from 'node:
 import {resolve} from 'node:path';
 import assert from 'node:assert/strict';
 const dir = resolve(process.argv[2] || 'examples/signing');
-const vectors = JSON.parse(readFileSync(resolve(dir, 'vectors.json'))).vectors;
+const corpus = JSON.parse(readFileSync(resolve(dir, 'vectors.json')));
+const vectors = corpus.vectors;
 const results = [];
 for (const v of vectors) {
   const payload = readFileSync(resolve(dir, v.payload));
@@ -33,7 +34,26 @@ for (const v of vectors) {
   const privateKey = createPrivateKey({key: pkcs8, format: 'der', type: 'pkcs8'});
   const reverse = sign(null, input, privateKey);
   assert.deepEqual(reverse, sig);
-  results.push({payload: v.payload, verified: true, tamper_rejected: true,
+  const negatives = [];
+  for (const c of corpus.negative_vectors.filter(c => c.base_vector === v.payload && c.independent_crypto)) {
+    // These marked cases have valid framing/profile; only signed bytes/key change.
+    const o = c.overrides;
+    const badPayload = o.payload_hex ? Buffer.from(o.payload_hex, 'hex') : payload;
+    const badJws = o.signature_hex ? Buffer.from(o.signature_hex, 'hex').toString('ascii')
+      : readFileSync(resolve(dir, v.signature), 'ascii');
+    const [badProtected, badDetached, badSignature] = badJws.split('.');
+    assert.equal(badDetached, '');
+    const badKeys = o.jwks_hex ? JSON.parse(Buffer.from(o.jwks_hex, 'hex').toString('utf8'))
+      : JSON.parse(readFileSync(resolve(dir, v.jwks)));
+    const badHeader = JSON.parse(Buffer.from(badProtected, 'base64url'));
+    const badKey = badKeys.keys.find(k => k.kid === badHeader.kid);
+    const candidate = createPublicKey({key: {kty: badKey.kty, crv: badKey.crv, x: badKey.x}, format: 'jwk'});
+    const badInput = Buffer.concat([Buffer.from(badProtected + '.', 'ascii'), badPayload]);
+    assert.equal(c.expected_reason, 'signature_mismatch');
+    assert(!verify(null, badInput, candidate, Buffer.from(badSignature, 'base64url')), c.id);
+    negatives.push({id: c.id, rejected: true});
+  }
+  results.push({payload: v.payload, verified: true, tamper_rejected: true, negative_vectors: negatives,
     node_jws: protected64 + '..' + reverse.toString('base64url')});
 }
 console.log(JSON.stringify(results));

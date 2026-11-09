@@ -53,12 +53,12 @@ Hashing uses the raw file bytes, including whitespace and the final newline. It 
 | `status_evidence.state: unverified` | Even a supplied, structurally valid, fresh, digest-matched file is not independently authenticated or audited. |
 | `available_evidence[].state: unverified` | A reference or embedded extension is present; its truth/authenticity was not verified. |
 | `policy.decision: hold` | One or more demonstration prerequisites failed. |
-| `policy.decision: manual_review` | Prerequisites passed; issuer authentication, independent assessment and revocation checks remain unresolved. |
+| `policy.decision: manual_review` | Original triage prerequisites passed; optional authentication and per-claim acceptance are reported separately, with remaining evidence limits still visible. |
 | `policy.access_granted: false` | Neither decision grants access or approves an action. |
 
 Prerequisites require a fresh supported manifest, a claimed origin match, declarations of explicit invocation and no content-triggered execution, and the single status file passing the listed checks while reporting `operational`. This is an explicit illustrative triage policy; it does not define minimum evidence for the ATM specification or substantiate those safeguard declarations.
 
-Schema validity and authenticity are separate output fields. The original nested `authentication` fields remain `unverified`; optional detached checks use separate additive fields described below. A claimed revocation label is not a revocation check; `revocation_checked` remains false.
+Schema validity and authenticity are separate output fields. Operational-status and platform-control authentication remain separate. Requested detached checks update `manifest.authentication` to match the additive `manifest_authentication.state` result. A claimed revocation label is not a revocation check; `revocation_checked` remains false.
 
 ## Draft platform-control checks (report version 0.2)
 
@@ -137,7 +137,15 @@ Authentication attributes bytes to an origin-bound key, applicability checks
 typed claims, subject, digest and current observation windows, and acceptance
 uses the visitor's chosen assessor. A different origin's self-declared
 `independent` relationship stays `independence: unproven`. Access/approval
-remain false. Original `policy.reasons` continue to describe the original
-triage checks; inspect the additive fields for the optional provenance result.
+remain false. `policy.reasons` now reflects the optional checks: publisher authentication
+removes `issuer_authentication_unverified`; an accepted finding adds
+`claim_accepted:/interaction_profile/explicit_invocation_required` and replaces
+the blanket claim reason with `other_claims_without_accepted_findings`.
+`policy.claim_acceptance` lists the four interaction-profile pointers separately;
+only the assessed claim becomes `accepted_for_claim`, and the other three stay
+`unresolved`. Acceptance does not prove organizational independence.
+`revocation_not_checked` still concerns the separately supplied operational-status
+evidence; it does not say that the selected signing JWKS was ignored. Other
+hold reasons remain in force, and no accepted finding changes a hold into approval.
 Consumer exit 0 still means manual review, even if optional authentication
 failed. It is not an authentication success flag.

@@ -1,9 +1,13 @@
 """Non-normative offline reading of ATM mechanism declarations; no protocol adapters."""
 import argparse
 import json
+import sys
+from pathlib import Path
 from datetime import datetime, timezone
 
-from consume import ConsumerError, decode_document, freshness, read_file, timestamp, validate
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from tools.consumer.consume import ConsumerError, decode_document, freshness, read_file, timestamp, validate
 
 IDENTITY_FIELDS = ("protocol_id", "specification_uri", "version", "profile")
 
