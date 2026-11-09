@@ -73,6 +73,22 @@ class ConsumerTests(unittest.TestCase):
                 manifest[field] = value
                 self.assertEqual(self.inspect(manifest)["manifest"]["state"], state)
 
+    def test_utc_conversion_overflow_is_held(self):
+        for field, value in [
+            ("published_at", "0001-01-01T00:00:00+01:00"),
+            ("expires_at", "9999-12-31T23:59:59-01:00"),
+        ]:
+            with self.subTest(field=field, value=value):
+                manifest = copy.deepcopy(self.manifest)
+                manifest[field] = value
+                self.assertTrue(consume.validate(manifest, "agent-trust-manifest.schema.json"))
+                result = self.inspect(manifest)
+                self.assertEqual(result["manifest"]["state"], "invalid")
+                self.assertEqual(result["policy"]["decision"], "hold")
+                self.assertFalse(result["policy"]["access_granted"])
+                with self.assertRaisesRegex(consume.ConsumerError, "^invalid_timestamp$"):
+                    consume.timestamp(value)
+
     def test_invalid_manifest_schema(self):
         del self.manifest["interaction_profile"]["explicit_invocation_required"]
         self.assertEqual(self.inspect()["policy"]["reasons"], ["manifest_schema_invalid"])
@@ -306,6 +322,28 @@ class FetchBoundaryTests(unittest.TestCase):
         self.assertEqual(result.returncode, 1)
         self.assertEqual(result.stdout, b"")
         self.assertEqual(result.stderr.strip(), b"invalid_origin")
+
+    def test_real_http_response_rejects_early_eof_and_accepts_complete_body(self):
+        endpoint = (socket.AF_INET, socket.SOCK_STREAM, 6, "", ("8.8.8.8", 443))
+        for length in (2, 20):
+            with self.subTest(content_length=length):
+                wire = ("HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n"
+                        f"Content-Length: {length}\r\n\r\n").encode() + b'{}'
+                sock = Mock()
+                sock.makefile.return_value = io.BytesIO(wire)
+                response = network.http.client.HTTPResponse(sock)
+                response.begin()
+                client = Mock()
+                client.getresponse.return_value = response
+                if length == 2:
+                    self.assertEqual(network.fetch(ORIGIN, Mock(return_value=[endpoint]),
+                                                  Mock(return_value=client)), b'{}')
+                else:
+                    with self.assertRaisesRegex(network.FetchError, "^incomplete_body$"):
+                        network.fetch(ORIGIN, Mock(return_value=[endpoint]),
+                                      Mock(return_value=client))
+                client.close.assert_called_once()
+                response.close()
 
     def test_redirects_encodings_lengths_and_oversize_rejected(self):
         scenarios = [

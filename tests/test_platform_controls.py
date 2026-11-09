@@ -144,6 +144,45 @@ class PlatformControlTests(unittest.TestCase):
         self.profile['expires_at'] = '2026-10-06T18:00:00Z'
         self.assertEqual(self.inspect()['platform_controls']['capability_existence'], 'unresolved')
 
+    def test_protocol_support_companion_does_not_hide_platform_controls(self):
+        companion_manifest = json.loads(
+            (FIXTURES / 'protocol-support/manifest.json').read_text())
+        companion = next(ref for ref in companion_manifest['governance_artifacts']
+                         if ref['type'] == 'platform_policy')
+        self.manifest['governance_artifacts'].append(companion)
+        self.assertTrue(consume.validate(self.manifest, 'agent-trust-manifest.schema.json'))
+        report = self.inspect()
+        self.assertEqual(report['policy']['decision'], 'manual_review')
+        self.assertTrue(report['platform_controls']['declaration_checks_passed'])
+        self.assertEqual(report['platform_controls']['reason'],
+                         'platform_controls_not_authenticated')
+        self.assert_no_authority(report)
+
+    def test_multiple_matching_platform_control_references_remain_ambiguous(self):
+        self.manifest['governance_artifacts'].append(
+            copy.deepcopy(self.manifest['governance_artifacts'][1]))
+        report = self.inspect()
+        self.assertEqual(report['policy']['decision'], 'hold')
+        self.assertEqual(report['platform_controls']['reason'],
+                         'platform_profile_reference_missing_or_ambiguous')
+        self.assertFalse(report['platform_controls']['declaration_checks_passed'])
+        self.assert_no_authority(report)
+
+    def test_wrong_profile_identity_cannot_substitute_for_platform_controls(self):
+        for field, value in [
+                ('schema_uri', 'https://agenttrustmanifest.org/schemas/protocol-support-draft-0.1.schema.json'),
+                ('version', 'protocol-support-draft/0.1')]:
+            with self.subTest(field=field):
+                original = self.manifest['governance_artifacts'][1][field]
+                self.manifest['governance_artifacts'][1][field] = value
+                report = self.inspect()
+                self.assertEqual(report['policy']['decision'], 'hold')
+                self.assertEqual(report['platform_controls']['reason'],
+                                 'platform_profile_reference_missing_or_ambiguous')
+                self.assertFalse(report['platform_controls']['declaration_checks_passed'])
+                self.assert_no_authority(report)
+                self.manifest['governance_artifacts'][1][field] = original
+
     def test_ambiguous_capabilities_and_assessments_are_held(self):
         for key in ['capabilities', 'evidence']:
             with self.subTest(key=key):

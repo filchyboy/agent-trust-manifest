@@ -114,7 +114,7 @@ def timestamp(value):
         raise ConsumerError("invalid_timestamp")
     try:
         return datetime.fromisoformat(value.replace("Z", "+00:00")).astimezone(timezone.utc)
-    except ValueError:
+    except (ValueError, OverflowError):
         raise ConsumerError("invalid_timestamp") from None
 
 
@@ -298,8 +298,12 @@ def inspect_platform_controls(raw, expected, manifest, origin, now):
         return result
     if expected is None or not validate(expected, "platform-context-draft-0.1.schema.json"):
         return unresolved("expected_context_missing_or_invalid")
+    # Other companion profiles also use platform_policy. Only matching profile
+    # identities compete for this reader; all binding checks still apply below.
     refs = [ref for ref in manifest.get("governance_artifacts", [])
-            if ref["type"] == "platform_policy"]
+            if (ref["type"] == "platform_policy"
+                and ref["schema_uri"] == "https://agenttrustmanifest.org/schemas/platform-controls-draft-0.1.schema.json"
+                and ref["version"] == "platform-controls-draft/0.1")]
     if len(refs) != 1:
         return unresolved("platform_profile_reference_missing_or_ambiguous")
     ref = refs[0]
