@@ -121,6 +121,8 @@ def fetch(origin, resolver=socket.getaddrinfo, connection=PinnedHTTPSConnection)
         body = response.read(MAX_BYTES + 1)
         if len(body) > MAX_BYTES:
             raise FetchError("document_too_large")
+        if lengths and len(body) != int(lengths[0]):
+            raise FetchError("incomplete_body")
         return body
     finally:
         client.close()

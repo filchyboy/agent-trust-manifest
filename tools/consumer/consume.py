@@ -114,7 +114,7 @@ def timestamp(value):
         raise ConsumerError("invalid_timestamp")
     try:
         return datetime.fromisoformat(value.replace("Z", "+00:00")).astimezone(timezone.utc)
-    except ValueError:
+    except (ValueError, OverflowError):
         raise ConsumerError("invalid_timestamp") from None
 
 
