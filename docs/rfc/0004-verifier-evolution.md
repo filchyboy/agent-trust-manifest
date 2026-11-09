@@ -1,6 +1,7 @@
 # Verifier evolution: timing, independent implementations and conformance
 
-Status: decision brief and local prototype, **not a normative profile revision**.
+Status: decision brief, updated with implemented offline-consumer coverage.
+**Not a normative timing-profile revision.**
 Current `atm-detached-jws/1` and `atm-invocation-finding/1` rules remain unchanged.
 No release, tag, merge, branch deletion or deployment is authorized by this brief.
 
@@ -75,30 +76,22 @@ revoked backdated signatures. Clock tolerance is not trustworthy timing proof.
 Do not fabricate observation timestamps or advise arbitrary backdating as a
 substitute for clock synchronization.
 
-## 3. Independent implementation milestone
+## 3. Independent offline implementation milestone
 
-The separate [Node prototype](../../tools/independent-verifier/README.md) now
-checks both positive and all 39 negative signing vectors independently of the
-Python verifier, including parsing, protected metadata, public JWKS and key
-status. It adds seven parser/lifecycle/CLI test groups and uses a pinned parser
-plus Node's standard crypto implementation.
+The separate [Node consumer](../../tools/independent-verifier/README.md) now
+checks both positive and all 39 negative signature vectors, plus 56 shared
+finding-consumer cases and 159 origin cases, independently of Python. It
+supports public-IP literals using an explicit address-policy snapshot and
+checks exact manifest bytes, subject/pointer/boolean/time bindings and explicit
+visitor selection. It preserves unresolved substantive truth and organizational
+independence, with false access output.
 
-This advances signature-profile interoperability beyond the original four
-primitive-negative checks. It does not complete the roadmap's broader second
-consumer:
-
-1. Specify and test public-IP origin equivalence; the prototype rejects all IP
-   literals and is explicitly DNS-only.
-2. Export finding-applicability vectors for typed values, exact subjects,
-   observation windows, manifest refresh, unselected assessors and publisher
-   self-assessment, with expected authentication/applicability/acceptance states.
-3. Implement those finding checks independently and preserve unresolved truth,
-   organizational independence and access decisions.
-4. Obtain review or replay by another implementer; multiple implementations in
-   one project are not themselves an independent assessment of the protocol.
-
-No network fetching or finding lifecycle is hidden inside the new prototype.
-Offline snapshot provenance remains an explicit operator assumption.
+This implements the bounded offline consumer class in two code paths. It does
+not claim independent HTTP/TLS retrieval conformance or a finding lifecycle.
+Operator-selected offline key provenance remains an assumption. Third-party
+replay/review by another implementer remains outstanding; two implementations
+maintained in the same project are not themselves an independent assessment
+of the protocol or a complete production conformance certificate.
 
 ## 4. Documentation and normative/default choices
 
@@ -127,5 +120,30 @@ silently declaring the entire repository production normative.
   case and finding-status expectations.
 - Accept or reject the coordinated 60-second future-only tolerance in a new
   profile identifier; preserve exact expiry and compromise handling either way.
-- Complete the independent consumer acceptance matrix before claiming that
-  milestone complete. Keep strict-format and release-default changes explicit.
+- Obtain third-party replay/review of the completed offline acceptance matrix.
+  Keep strict-format and release-default changes explicit.
+
+## Review completion decisions
+
+The compatibility-safe work is now implemented: the independent Node consumer
+checks finding applicability and visitor selection, supports public-IP origins,
+and executes the same 56 finding and 159 origin cases as Python. CI checks all
+25 distinct examples with explicit strict formats; the CLI retains structural
+defaults and adds explicit `--structural-only`. Core conformance requirements
+use BCP 14 wording for existing requirements only, with a published class/check
+matrix. No old closed schema, enum or signed v1 representation is widened.
+
+V1's timing rules are retained as an explicit compatibility decision, not
+reported as a missing bug fix. New tests reject future issuance at 59/60/61
+seconds and enforce exact expiry and 24-hour boundaries. Both consumers add
+only a visitor-selected maximum observation age that can make acceptance
+stricter without changing authenticity or applicability.
+
+The consequential unresolved product decision is the intended audit use case:
+which deployment/control snapshot is assessed, how old an observation may be,
+what withdrawal/status evidence exists, and what replay horizon the visitor
+will accept. Without those inputs, selecting longer lifetimes or a universal
+age default would be a guess. Any future 60-second clock allowance still needs
+a separately identified profile and its full clock matrix; it has not been
+enabled in v1. Independent third-party replay/review remains desirable and is
+not established merely by maintaining two implementations in this repository.

@@ -21,6 +21,6 @@ for (const c of corpus.negative_vectors) {
   catch (e) { if (!(e instanceof Rejection)) throw e; reason = e.message; }
   if (reason !== c.expected_reason) failures.push({id: c.id, expected: c.expected_reason, actual: reason});
 }
-console.log(JSON.stringify({implementation: 'independent-node-dns-v1', positive: bases.size,
+console.log(JSON.stringify({implementation: 'independent-node-v1', positive: bases.size,
   negative: corpus.negative_vectors.length, passed: !failures.length, failures}));
 process.exitCode = failures.length ? 1 : 0;

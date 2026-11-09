@@ -1,0 +1,104 @@
+{
+  "cases": [
+    {
+      "document": "examples/basic-manifest.json",
+      "schema": "schemas/agent-trust-manifest.schema.json"
+    },
+    {
+      "document": "examples/signed-manifest.json",
+      "schema": "schemas/agent-trust-manifest.schema.json"
+    },
+    {
+      "document": "examples/verification-report.json",
+      "schema": "schemas/verification-report.schema.json"
+    },
+    {
+      "document": "examples/reputation-feed.json",
+      "schema": "schemas/reputation-feed.schema.json"
+    },
+    {
+      "document": "examples/attestation-envelope.json",
+      "schema": "schemas/attestation-envelope.schema.json"
+    },
+    {
+      "document": "examples/capability-catalog.json",
+      "schema": "schemas/capability-catalog.schema.json"
+    },
+    {
+      "document": "examples/operational-status-feed.json",
+      "schema": "schemas/operational-status-feed.schema.json"
+    },
+    {
+      "document": "examples/revocation-feed.json",
+      "schema": "schemas/revocation-feed.schema.json"
+    },
+    {
+      "document": "examples/consumer/manifest.json",
+      "schema": "schemas/agent-trust-manifest.schema.json"
+    },
+    {
+      "document": "examples/consumer/operational-status.json",
+      "schema": "schemas/operational-status-feed.schema.json"
+    },
+    {
+      "document": "examples/consumer/stale-manifest.json",
+      "schema": "schemas/agent-trust-manifest.schema.json"
+    },
+    {
+      "document": "examples/consumer/tampered-status.json",
+      "schema": "schemas/operational-status-feed.schema.json"
+    },
+    {
+      "document": "examples/consumer/platform-controls/manifest.json",
+      "schema": "schemas/agent-trust-manifest.schema.json"
+    },
+    {
+      "document": "examples/consumer/platform-controls/profile.json",
+      "schema": "schemas/platform-controls-draft-0.1.schema.json"
+    },
+    {
+      "document": "examples/consumer/platform-controls/expected-context.json",
+      "schema": "schemas/platform-context-draft-0.1.schema.json"
+    },
+    {
+      "document": "examples/consumer/protocol-support/manifest.json",
+      "schema": "schemas/agent-trust-manifest.schema.json"
+    },
+    {
+      "document": "examples/consumer/protocol-support/declaration.json",
+      "schema": "schemas/protocol-support-draft-0.1.schema.json"
+    },
+    {
+      "document": "examples/consumer/protocol-support/expected-context.json",
+      "schema": "schemas/platform-context-draft-0.1.schema.json"
+    },
+    {
+      "document": "examples/consumer/protocol-support/known-vocabulary.json",
+      "schema": "schemas/protocol-vocabulary-demo-0.1.schema.json"
+    },
+    {
+      "document": "examples/validation-chain/manifest.json",
+      "schema": "schemas/agent-trust-manifest.schema.json"
+    },
+    {
+      "document": "examples/rating-normalization/normalized-feed.json",
+      "schema": "schemas/reputation-feed.schema.json"
+    },
+    {
+      "document": "examples/signing/manifest.json",
+      "schema": "schemas/agent-trust-manifest.schema.json"
+    },
+    {
+      "document": "examples/signing/finding.json",
+      "schema": "schemas/invocation-finding-v1.schema.json"
+    },
+    {
+      "document": "examples/signing/publisher.jwks.json",
+      "schema": "schemas/signing-jwks-v1.schema.json"
+    },
+    {
+      "document": "examples/signing/assessor.jwks.json",
+      "schema": "schemas/signing-jwks-v1.schema.json"
+    }
+  ]
+}

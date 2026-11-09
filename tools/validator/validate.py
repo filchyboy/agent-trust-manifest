@@ -57,7 +57,9 @@ def pointer(path):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--strict-formats", action="store_true",
+    modes = parser.add_mutually_exclusive_group()
+    modes.add_argument("--structural-only", action="store_true", help="explicitly select the existing structural-only default")
+    modes.add_argument("--strict-formats", action="store_true",
                         help="also check schema format annotations; not full conformance or authenticity")
     parser.add_argument("document")
     parser.add_argument("schema")

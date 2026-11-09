@@ -71,3 +71,15 @@ deployment-bound observations, tenant removal, notifications and access
 decisions are out of scope. A signature-valid finding may have been withdrawn
 without the offline consumer knowing; expiry and key revocation do not provide
 a full finding lifecycle. No assessor trust registry is supplied.
+
+## Optional visitor freshness policy (non-normative tooling guidance)
+
+The reference consumers accept an optional visitor-selected maximum observation
+age, measured from `observation.end` to the decision time. The Python CLI names
+it `--max-finding-age-seconds`; values are 0 through 86400 inclusive. Omission
+preserves the original v1 behavior. A finding older than that selected maximum
+can remain authenticated and applicable while acceptance is unresolved with
+`finding_observation_too_old`. This adds no signed fields and never extends an
+expiry, admits a future date, bypasses key revocation or weakens v1's 24-hour
+observation-to-expiry cap. It is a visitor policy input, not a platform verdict
+about assessment truth or a mandated universal assessment age.

@@ -1,5 +1,12 @@
 # Agent Trust Manifest Draft Specification v0.2.0
 
+Uppercase requirement words in this document use the meanings defined by
+[BCP 14 / RFC 2119](https://www.rfc-editor.org/rfc/rfc2119) and
+[RFC 8174](https://www.rfc-editor.org/rfc/rfc8174). Lowercase design advice is
+ordinary guidance. The conformance requirements below restate the existing
+v0.2.0 schema, required-field and timestamp rules; schemas and accepted legacy
+shapes are unchanged. See the [conformance classes](conformance.md).
+
 ## 1. Overview
 
 The Agent Trust Manifest (ATM) is a JSON document published by a system operator to declare machine-readable trust properties for agent interaction.
@@ -118,9 +125,9 @@ The existing v0.2.0 schema does not encode all these role and applicability dist
 
 A manifest conforms to ATM v0.2.0 if:
 
-- it validates against the JSON schema
-- required fields are present
-- timestamps are syntactically valid
-- extension sections, if present, conform to their extension specs
+- it MUST validate against the core JSON Schema;
+- it MUST include the required fields and types specified above;
+- its timestamps MUST use syntactically valid RFC 3339 representations;
+- extension sections, when present, MUST conform to their applicable extension specifications.
 
 The reference CLI defaults to structural schema constraints. Its optional `--strict-formats` mode also checks URI and timestamp formats. Neither mode verifies signatures or hashes or establishes the truth of declared claims. Passing the CLI alone does not demonstrate all of the conformance requirements above or establish authenticity.

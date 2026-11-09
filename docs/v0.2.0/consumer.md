@@ -149,3 +149,14 @@ evidence; it does not say that the selected signing JWKS was ignored. Other
 hold reasons remain in force, and no accepted finding changes a hold into approval.
 Consumer exit 0 still means manual review, even if optional authentication
 failed. It is not an authentication success flag.
+
+## Visitor-selected observation age
+
+`--max-finding-age-seconds N` optionally tightens the accepted invocation
+finding's observation age, with `N` from 0 to 86400 inclusive. The boundary is
+inclusive: `now - observation.end <= N`. No default maximum is newly selected;
+omitting the option preserves v1. Over-age evidence may still authenticate
+and match its subject/digest while acceptance remains unresolved. It does not
+clear the unresolved-claim policy reason or grant access. Supplying an age
+option without finding inputs gives an explicit unresolved input reason.
+V1's existing expiry, future-date, key and interval checks still apply first.

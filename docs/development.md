@@ -26,12 +26,14 @@ runtime or silently substitute an unverified patch version.
 ## Tests and independent verifier
 
 The Python suite also uses Node for the existing vector harness. CI selects
-Node 22. For the separate local verifier prototype, install its locked parser
+Node 22. For the separate independent offline consumer, install its locked parser
 with package scripts disabled; it does not modify global npm settings:
 
 ```sh
 .venv/bin/python -m unittest discover -s tests
 .venv/bin/python tools/signing/check_vectors.py
+.venv/bin/python tools/signing/check_consumer_vectors.py
+.venv/bin/python tools/validator/check_examples.py --strict-formats
 node tools/signing/interop.mjs
 npm ci --ignore-scripts --prefix tools/independent-verifier
 npm test --prefix tools/independent-verifier

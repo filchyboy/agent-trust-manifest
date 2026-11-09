@@ -13,6 +13,33 @@ not announce a new release or tag. Core schemas retain their existing versions.
 | Consumer | Optional bounded reference demonstration; publisher authentication and one claim's visitor-selected acceptance are separate from access decisions |
 | Rating normalization and host lifecycle proposals | Fictional normalization fixtures and design guidance; no provider integration or automated host lifecycle |
 
+### Remaining original review completion
+
+- Add an independent offline Node finding consumer and bounded CLI. Both
+  implementations check 56 shared acceptance/applicability cases and 159 origin
+  cases; Node now handles public IPv4/IPv6 literals and retains the existing
+  two-positive/39-negative signature corpus.
+- Add an optional visitor-selected maximum observation age to both consumers.
+  It only tightens acceptance; authenticated applicability is separate. Preserve
+  v1 expiry, 24-hour limits, zero skew and revoked-key handling. Boundary cases
+  cover exact expiry, 24-hour limits and future issuance at 59/60/61 seconds.
+- Explicitly select strict formats for all 25 distinct CI authoring examples,
+  preserving the structural CLI default and adding `--structural-only` for
+  explicit callers. Remove one duplicate fixture invocation from the former
+  26-command workflow through a curated local catalogue.
+- Restate existing core conformance requirements using BCP 14 words and publish
+  a class/check matrix. No core schema assertions, required fields, enums or
+  legacy placeholder permissions change; no truth or access guarantee is added.
+- Audit the six older remote branch tips rather than deleting from a review
+  label alone. Three are not ancestors of current main and all six names are
+  used by local worktrees. Preserve them and all worktrees. No release is tagged.
+
+The unresolved product decision is a new audit/timing profile: actual control
+snapshot, acceptable observation age/replay horizon, status/withdrawal evidence
+and consistent clock allowance. No universal long lifetime or v2 default is
+invented. Independent organizational review, network conformance, finding
+status/revocation and deployment-bound evidence remain outside this change.
+
 ### Reporting and vector follow-up
 
 - Reconcile successful publisher authentication with the consumer's reason
@@ -22,7 +49,8 @@ not announce a new release or tag. Core schemas retain their existing versions.
 - Export 39 exact negative JWS inputs and expected rejection reasons alongside
   the two positive vectors. Run the whole corpus with the reference Python
   verifier; independently reject four cryptographic tamper cases with Node.
-  A complete second hostile-input profile implementation remains outstanding.
+  The original primitive-only harness did not cover full profile parsing or
+  finding acceptance; the remaining-review completion below adds that coverage.
 - Authenticate a finding once, cache the local schema registry per process,
   and use package imports with shared offline origin validation. Preserve direct
   CLI entry points and bounded fetch behavior.
@@ -71,12 +99,12 @@ preserved; they document compatibility and security decisions. Merged remote
 branches have not been deleted. No release/tag, deployment, notification,
 trust-registry integration, or full finding lifecycle is introduced here.
 
-### Local independent-verifier and documentation follow-up
+### Initial independent-verifier and documentation follow-up (historical)
 
-A separate DNS-origin Node prototype now checks the two positive and all 39
+At that stage, a separate DNS-origin Node prototype checked the two positive and all 39
 negative signing vectors without invoking Python. Seven additional Node test
 groups cover strict parsing, lexical date types, retirement, CLI behavior and
-origin limits. It remains offline, rejects IP origins, and does not implement
+origin limits. That initial prototype was offline, rejected IP origins, and did not implement
 finding applicability or relying-party acceptance. This is progress toward a
 second implementation, not completion of the independent-consumer milestone.
 

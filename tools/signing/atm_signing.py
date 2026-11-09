@@ -227,12 +227,14 @@ def applicable_manifest(manifest, expected_origin, now):
     require(dates[0] <= now < dates[1], "stale_or_future_manifest")
 
 
-def inspect_finding(raw, signature, jwks, manifest_raw, platform_origin, assessor_origin, trusted_assessors, now):
+def inspect_finding(raw, signature, jwks, manifest_raw, platform_origin, assessor_origin, trusted_assessors, now, max_observation_age=None):
     """Authenticate separately from applicability and explicit visitor acceptance."""
     authentication, h = _authenticate(raw, signature, jwks, assessor_origin, FINDING, now)
     result = {"authentication": authentication,
               "applicability": "unresolved", "acceptance": "unresolved", "access_granted": False}
     try:
+        require(max_observation_age is None or (type(max_observation_age) is int
+                and 0 <= max_observation_age <= 86400), "invalid_observation_age_policy")
         require(isinstance(trusted_assessors, (list, tuple)) and len(trusted_assessors) <= 8, "too_many_assessors")
         selected = [origin(item) for item in trusted_assessors]
         require(result["authentication"]["state"] == "authenticated", "finding_not_authenticated")
@@ -266,6 +268,8 @@ def inspect_finding(raw, signature, jwks, manifest_raw, platform_origin, assesso
                       limitations=f["limitations"])
         require(assessor_origin in selected, "assessor_not_selected")
         require(assessor_origin != platform_origin and f["assessor"]["relationship"] == "independent", "independent_assessor_required")
+        require(max_observation_age is None or now - obs["end"] <= max_observation_age,
+                "finding_observation_too_old")
         require(f["result"] == "pass" and claim["value"] is True, "finding_not_supportive")
         result.update(acceptance="accepted_for_claim", reason="visitor_selected_assessor")
     except VerificationError as exc:
