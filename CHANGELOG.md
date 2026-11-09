@@ -2,13 +2,24 @@
 
 ## Unreleased
 
-This section describes work on `main` after the v0.2.0 draft baseline; it does
-not announce a new release or tag. Core schemas retain their existing versions.
+- Clarify release status, current signature-failure handling and offline
+  interoperability coverage in the README and signing rollout notes. These
+  editorial corrections follow the immutable v0.3.0 snapshot; they do not
+  change protocol rules or runtime behavior.
+
+## v0.3.0 — tagged snapshot; GitHub release draft
+
+The tag identifies commit `2867bd876c63304474d51368fe4ce6430c343a3c`, including
+PR #13. As of 2026-11-09 its GitHub release is an unpublished draft prerelease.
+The entries below describe changes since the published v0.2.0 baseline included
+in that snapshot. Project version v0.3.0 does not change core `atm_version: 0.2.0`,
+`atm-detached-jws/1` or `atm-invocation-finding/1`. Later changes appear under
+Unreleased above; the tag is not moved to include them.
 
 | Area | Status and boundary |
 | --- | --- |
 | Core manifest and legacy verification/attestation schemas | Existing draft contracts, preserved for compatibility |
-| `atm-detached-jws/1` and `atm-invocation-finding/1` | Optional normative profiles with reference code and reproducible vectors; unreleased |
+| `atm-detached-jws/1` and `atm-invocation-finding/1` | Optional normative profiles with reference code and reproducible vectors in the tagged snapshot |
 | Platform-controls and protocol-support 0.1 | Experimental companion drafts, not part of the original release contract |
 | Consumer | Optional bounded reference demonstration; publisher authentication and one claim's visitor-selected acceptance are separate from access decisions |
 | Rating normalization and host lifecycle proposals | Fictional normalization fixtures and design guidance; no provider integration or automated host lifecycle |
@@ -70,7 +81,7 @@ status/revocation and deployment-bound evidence remain outside this change.
   and use package imports with shared offline origin validation. Preserve direct
   CLI entry points and bounded fetch behavior.
 
-### Existing unreleased additions
+### Additional changes in the snapshot
 
 - [Detached signing and assessor pilot](docs/signing-v1-release-notes.md):
   exact-byte Ed25519 JWS, origin/type/expiry bindings, same-origin public JWKS,
