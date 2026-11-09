@@ -5,10 +5,13 @@ platform's controls and references to supporting assessments. A visiting agent
 can discover a claim, authenticate its source under a selected profile, check
 what an assessment covers, and choose whether to rely on the assessor.
 
-**Status:** the core schema is **v0.2.0 draft**. `main` also contains unreleased
-optional normative signing/finding v1 profiles, experimental companion drafts,
-and reference tooling. The [changelog](CHANGELOG.md) distinguishes them; no
-v0.3.0 release or tag is implied.
+**Status (2026-11-09):** the core schema remains **v0.2.0 draft**. The project
+snapshot [tagged v0.3.0](https://github.com/filchyboy/agent-trust-manifest/tree/v0.3.0)
+includes optional normative signing/finding v1 profiles, experimental companion
+drafts and reference tooling. Its GitHub release is an **unpublished draft**;
+v0.2.0 remains the published prerelease. Project tags do not change `atm_version`
+or profile identifiers. The [changelog](CHANGELOG.md) separates the tagged
+snapshot from later work.
 
 ## Responsibility and trust
 
@@ -38,7 +41,7 @@ external. See the [verification specification](spec/verification-spec.md),
 | --- | --- |
 | Publish declarations | [Core manifest](spec/manifest-spec.md), with the existing v0.2.0 schema |
 | Discover assessment and reputation records | [Verification](spec/verification-spec.md) and [reputation](spec/reputation-spec.md) extensions; attribution/applicability still need an authenticated profile |
-| Authenticate exact manifest or finding bytes | [Detached signing v1](spec/signing-profile-v1.md), optional normative profile, unreleased |
+| Authenticate exact manifest or finding bytes | [Detached signing v1](spec/signing-profile-v1.md), optional normative profile included in the v0.3.0 snapshot |
 | Assess explicit invocation | [Invocation finding v1](spec/finding-profile-v1.md), optional full-manifest digest profile for one typed platform claim |
 | Describe scoped controls/capability conditions | [Platform-controls 0.1](spec/platform-controls-draft-0.1.md), experimental sidecar/context retaining assessed-controls snapshots |
 | Declare external mechanism support | [Protocol-support 0.1](spec/protocol-support-draft-0.1.md), experimental declaration; no adapter or protocol execution |
@@ -84,8 +87,11 @@ publisher, fictional assessor, raw-byte signatures and explicit offline key
 snapshots. It demonstrates publisher authentication, finding applicability,
 and visitor-selected acceptance for the invocation claim as separate results.
 The consumer names that one accepted claim and leaves other interaction claims
-unresolved. Its original `hold`/`manual_review` triage and false access/approval
-outputs remain intact.
+unresolved. Invalid requested publisher authentication forces `hold`, exit 1
+and `manifest_signature_invalid:<reason>`; a separately accepted assessor finding
+cannot clear that hold. Confirmed signature absence and unavailable inputs stay
+distinct. `manual_review` and exit 0 do not establish authentication; access and
+approval remain false. See the [consumer contract](docs/v0.2.0/consumer.md).
 
 ```sh
 .venv/bin/python tools/signing/check_vectors.py
@@ -96,9 +102,11 @@ The portable corpus contains two valid cases and 39 exact negative inputs with
 expected rejection reasons. Python runs the complete corpus; the original Node
 harness independently checks the positive signatures and four cryptographic
 negative cases. A [separate Node offline consumer](tools/independent-verifier/README.md)
-now checks the signature corpus plus 56 shared finding-consumer cases and 159
-origin cases, with public-IP origins and independent finding applicability and
-visitor acceptance. These checks preserve unresolved truth and independence.
+checks the signature corpus plus eight authentication outcomes, 56 shared
+finding-consumer cases and 159 origin cases, with public-IP origins and separate
+finding applicability and visitor acceptance. Both implementations were developed
+within this project; this is not external independent validation. Truth and
+organizational independence remain unresolved.
 
 Network manifest authentication is optional and limited to fixed same-origin
 manifest/signature/JWKS paths. Generic evidence links are never automatically
