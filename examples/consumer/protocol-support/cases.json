@@ -1,0 +1,441 @@
+[
+  {
+    "name": "multiple_mechanisms_positive",
+    "changes": {},
+    "remove": [],
+    "schema_valid": true,
+    "illustration_state": "declarations_read",
+    "reason": "declarations_are_not_authority"
+  },
+  {
+    "name": "platform_operator",
+    "changes": {
+      "publisher.role": "platform_operator"
+    },
+    "remove": [],
+    "schema_valid": true,
+    "illustration_state": "declarations_read",
+    "reason": "declarations_are_not_authority"
+  },
+  {
+    "name": "missing_version",
+    "changes": {},
+    "remove": [
+      "mechanisms.recognition_a.version"
+    ],
+    "schema_valid": false,
+    "illustration_state": "unresolved",
+    "reason": "declaration_schema_invalid"
+  },
+  {
+    "name": "missing_profile",
+    "changes": {},
+    "remove": [
+      "mechanisms.recognition_a.profile"
+    ],
+    "schema_valid": false,
+    "illustration_state": "unresolved",
+    "reason": "declaration_schema_invalid"
+  },
+  {
+    "name": "missing_tenant",
+    "changes": {},
+    "remove": [
+      "applies_to.scope.tenant"
+    ],
+    "schema_valid": false,
+    "illustration_state": "unresolved",
+    "reason": "declaration_schema_invalid"
+  },
+  {
+    "name": "wildcard_tenant",
+    "changes": {
+      "applies_to.scope.tenant": "*"
+    },
+    "remove": [],
+    "schema_valid": false,
+    "illustration_state": "unresolved",
+    "reason": "declaration_schema_invalid"
+  },
+  {
+    "name": "cross_tenant",
+    "changes": {
+      "applies_to.scope.tenant": "other-tenant"
+    },
+    "remove": [],
+    "schema_valid": true,
+    "illustration_state": "unresolved",
+    "reason": "applicability_mismatch"
+  },
+  {
+    "name": "wrong_surface",
+    "changes": {
+      "applies_to.scope.surface": "other-surface"
+    },
+    "remove": [],
+    "schema_valid": true,
+    "illustration_state": "unresolved",
+    "reason": "applicability_mismatch"
+  },
+  {
+    "name": "wrong_deployment",
+    "changes": {
+      "applies_to.scope.deployment": "other-deployment"
+    },
+    "remove": [],
+    "schema_valid": true,
+    "illustration_state": "unresolved",
+    "reason": "applicability_mismatch"
+  },
+  {
+    "name": "wrong_capability",
+    "changes": {
+      "applies_to.capability_id": "other-capability"
+    },
+    "remove": [],
+    "schema_valid": true,
+    "illustration_state": "unresolved",
+    "reason": "applicability_mismatch"
+  },
+  {
+    "name": "changed_policy",
+    "changes": {
+      "applies_to.scope.policy_version": "other-policy"
+    },
+    "remove": [],
+    "schema_valid": true,
+    "illustration_state": "unresolved",
+    "reason": "applicability_mismatch"
+  },
+  {
+    "name": "agent_subject",
+    "changes": {
+      "applies_to.subject.type": "agent"
+    },
+    "remove": [],
+    "schema_valid": false,
+    "illustration_state": "unresolved",
+    "reason": "declaration_schema_invalid"
+  },
+  {
+    "name": "per_mechanism_tenant_override",
+    "changes": {
+      "mechanisms.recognition_a.tenant": "other-tenant"
+    },
+    "remove": [],
+    "schema_valid": false,
+    "illustration_state": "unresolved",
+    "reason": "declaration_schema_invalid"
+  },
+  {
+    "name": "optional_unknown_version",
+    "changes": {
+      "mechanisms.payment_a.version": "99.0",
+      "requirements": []
+    },
+    "remove": [],
+    "schema_valid": true,
+    "illustration_state": "declarations_read",
+    "reason": "declarations_are_not_authority"
+  },
+  {
+    "name": "required_unknown_version",
+    "changes": {
+      "mechanisms.payment_a.version": "99.0"
+    },
+    "remove": [],
+    "schema_valid": true,
+    "illustration_state": "unresolved",
+    "reason": "required_mechanism_unresolved"
+  },
+  {
+    "name": "required_unknown_profile",
+    "changes": {
+      "mechanisms.payment_a.profile": "unknown-profile"
+    },
+    "remove": [],
+    "schema_valid": true,
+    "illustration_state": "unresolved",
+    "reason": "required_mechanism_unresolved"
+  },
+  {
+    "name": "required_unknown_protocol",
+    "changes": {
+      "mechanisms.payment_a.protocol_id": "urn:example:unrecognized"
+    },
+    "remove": [],
+    "schema_valid": true,
+    "illustration_state": "unresolved",
+    "reason": "required_mechanism_unresolved"
+  },
+  {
+    "name": "required_wrong_specification",
+    "changes": {
+      "mechanisms.payment_a.specification_uri": "https://specs.example/another-spec"
+    },
+    "remove": [],
+    "schema_valid": true,
+    "illustration_state": "unresolved",
+    "reason": "required_mechanism_unresolved"
+  },
+  {
+    "name": "one_of_known_and_unknown",
+    "changes": {
+      "mechanisms.recognition_b.version": "99.0"
+    },
+    "remove": [],
+    "schema_valid": true,
+    "illustration_state": "declarations_read",
+    "reason": "declarations_are_not_authority"
+  },
+  {
+    "name": "one_of_all_unknown",
+    "changes": {
+      "mechanisms.recognition_a.version": "99.0",
+      "mechanisms.recognition_b.version": "99.0"
+    },
+    "remove": [],
+    "schema_valid": true,
+    "illustration_state": "unresolved",
+    "reason": "required_mechanism_unresolved"
+  },
+  {
+    "name": "all_of_one_unknown",
+    "changes": {
+      "requirements": [
+        {
+          "mode": "all_of",
+          "mechanisms": [
+            "recognition_a",
+            "recognition_b"
+          ]
+        }
+      ],
+      "mechanisms.recognition_b.version": "99.0"
+    },
+    "remove": [],
+    "schema_valid": true,
+    "illustration_state": "unresolved",
+    "reason": "required_mechanism_unresolved"
+  },
+  {
+    "name": "required_unsupported",
+    "changes": {
+      "mechanisms.payment_a.support": "unsupported"
+    },
+    "remove": [],
+    "schema_valid": true,
+    "illustration_state": "unresolved",
+    "reason": "required_mechanism_unresolved"
+  },
+  {
+    "name": "required_unknown_support",
+    "changes": {
+      "mechanisms.payment_a.support": "unknown"
+    },
+    "remove": [],
+    "schema_valid": true,
+    "illustration_state": "unresolved",
+    "reason": "required_mechanism_unresolved"
+  },
+  {
+    "name": "optional_unsupported",
+    "changes": {
+      "mechanisms.payment_a.support": "unsupported",
+      "requirements": []
+    },
+    "remove": [],
+    "schema_valid": true,
+    "illustration_state": "declarations_read",
+    "reason": "declarations_are_not_authority"
+  },
+  {
+    "name": "dangling_requirement",
+    "changes": {
+      "requirements.0.mechanisms": [
+        "missing_key"
+      ]
+    },
+    "remove": [],
+    "schema_valid": true,
+    "illustration_state": "unresolved",
+    "reason": "requirement_reference_unresolved"
+  },
+  {
+    "name": "empty_alternatives",
+    "changes": {
+      "requirements.0.mechanisms": []
+    },
+    "remove": [],
+    "schema_valid": false,
+    "illustration_state": "unresolved",
+    "reason": "declaration_schema_invalid"
+  },
+  {
+    "name": "unknown_requirement_operator",
+    "changes": {
+      "requirements.0.mode": "any"
+    },
+    "remove": [],
+    "schema_valid": false,
+    "illustration_state": "unresolved",
+    "reason": "declaration_schema_invalid"
+  },
+  {
+    "name": "missing_requirements",
+    "changes": {},
+    "remove": [
+      "requirements"
+    ],
+    "schema_valid": false,
+    "illustration_state": "unresolved",
+    "reason": "declaration_schema_invalid"
+  },
+  {
+    "name": "explicit_empty_declaration",
+    "changes": {
+      "mechanisms": {},
+      "requirements": []
+    },
+    "remove": [],
+    "schema_valid": true,
+    "illustration_state": "unresolved",
+    "reason": "support_not_declared"
+  },
+  {
+    "name": "stale_declaration",
+    "changes": {
+      "expires_at": "2026-10-06T18:00:00Z"
+    },
+    "remove": [],
+    "schema_valid": true,
+    "illustration_state": "unresolved",
+    "reason": "declaration_freshness_stale"
+  },
+  {
+    "name": "unknown_support_token",
+    "changes": {
+      "mechanisms.payment_a.support": "certified"
+    },
+    "remove": [],
+    "schema_valid": false,
+    "illustration_state": "unresolved",
+    "reason": "declaration_schema_invalid"
+  },
+  {
+    "name": "independent_test_reference",
+    "changes": {
+      "mechanisms.payment_a.test_report": {
+        "uri": "https://assessments.example/report-1",
+        "assessor_id": "urn:example:assessor",
+        "relationship": "independent"
+      }
+    },
+    "remove": [],
+    "schema_valid": true,
+    "illustration_state": "declarations_read",
+    "reason": "declarations_are_not_authority"
+  },
+  {
+    "name": "independent_test_is_not_support_state",
+    "changes": {
+      "mechanisms.payment_a.support": "independently_tested"
+    },
+    "remove": [],
+    "schema_valid": false,
+    "illustration_state": "unresolved",
+    "reason": "declaration_schema_invalid"
+  },
+  {
+    "name": "endpoint_not_specification",
+    "changes": {
+      "mechanisms.payment_a.specification_uri": "https://consumer-demo.example/mechanisms/payment-a"
+    },
+    "remove": [],
+    "schema_valid": true,
+    "illustration_state": "unresolved",
+    "reason": "required_mechanism_unresolved"
+  },
+  {
+    "name": "approval_injection",
+    "changes": {
+      "approval_granted": true
+    },
+    "remove": [],
+    "schema_valid": false,
+    "illustration_state": "unresolved",
+    "reason": "declaration_schema_invalid"
+  },
+  {
+    "name": "new_fields_not_old_profile",
+    "changes": {
+      "profile_version": "platform-controls-draft/0.1"
+    },
+    "remove": [],
+    "schema_valid": false,
+    "illustration_state": "unresolved",
+    "reason": "declaration_schema_invalid"
+  },
+  {
+    "name": "mutable_version",
+    "changes": {
+      "mechanisms.payment_a.version": "latest"
+    },
+    "remove": [],
+    "schema_valid": false,
+    "illustration_state": "unresolved",
+    "reason": "declaration_schema_invalid"
+  },
+  {
+    "name": "wildcard_profile",
+    "changes": {
+      "mechanisms.payment_a.profile": "*"
+    },
+    "remove": [],
+    "schema_valid": false,
+    "illustration_state": "unresolved",
+    "reason": "declaration_schema_invalid"
+  },
+  {
+    "name": "optional_unknown_support",
+    "changes": {
+      "mechanisms.payment_a.support": "unknown",
+      "requirements": []
+    },
+    "remove": [],
+    "schema_valid": true,
+    "illustration_state": "declarations_read",
+    "reason": "declarations_are_not_authority"
+  },
+  {
+    "name": "joint_known_requirements",
+    "changes": {
+      "requirements": [
+        {
+          "mode": "all_of",
+          "mechanisms": [
+            "recognition_a",
+            "payment_a"
+          ]
+        }
+      ]
+    },
+    "remove": [],
+    "schema_valid": true,
+    "illustration_state": "declarations_read",
+    "reason": "declarations_are_not_authority"
+  },
+  {
+    "name": "dangling_alternative_with_known",
+    "changes": {
+      "requirements.0.mechanisms": [
+        "recognition_a",
+        "missing_key"
+      ]
+    },
+    "remove": [],
+    "schema_valid": true,
+    "illustration_state": "unresolved",
+    "reason": "requirement_reference_unresolved"
+  }
+]

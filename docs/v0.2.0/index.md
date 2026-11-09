@@ -9,8 +9,9 @@ These pages navigate the v0.2.0 draft schemas and specifications. The reference 
 1. [Core manifest](../../spec/manifest-spec.md): declarations, artifact references, issuer hints and responsibility labels.
 2. [Verification](../../spec/verification-spec.md), [reputation](../../spec/reputation-spec.md), and [attestation](../../spec/attestation-spec.md): evidence models and consumer responsibilities. Verification and attestation retain v0.1.0 document versions.
 3. [Worked fictional example](worked-example.md): compare exact status bytes with a manifest digest, then observe a decision that grants no access.
-4. [Reference consumer](consumer.md): supported inputs, states, limits and network boundary.
-5. [Design-review questions](../rfc/0001-consumer-policy.md): scope, freshness, failure behavior and issuer trust remain review topics.
+4. [Claim-to-validation example](validation-chain.md): follow a publisher reference to a validator's own finding and distinguish provenance from truth. This is the intended flow, not an implemented network verifier.
+5. [Reference consumer](consumer.md): supported inputs, states, limits and network boundary.
+6. [Design-review questions](../rfc/0001-consumer-policy.md): scope, freshness, failure behavior and issuer trust remain review topics.
 
 ## Schemas
 
@@ -25,3 +26,11 @@ These pages navigate the v0.2.0 draft schemas and specifications. The reference 
 ## Project guidance
 
 [Contributing](../../CONTRIBUTING.md) · [Security reporting](../../SECURITY.md) · [Versioning](../../governance/VERSIONING.md) · [Threat model](../threat-model.md) · [Key management](../key-management.md)
+
+## Unreleased work
+
+[Platform-control profile 0.1](../../spec/platform-controls-draft-0.1.md) is a separately versioned experimental sidecar/context, not part of the v0.2.0 release contract. [Issue #1](https://github.com/filchyboy/agent-trust-manifest/issues/1) remains the open design record.
+
+[External protocol-support declarations](../../spec/protocol-support-draft-0.1.md) are a separate draft companion compatible with core ATM 0.2.0, with [consumer illustrations](../protocol-support-consumers.md). Neither changes the existing release/profile contracts or implements an external protocol.
+
+[Third-party findings and host claim lifecycle](../rfc/0002-third-party-claims-and-host-lifecycle.md) develops tenant scope, normalized ratings, chosen trust and failure/withdrawal/notification policy. This is an unreleased design, not implemented behavior or a schema expansion.

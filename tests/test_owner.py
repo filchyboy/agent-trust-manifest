@@ -58,6 +58,10 @@ class ArtifactOwnerTests(unittest.TestCase):
     def test_nonblank_whitespace_surrounding_label_is_valid(self):
         self.assertTrue(self.validator.is_valid(self.with_owner("  example_component\t")))
 
+    def test_validation_chain_manifest_is_structurally_valid(self):
+        document = json.loads((ROOT / "examples/validation-chain/manifest.json").read_text())
+        self.assertTrue(self.validator.is_valid(document))
+
     def test_basic_manifest_without_artifacts_remains_valid(self):
         document = json.loads((ROOT / "examples/basic-manifest.json").read_text())
         self.assertTrue(self.validator.is_valid(document))

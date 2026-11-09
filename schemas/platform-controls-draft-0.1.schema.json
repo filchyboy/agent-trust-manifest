@@ -1,0 +1,267 @@
+{
+  "type": "object",
+  "required": [
+    "profile_version",
+    "atm_version",
+    "manifest_version",
+    "origin",
+    "publisher",
+    "subject",
+    "scope",
+    "control_authority",
+    "enforcement_point",
+    "published_at",
+    "expires_at",
+    "capabilities",
+    "evidence"
+  ],
+  "properties": {
+    "profile_version": {
+      "const": "platform-controls-draft/0.1"
+    },
+    "atm_version": {
+      "const": "0.2.0"
+    },
+    "manifest_version": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "origin": {
+      "type": "string",
+      "format": "uri"
+    },
+    "publisher": {
+      "$ref": "#/$defs/identity"
+    },
+    "subject": {
+      "$ref": "#/$defs/subject"
+    },
+    "scope": {
+      "$ref": "#/$defs/scope"
+    },
+    "control_authority": {
+      "$ref": "#/$defs/identity"
+    },
+    "enforcement_point": {
+      "$ref": "#/$defs/identity"
+    },
+    "published_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "platform_permission",
+          "access_conditions",
+          "approval_required"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "platform_permission": {
+            "enum": [
+              "allowed",
+              "refused",
+              "unknown"
+            ]
+          },
+          "access_conditions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "approval_required": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "maxItems": 32
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "assessor",
+          "relationship",
+          "claim",
+          "applies_to",
+          "observed_at",
+          "expires_at",
+          "result",
+          "assessed_controls"
+        ],
+        "properties": {
+          "assessor": {
+            "$ref": "#/$defs/identity"
+          },
+          "relationship": {
+            "enum": [
+              "self",
+              "independent",
+              "affiliated",
+              "unknown"
+            ]
+          },
+          "claim": {
+            "const": "platform_capability_conditions"
+          },
+          "applies_to": {
+            "$ref": "#/$defs/binding"
+          },
+          "observed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "result": {
+            "enum": [
+              "pass",
+              "fail",
+              "unknown"
+            ]
+          },
+          "assessed_controls": {
+            "$ref": "#/$defs/assessed_controls"
+          }
+        },
+        "additionalProperties": false
+      },
+      "maxItems": 32
+    }
+  },
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agenttrustmanifest.org/schemas/platform-controls-draft-0.1.schema.json",
+  "title": "Unreleased platform-control consumer profile 0.1 (ATM 0.2.0 sidecar)",
+  "$defs": {
+    "identity": {
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      },
+      "additionalProperties": false
+    },
+    "subject": {
+      "type": "object",
+      "required": [
+        "type",
+        "id"
+      ],
+      "properties": {
+        "type": {
+          "const": "platform"
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      },
+      "additionalProperties": false
+    },
+    "scope": {
+      "type": "object",
+      "required": [
+        "deployment",
+        "tenant",
+        "surface",
+        "policy_version"
+      ],
+      "properties": {
+        "deployment": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "tenant": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "surface": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "policy_version": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      },
+      "additionalProperties": false
+    },
+    "binding": {
+      "type": "object",
+      "required": [
+        "subject",
+        "scope",
+        "capability_id"
+      ],
+      "properties": {
+        "subject": {
+          "$ref": "#/$defs/subject"
+        },
+        "scope": {
+          "$ref": "#/$defs/scope"
+        },
+        "capability_id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      },
+      "additionalProperties": false
+    },
+    "assessed_controls": {
+      "type": "object",
+      "required": [
+        "control_authority",
+        "enforcement_point",
+        "capability"
+      ],
+      "properties": {
+        "control_authority": {
+          "$ref": "#/$defs/identity"
+        },
+        "enforcement_point": {
+          "$ref": "#/$defs/identity"
+        },
+        "capability": {
+          "$ref": "#/properties/capabilities/items"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "description": "Experimental sidecar, not an ATM core field or grant. Declared publisher, subject, authority, enforcement and assessor identities are not authenticated. Conditions are prerequisites, never caller eligibility or approval receipts."
+}

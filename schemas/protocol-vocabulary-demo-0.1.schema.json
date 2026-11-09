@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agenttrustmanifest.org/schemas/protocol-vocabulary-demo-0.1.schema.json",
+  "title": "Non-normative offline illustration vocabulary; not implemented adapters",
+  "type": "object",
+  "required": [
+    "recognized_tuples"
+  ],
+  "properties": {
+    "recognized_tuples": {
+      "type": "array",
+      "items": {
+        "$ref": "protocol-support-draft-0.1.schema.json#/$defs/mechanism_identity"
+      },
+      "maxItems": 32,
+      "uniqueItems": true
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agenttrustmanifest.org/schemas/platform-context-draft-0.1.schema.json",
+  "title": "Independently selected consumer expectation (not authority)",
+  "$ref": "platform-controls-draft-0.1.schema.json#/$defs/binding"
+}

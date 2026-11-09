@@ -1,0 +1,93 @@
+{
+  "profile_version": "protocol-support-draft/0.1",
+  "atm_version": "0.2.0",
+  "manifest_version": "fictional-consumer-demo-1",
+  "publisher": {
+    "id": "https://consumer-demo.example",
+    "role": "tenant_operator"
+  },
+  "control_authority": {
+    "id": "urn:example:platform-policy-authority"
+  },
+  "applies_to": {
+    "subject": {
+      "type": "platform",
+      "id": "urn:example:receiving-platform"
+    },
+    "scope": {
+      "deployment": "public-demo-2026-10",
+      "tenant": "public-demo-tenant",
+      "surface": "https-api",
+      "policy_version": "policy-demo-1"
+    },
+    "capability_id": "export-summary"
+  },
+  "published_at": "2026-10-06T17:55:00Z",
+  "expires_at": "2026-10-06T18:05:00Z",
+  "mechanisms": {
+    "recognition_a": {
+      "protocol_id": "urn:example:mechanism:recognition-a",
+      "specification_uri": "https://specs.example/recognition-a/1.0",
+      "version": "1.0",
+      "profile": "example-recognition-a",
+      "roles": [
+        "recognition",
+        "authentication"
+      ],
+      "support": "supported",
+      "endpoint_uris": [
+        "https://consumer-demo.example/mechanisms/recognition-a"
+      ],
+      "documentation_uris": [
+        "https://consumer-demo.example/docs/recognition-a"
+      ]
+    },
+    "recognition_b": {
+      "protocol_id": "urn:example:mechanism:recognition-b",
+      "specification_uri": "https://specs.example/recognition-b/1.0",
+      "version": "1.0",
+      "profile": "example-recognition-b",
+      "roles": [
+        "recognition"
+      ],
+      "support": "supported",
+      "endpoint_uris": [
+        "https://consumer-demo.example/mechanisms/recognition-b"
+      ],
+      "documentation_uris": [
+        "https://consumer-demo.example/docs/recognition-b"
+      ]
+    },
+    "payment_a": {
+      "protocol_id": "urn:example:mechanism:payment-a",
+      "specification_uri": "https://specs.example/payment-a/1.0",
+      "version": "1.0",
+      "profile": "example-payment-a",
+      "roles": [
+        "payment"
+      ],
+      "support": "supported",
+      "endpoint_uris": [
+        "https://consumer-demo.example/mechanisms/payment-a"
+      ],
+      "documentation_uris": [
+        "https://consumer-demo.example/docs/payment-a"
+      ]
+    }
+  },
+  "requirements": [
+    {
+      "mode": "one_of",
+      "mechanisms": [
+        "recognition_a",
+        "recognition_b"
+      ]
+    },
+    {
+      "mode": "all_of",
+      "mechanisms": [
+        "payment_a"
+      ]
+    }
+  ]
+}

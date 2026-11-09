@@ -9,3 +9,7 @@ ATM trust matures in stages:
 5. deployment or hardware attestation
 
 The key principle is that trust assertions should become progressively more expensive to fake.
+
+## Claim publication lifecycle
+
+The stages above describe assurance maturity, not withdrawal or notification behavior. The [separate lifecycle design proposal](rfc/0002-third-party-claims-and-host-lifecycle.md#5-host-publication-lifecycle) distinguishes an authenticated adverse finding from missing, unavailable, expired or inapplicable evidence. It proposes host-owned claim withdrawal, tenant notification, audit history and restoration policy while keeping portable ATM evidence/status semantics separate. These operations are not implemented by the reference consumer.

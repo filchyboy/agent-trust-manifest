@@ -86,7 +86,7 @@ This field does not identify the owner of an organization or a verifier, establi
 
 This draft widens the earlier fixed owner vocabulary to accept any nonblank string while retaining the existing field name and artifact shape. Previously accepted owner labels remain valid. Validators using the earlier fixed vocabulary may reject new implementation-defined labels until their schema is updated.
 
-Companion artifacts should not expose private implementation details such as internal policy rule IDs, internal TOON bindings, tenant identifiers, raw evidence payloads, secrets, or private guardrail configuration.
+Companion artifacts should not expose private implementation details such as internal policy rule IDs, private serialization bindings, tenant identifiers, raw evidence payloads, secrets, or private guardrail configuration.
 
 The legacy `reputation` extension remains a lightweight pointer to an external scorecard. New implementations that need hash pinning, issuer/subject responsibility, freshness metadata, acceptance controls, or multiple companion artifacts should use `governance_artifacts` entries of type `reputation_feed`.
 
@@ -106,7 +106,13 @@ Boolean. Indicates whether the platform can record decision and execution artifa
 
 ## 6. Security considerations
 
-A core ATM document is a declaration, not proof. Consumers should treat unsigned or unverified manifests as low-assurance claims.
+A core ATM document is a declaration, not proof. Consumers should treat unsigned or unverified manifests as low-assurance claims. This distinction does not make self-asserted claims unverifiable: ATM lets an outside party follow a link to a validator's claim about them and evaluate that finding's provenance and substance. The publisher's verification summary is not a substitute for the validator's authenticated statement. See the [claim-to-validation chain](verification-spec.md#5-claim-to-validation-discovery).
+
+## Platform-control clarification and experimental work
+
+The `issuer` identifies the publisher; it must not be assumed to identify the assessed platform, its control authority, enforcement point or an independent assessor. Evidence about an agent cannot satisfy a platform-control claim merely because identifiers match. An agent's ability and operator consent do not authorize a function the receiving platform does not permit. Capability discovery and structural validation grant no authority; the platform independently enforces current policy. Capability access/approval prerequisites do not establish caller eligibility or approval. Missing or stale information remains unresolved, without permission or an assertion that a capability is absent. Agent mandates remain outside ATM.
+
+The existing v0.2.0 schema does not encode all these role and applicability distinctions. The [unreleased platform-control sidecar](platform-controls-draft-0.1.md) proposes explicit bindings through the existing `platform_policy` artifact link; its stricter profile requirements do not retrofit new required fields into v0.2.0.
 
 ## 7. Conformance
 
@@ -117,4 +123,4 @@ A manifest conforms to ATM v0.2.0 if:
 - timestamps are syntactically valid
 - extension sections, if present, conform to their extension specs
 
-The reference CLI checks structural schema constraints only. It does not enforce URI or timestamp formats, verify signatures or hashes, or establish the truth of declared claims. Passing the CLI alone does not demonstrate all of the conformance requirements above or establish authenticity.
+The reference CLI defaults to structural schema constraints. Its optional `--strict-formats` mode also checks URI and timestamp formats. Neither mode verifies signatures or hashes or establishes the truth of declared claims. Passing the CLI alone does not demonstrate all of the conformance requirements above or establish authenticity.

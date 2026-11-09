@@ -1,0 +1,52 @@
+{
+  "feed_version": "0.2.0",
+  "published_at": "2026-11-08T12:00:00Z",
+  "expires_at": "2026-12-08T12:00:00Z",
+  "cache_ttl_seconds": 3600,
+  "freshness_class": "attestation",
+  "issuer": {
+    "id": "https://ratings.example",
+    "name": "Fictional Business Rating Provider"
+  },
+  "subject": {
+    "id": "tenant-demo-42",
+    "type": "business"
+  },
+  "scope": {
+    "level": "tenant",
+    "identifier": "tenant-demo-42"
+  },
+  "methodology": {
+    "id": "fictional-letter-to-atm",
+    "version": "1",
+    "uri": "https://ratings.example/methodology/fictional-letter-to-atm/1",
+    "summary": "Provider-authored normalized representation. Fictional native A+ maps to excellent under mapping version 1; this is a business grade, not a platform-control finding. Native source and mapping provenance remain separately inspectable.",
+    "rating_scale": [
+      "excellent",
+      "good",
+      "fair",
+      "poor",
+      "unknown"
+    ],
+    "evidence_policy": "Use the referenced native observation and published mapping; unmapped native grades become unknown. No control-safety dimension is inferred. This fixture supplies no real evidence or authenticated signature."
+  },
+  "dimensions": [],
+  "overall": {
+    "rating": "excellent",
+    "summary": "Fictional native A+ mapped by its issuing provider; no claim of execution safety, provenance quality or other technical-control dimension."
+  },
+  "evidence_refs": [
+    {
+      "type": "provider_observation",
+      "uri": "https://ratings.example/native/tenant-demo-42",
+      "hash": "sha256:4363af655f1f309225c21de0dddf8ea778f5a44188bac78c9daf57a520709da1"
+    }
+  ],
+  "assurance_level": "declaration",
+  "revocation_status": "unknown",
+  "signature": {
+    "alg": "none",
+    "key_id": "fictional-placeholder",
+    "value": "NOT-A-REAL-SIGNATURE"
+  }
+}

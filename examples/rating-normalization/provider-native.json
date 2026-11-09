@@ -1,0 +1,10 @@
+{
+  "provider_format": "fictional-business-rating/7",
+  "business_reference": "tenant-demo-42",
+  "grade": {
+    "label": "A+",
+    "scale": "fictional-letter-grades/1"
+  },
+  "observed": "2026-11-08",
+  "notes": "Fictional source-native record. Not an ATM document or an actual BBB rating."
+}

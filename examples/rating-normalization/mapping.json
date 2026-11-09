@@ -1,0 +1,17 @@
+{
+  "fixture_only": true,
+  "mapping_id": "fictional-letter-to-atm",
+  "mapping_version": "1",
+  "source_scale": "fictional-letter-grades/1",
+  "target_field": "overall.rating",
+  "map": {
+    "A+": "excellent",
+    "A": "good",
+    "B": "fair",
+    "C": "poor"
+  },
+  "unmapped": "unknown",
+  "source_uri": "https://ratings.example/native/tenant-demo-42",
+  "normalizer": "https://ratings.example",
+  "limitations": "Illustrative provider-specific, lossy mapping. No universal grade equivalence or technical-control assessment."
+}

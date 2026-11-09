@@ -11,8 +11,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-      - run: python -m pip install jsonschema
+          python-version: '3.11.18'
+      - name: Bootstrap patched pip with the Python security advisory's digest
+        run: >-
+          python -m pip --isolated --disable-pip-version-check install --no-cache-dir --no-deps
+          'pip @ https://files.pythonhosted.org/packages/3f/06/3e4420302363fbb71be3c7f35ce042f54bfca330e3e66b3a2e3c4cca579f/pip-26.2.2-py3-none-any.whl#sha256=fd7f4dfa8190e014013b9f08f3e973f4e4c26ffd179a204895533a7254813a70'
+      - run: python -m pip install -r requirements.txt
       - run: python tools/validator/validate.py examples/basic-manifest.json schemas/agent-trust-manifest.schema.json
       - run: python tools/validator/validate.py examples/signed-manifest.json schemas/agent-trust-manifest.schema.json
       - run: python tools/validator/validate.py examples/verification-report.json schemas/verification-report.schema.json
@@ -25,4 +29,14 @@ jobs:
       - run: python tools/validator/validate.py examples/consumer/operational-status.json schemas/operational-status-feed.schema.json
       - run: python tools/validator/validate.py examples/consumer/stale-manifest.json schemas/agent-trust-manifest.schema.json
       - run: python tools/validator/validate.py examples/consumer/tampered-status.json schemas/operational-status-feed.schema.json
+      - run: python tools/validator/validate.py examples/consumer/platform-controls/manifest.json schemas/agent-trust-manifest.schema.json
+      - run: python tools/validator/validate.py examples/consumer/platform-controls/profile.json schemas/platform-controls-draft-0.1.schema.json
+      - run: python tools/validator/validate.py examples/consumer/platform-controls/expected-context.json schemas/platform-context-draft-0.1.schema.json
+      - run: python tools/validator/validate.py examples/consumer/protocol-support/manifest.json schemas/agent-trust-manifest.schema.json
+      - run: python tools/validator/validate.py examples/consumer/protocol-support/declaration.json schemas/protocol-support-draft-0.1.schema.json
+      - run: python tools/validator/validate.py examples/consumer/protocol-support/expected-context.json schemas/platform-context-draft-0.1.schema.json
+      - run: python tools/validator/validate.py examples/consumer/protocol-support/known-vocabulary.json schemas/protocol-vocabulary-demo-0.1.schema.json
+      - run: python tools/validator/validate.py examples/validation-chain/manifest.json schemas/agent-trust-manifest.schema.json
+      - run: python tools/validator/validate.py examples/rating-normalization/normalized-feed.json schemas/reputation-feed.schema.json
+      - run: python tools/validator/validate.py --strict-formats examples/signed-manifest.json schemas/agent-trust-manifest.schema.json
       - run: python -m unittest discover -s tests

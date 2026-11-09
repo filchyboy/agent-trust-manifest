@@ -1,0 +1,80 @@
+{
+  "profile_version": "platform-controls-draft/0.1",
+  "atm_version": "0.2.0",
+  "manifest_version": "fictional-consumer-demo-1",
+  "origin": "https://consumer-demo.example",
+  "publisher": {
+    "id": "https://consumer-demo.example"
+  },
+  "subject": {
+    "type": "platform",
+    "id": "urn:example:receiving-platform"
+  },
+  "scope": {
+    "deployment": "public-demo-2026-10",
+    "tenant": "public-demo-tenant",
+    "surface": "https-api",
+    "policy_version": "policy-demo-1"
+  },
+  "control_authority": {
+    "id": "urn:example:platform-policy-authority"
+  },
+  "enforcement_point": {
+    "id": "urn:example:export-api-gateway"
+  },
+  "published_at": "2026-10-06T17:55:00Z",
+  "expires_at": "2026-10-06T18:05:00Z",
+  "capabilities": [
+    {
+      "id": "export-summary",
+      "platform_permission": "allowed",
+      "access_conditions": [
+        "Authenticated platform account with export scope",
+        "Platform evaluates current tenant policy at invocation"
+      ],
+      "approval_required": true
+    }
+  ],
+  "evidence": [
+    {
+      "assessor": {
+        "id": "urn:example:demo-assessor"
+      },
+      "relationship": "self",
+      "claim": "platform_capability_conditions",
+      "applies_to": {
+        "subject": {
+          "type": "platform",
+          "id": "urn:example:receiving-platform"
+        },
+        "scope": {
+          "deployment": "public-demo-2026-10",
+          "tenant": "public-demo-tenant",
+          "surface": "https-api",
+          "policy_version": "policy-demo-1"
+        },
+        "capability_id": "export-summary"
+      },
+      "observed_at": "2026-10-06T17:55:00Z",
+      "expires_at": "2026-10-06T18:05:00Z",
+      "result": "pass",
+      "assessed_controls": {
+        "control_authority": {
+          "id": "urn:example:platform-policy-authority"
+        },
+        "enforcement_point": {
+          "id": "urn:example:export-api-gateway"
+        },
+        "capability": {
+          "id": "export-summary",
+          "platform_permission": "allowed",
+          "access_conditions": [
+            "Authenticated platform account with export scope",
+            "Platform evaluates current tenant policy at invocation"
+          ],
+          "approval_required": true
+        }
+      }
+    }
+  ]
+}
